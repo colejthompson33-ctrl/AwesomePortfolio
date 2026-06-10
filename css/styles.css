@@ -1,0 +1,230 @@
+/* =========================================================
+   Portfolio — global styles
+   Minimal, full-bleed photography layout with overlay nav
+   ========================================================= */
+
+:root {
+  --black: #0a0a0a;
+  --white: #f5f5f2;
+  --line: rgba(255, 255, 255, 0.55);
+  --muted: rgba(245, 245, 242, 0.8);
+  --topbar-height: 34px;
+  --gutter: 56px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Inter",
+    Arial, sans-serif;
+  background: var(--black);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+/* ---------------------------------------------------------
+   Top breadcrumb bar
+   --------------------------------------------------------- */
+
+.topbar {
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  background: var(--black);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.topbar a {
+  text-decoration: none;
+  color: var(--white);
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.topbar a:hover {
+  opacity: 1;
+}
+
+.topbar .crumb-sep {
+  margin: 0 6px;
+  opacity: 0.4;
+}
+
+.topbar .crumb-current {
+  opacity: 0.55;
+}
+
+/* ---------------------------------------------------------
+   Full-bleed hero / background image section
+   --------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: calc(100vh - var(--topbar-height));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: flex;
+}
+
+/* subtle gradient so white text/lines stay legible over photos */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  pointer-events: none;
+}
+
+.hero-canyon {
+  background-image: url("../images/canyon.jpg");
+}
+
+.hero-sky {
+  background-image: url("../images/sky.jpg");
+}
+
+/* ---------------------------------------------------------
+   Overlay nav (thin rule + stacked links)
+   --------------------------------------------------------- */
+
+.nav-overlay {
+  position: relative;
+  z-index: 2;
+  margin-top: 64px;
+  margin-left: var(--gutter);
+}
+
+.divider {
+  display: block;
+  width: 170px;
+  height: 1px;
+  border: none;
+  background: var(--line);
+  margin-bottom: 16px;
+}
+
+.nav-overlay ul {
+  list-style: none;
+}
+
+.nav-overlay li {
+  margin-bottom: 8px;
+}
+
+.nav-overlay a {
+  display: inline-block;
+  font-size: 17px;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--white);
+  letter-spacing: 0.01em;
+  transition: opacity 0.2s ease;
+}
+
+.nav-overlay a:hover {
+  opacity: 0.6;
+}
+
+/* ---------------------------------------------------------
+   Content panel (detail pages — heading + copy + back link)
+   --------------------------------------------------------- */
+
+.panel {
+  position: relative;
+  z-index: 2;
+  margin-top: 64px;
+  margin-left: var(--gutter);
+  margin-right: var(--gutter);
+  max-width: 520px;
+}
+
+.panel .divider {
+  width: 100%;
+  max-width: 640px;
+}
+
+.panel h1 {
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-bottom: 18px;
+}
+
+.panel p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 40px;
+  max-width: 460px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  text-decoration: none;
+  color: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 24px;
+  }
+
+  .nav-overlay,
+  .panel {
+    margin-top: 40px;
+  }
+
+  .nav-overlay a {
+    font-size: 16px;
+  }
+
+  .panel h1 {
+    font-size: 24px;
+  }
+
+  .panel p {
+    font-size: 13px;
+  }
+}
