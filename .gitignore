@@ -1,1 +1,17 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+.claude/
+
+# Build artifacts
+*.log
+dist/
+build/

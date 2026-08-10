@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fun — Cole Thompson</title>
+  
+  <!-- Preload critical font -->
+  <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <style>
+    /* ==========================================================================
+       1. Reset & Global Setup
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Edge Glow Outline */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9990;
+      border: 1px solid rgba(0, 210, 255, 0.9);
+      box-shadow: 
+        inset 0 0 10px rgba(0, 210, 255, 0.6),
+        inset 0 0 20px rgba(180, 255, 60, 0.4),
+        0 0 15px rgba(0, 210, 255, 0.7);
+      opacity: var(--edge-glow-opacity, 0);
+      transition: opacity 0.2s ease;
+      
+      -webkit-mask-image: radial-gradient(
+        70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+        black 0%,
+        rgba(0, 0, 0, 0.8) 40%,
+        transparent 80%
+      );
+      mask-image: radial-gradient(
+        70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+        black 0%,
+        rgba(0, 0, 0, 0.8) 40%,
+        transparent 80%
+      );
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Dragging Hover Interference Fix */
+    body.is-dragging-active .sticker-item:not(.dragging) {
+      pointer-events: none !important;
+    }
+
+    /* ==========================================================================
+       2. Fixed Top Navigation (Matched to work.html)
+       ========================================================================== */
+    .top-nav {
+      position: fixed;
+      top: 2.2rem;
+      left: 2.5rem;
+      z-index: 2000;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 2rem;
+      height: 2rem;
+      min-width: 44px;
+      min-height: 44px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 2001;
+      position: relative;
+    }
+
+    .hamburger-line {
+      width: 2rem;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+
+    @media (hover: hover) {
+      .mobile-menu-toggle:hover .hamburger-line {
+        background: #ffffff;
+      }
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 6px);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -6px);
+    }
+
+    /* Mobile Menu Panel */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .mobile-menu[aria-hidden="false"] {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .mobile-nav-link {
+      font-size: 2rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.2s ease, transform 0.2s ease;
+      letter-spacing: -0.02em;
+      padding: 1rem 1.5rem;
+      min-height: 48px;
+      min-width: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (hover: hover) {
+      .mobile-nav-link:hover {
+        color: #ffffff;
+        transform: scale(1.05);
+      }
+    }
+
+    .mobile-nav-link.active {
+      color: #ffffff;
+    }
+
+    .nav-link {
+      transition: color 0.2s ease, text-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    @media (hover: hover) {
+      .nav-link:hover {
+        color: #ffffff;
+        text-shadow: 0 0 12px rgba(0, 210, 255, 0.8), 0 0 20px rgba(180, 255, 60, 0.6);
+      }
+    }
+
+    .nav-link.active {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* ==========================================================================
+       3. Mac OS Window Wrapper
+       ========================================================================== */
+    .viewport-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: min(1600px, 95vw);
+      margin: 0 auto;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 3rem;
+      overflow-x: hidden;
+    }
+
+    .mac-window {
+      width: clamp(85vw, 92vw, 95vw);
+      height: clamp(75vh, 85vh, 90vh);
+      background-color: #141416;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      box-shadow: 0 25px 75px rgba(0, 0, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mac-header {
+      background: #1e1e22;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      z-index: 1050;
+    }
+
+    .mac-titlebar {
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .mac-dots .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-close { background-color: #ff5f56; border: 1px solid #e0443e; }
+    .dot-min { background-color: #ffbd2e; border: 1px solid #dea123; }
+    .dot-max { background-color: #27c93f; border: 1px solid #1aab29; }
+
+    .mac-tabs {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      flex: 1;
+      padding: 2px 0;
+    }
+
+    .mac-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mac-tab-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 6px;
+      height: 28px;
+      width: 28px;
+      background: #28282e;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                  background 0.2s ease, 
+                  padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      overflow: hidden;
+    }
+
+    @media (hover: hover) {
+      .mac-tab-item:hover {
+        background: #32323a;
+      }
+    }
+
+    .mac-tab-item.active {
+      width: clamp(140px, 15vw, 180px);
+      padding: 4px 10px;
+      background: #141416;
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 -1px 3px rgba(0,0,0,0.5);
+    }
+
+    .mac-tab-thumb {
+      width: 16px;
+      height: 16px;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .mac-tab-title {
+      font-size: clamp(0.65rem, 1.2vw, 0.75rem);
+      color: #e1e1e6;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-left: 8px;
+      opacity: 0;
+      transform: translateX(-5px);
+      transition: opacity 0.2s ease 0.05s, transform 0.2s ease 0.05s;
+    }
+
+    .mac-tab-item.active .mac-tab-title {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .mac-addressbar-container {
+      padding: 0 16px 8px 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .mac-searchbar {
+      width: 100%;
+      max-width: min(1200px, 90vw);
+      background: #121214;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 5px 0;
+      font-size: 0.8rem;
+      color: #a0a0aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* ==========================================================================
+       4. Canvas Area & Separation Effects
+       ========================================================================== */
+    .collage-canvas {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background-color: #141416;
+      overflow: hidden;
+    }
+
+    .drawing-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .drawing-canvas.draw-mode {
+      z-index: 990;
+      pointer-events: auto;
+      cursor: crosshair;
+    }
+
+    /* ==========================================================================
+       Responsive Breakpoints
+       ========================================================================== */
+    
+    /* Mobile: < 768px */
+    @media (max-width: 767px) {
+      .viewport-container {
+        padding-top: 1rem;
+      }
+      
+      .mac-window {
+        width: 95vw;
+        height: 80vh;
+      }
+      
+      .mac-tabs {
+        gap: 2px;
+      }
+      
+      .mac-tab-item {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .mac-tab-item.active {
+        width: clamp(120px, 25vw, 150px);
+      }
+      
+      .top-nav {
+        top: 1rem;
+        left: 1.5rem;
+        right: 1.5rem;
+      }
+      
+      .main-nav {
+        gap: 1rem;
+      }
+      
+      /* Mobile Navigation */
+      .mobile-menu-toggle {
+        display: flex;
+      }
+      
+      .main-nav {
+        display: none;
+      }
+      
+      /* Ensure header doesn't obscure content */
+      html {
+        scroll-padding-top: 4rem;
+      }
+      
+      .pen-toolbar {
+        bottom: 15px;
+        right: 15px;
+        padding: 4px 8px;
+      }
+      
+      .project-showcase-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .project-card-image {
+        height: 180px;
+      }
+    }
+    
+    /* Tablet: 768px – 1023px */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .mac-window {
+        width: 90vw;
+        height: 82vh;
+      }
+      
+      .mac-tab-item.active {
+        width: clamp(150px, 18vw, 170px);
+      }
+      
+      /* Hide mobile navigation on tablet/desktop */
+      .mobile-menu-toggle {
+        display: none;
+      }
+      
+      .mobile-menu {
+        display: none;
+      }
+      
+      .project-showcase-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+    }
+    
+    /* Laptop / Desktop: 1024px – 1439px */
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      .mac-window {
+        width: 90vw;
+        height: 84vh;
+      }
+      
+      /* Hide mobile navigation on laptop/desktop */
+      .mobile-menu-toggle {
+        display: none;
+      }
+      
+      .mobile-menu {
+        display: none;
+      }
+      
+      .project-showcase-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+      }
+    }
+    
+    /* Ultra-Wide / Large Displays: >= 1440px */
+    @media (min-width: 1440px) {
+      .mac-window {
+        width: 85vw;
+        height: 86vh;
+      }
+      
+      .mac-tab-item.active {
+        width: clamp(160px, 12vw, 200px);
+      }
+      
+      /* Hide mobile navigation on ultra-wide */
+      .mobile-menu-toggle {
+        display: none;
+      }
+      
+      .mobile-menu {
+        display: none;
+      }
+      
+      .project-showcase-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+      }
+    }
+
+    /* Dim and push back non-selected stickers when an image is active */
+    .collage-canvas.has-active .sticker-item:not(.active-highlight) {
+      opacity: 0.25;
+      filter: grayscale(40%) blur(1px);
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    /* ==========================================================================
+       5. Dark Icon Toolbar
+       ========================================================================== */
+    .pen-toolbar {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(25, 25, 30, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 30px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .tool-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #a0a0aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (hover: hover) {
+      .tool-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+      }
+    }
+
+    .tool-btn.active {
+      background: #00d2ff;
+      color: #000000;
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.5);
+    }
+
+    .color-picker-wrapper {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+
+    .color-picker {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      width: 30px;
+      height: 30px;
+      border: none;
+      cursor: pointer;
+      background: none;
+    }
+
+    /* ==========================================================================
+       6. Dynamic Sticker Items & Active Highlighting
+       ========================================================================== */
+    .sticker-item {
+      position: absolute;
+      cursor: grab;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease, opacity 0.3s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      display: inline-block;
+      width: fit-content;
+      height: fit-content;
+      max-width: 200px;
+    }
+
+    .sticker-item:active {
+      cursor: grabbing;
+    }
+
+    @media (hover: hover) {
+      .sticker-item:hover {
+        transform: scale(1.04) rotate(0deg) !important;
+      }
+      
+      .sticker-item:hover .sticker-image {
+        filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 210, 255, 0.3));
+      }
+    }
+
+    /* Highlights the single canvas image on selection to separate it from rest */
+    .sticker-item.active-highlight {
+      z-index: 2000 !important;
+      transform: scale(1.08) rotate(0deg) !important;
+      opacity: 1 !important;
+    }
+
+    .sticker-item.active-highlight .sticker-image {
+      filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.9)) 
+              drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) 
+              drop-shadow(0 15px 35px rgba(0, 0, 0, 0.9)) !important;
+    }
+
+    .sticker-item.dragging {
+      transition: none;
+    }
+
+    .sticker-item.dragging .sticker-image {
+      filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.8));
+    }
+
+    .sticker-image {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+      transition: filter 0.25s ease;
+    }
+    
+    /* Responsive Project Showcase Grid */
+    .project-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      width: 100%;
+    }
+    
+    .project-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    @media (hover: hover) {
+      .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+      }
+    }
+    
+    .project-card-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .project-card-content {
+      padding: 1.5rem;
+    }
+    
+    .project-card-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+    
+    .project-card-description {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       7. Info Glass Card (No Duplicate Image - Directly Below & Centered)
+       ========================================================================== */
+    .glass-info-card {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      width: 380px;
+      max-width: 90vw;
+      padding: 1.1rem 1.4rem;
+      background: rgba(20, 20, 24, 0.95);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 210, 255, 0.2);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.25s ease;
+      pointer-events: none;
+      z-index: 1999;
+    }
+
+    .glass-info-card.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .glass-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      width: 100%;
+    }
+
+    .glass-card-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .glass-card-dots .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .glass-card-dots .dot-close { background-color: #ff5f56; border: 1px solid #e0443e; cursor: pointer; }
+    .glass-card-dots .dot-min { background-color: #ffbd2e; border: 1px solid #dea123; }
+    .glass-card-dots .dot-max { background-color: #27c93f; border: 1px solid #1aab29; }
+
+    .glass-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      color: #e1e1e6;
+    }
+
+    .glass-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+      line-height: 1.25;
+    }
+
+    .glass-card-desc {
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: #a0a0aa;
+      font-weight: 400;
+    }
+
+    /* ==========================================================================
+       8. Page Transition Overlay
+       ========================================================================== */
+    .page-transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.is-exiting .page-transition-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 650px) {
+      .top-nav {
+        top: 1.5rem;
+        left: 1.5rem;
+      }
+      .mac-window {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        margin-top: 0;
+      }
+      .viewport-container {
+        padding-top: 0;
+      }
+      .glass-info-card {
+        width: 300px;
+        padding: 1rem;
+      }
+      .sticker-item {
+        max-width: 130px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <button 
+      class="mobile-menu-toggle" 
+      id="mobileMenuToggle" 
+      aria-expanded="false" 
+      aria-controls="mobileMenu"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    
+    <nav class="main-nav" id="mainNav">
+      <a href="work.html" class="nav-link">Work</a>
+      <a href="experience.html" class="nav-link">Contact</a>
+      <a href="#" class="nav-link active">Fun</a>
+    </nav>
+    
+    <!-- Mobile Menu Panel -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <nav class="mobile-nav">
+        <a href="work.html" class="mobile-nav-link">Work</a>
+        <a href="experience.html" class="mobile-nav-link">Contact</a>
+        <a href="#" class="mobile-nav-link active">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Viewport Container -->
+  <main class="viewport-container">
+    
+    <!-- Mac OS Window Wrapper -->
+    <div class="mac-window">
+      
+      <!-- Mac Header -->
+      <div class="mac-header">
+        <div class="mac-titlebar">
+          <div class="mac-dots">
+            <span class="dot dot-close"></span>
+            <span class="dot dot-min"></span>
+            <span class="dot dot-max"></span>
+          </div>
+          <div class="mac-tabs" id="macTabs"></div>
+        </div>
+        <div class="mac-addressbar-container">
+          <div class="mac-searchbar">
+            <span>🔒</span> cole-thompson.com/fun
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Area -->
+      <div class="collage-canvas" id="collageCanvas">
+        
+        <!-- Drawing Canvas -->
+        <canvas class="drawing-canvas" id="drawingCanvas"></canvas>
+
+        <!-- Dark Glass Info Card (NO duplicate image) -->
+        <div class="glass-info-card" id="glassInfoCard">
+          <div class="glass-card-header">
+            <div class="glass-card-dots">
+              <span class="dot dot-close" id="glassCardCloseDot" title="Close"></span>
+              <span class="dot dot-min"></span>
+              <span class="dot dot-max"></span>
+            </div>
+          </div>
+          <div class="glass-card-body">
+            <h3 class="glass-card-title" id="glassTitle"></h3>
+            <p class="glass-card-desc" id="glassDesc"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Dark Icon Toolbar -->
+      <div class="pen-toolbar">
+        <button class="tool-btn" id="penBtn" title="Draw Tool">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+        <div class="color-picker-wrapper" title="Pen Color">
+          <input type="color" class="color-picker" id="penColor" value="#00d2ff" />
+        </div>
+        <button class="tool-btn" id="clearBtn" title="Clear Canvas">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    /* Edge Proximity Glow Script */
+    const EDGE_THRESHOLD = 90;
+    window.addEventListener('mousemove', (e) => {
+      document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
+      document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
+
+      const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
+
+      if (minEdgeDist < EDGE_THRESHOLD) {
+        const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
+        document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
+      } else {
+        document.body.style.setProperty('--edge-glow-opacity', '0');
+      }
+    });
+
+    /* Sticker Configuration Data */
+    const stickerData = [
+      // Top Row
+      { id: 1, title: "Aggie Outdoors Logo Design", stickerImage: "Images/funstickers/AO.png", position: { top: "5%", left: "5%", rotation: "-12deg" }, description: "I designed a logo for Aggie Outdoors" },
+      { id: 2, title: "Aggie Outdoors Apparel", stickerImage: "Images/funstickers/AOShirt.png", position: { top: "4%", left: "20%", rotation: "8deg" }, description: "Printed and sold this shirt for the organization" },
+      { id: 3, title: "Aggie Outdoors Bandana", stickerImage: "Images/funstickers/BANDANA.png", position: { top: "6%", left: "40%", rotation: "-5deg" }, description: "Wanted to make a traditional bandana and would 10/10 print and sell again" },
+      { id: 4, title: "Aggie Radio Sticker", stickerImage: "Images/funstickers/AgRadio.png", position: { top: "5%", left: "55%", rotation: "12deg" }, description: "While a host, I made many designs for the student radio. This design was one of my favorites" },
+      { id: 5, title: "Like New Legs", stickerImage: "Images/funstickers/LikenewLegs.png", position: { top: "7%", left: "70%", rotation: "-8deg" }, description: "Poster design I made for a friend whose motto is 'life should hurt like a pair of new legs'" },
+      { id: 6, title: "Aggie Outdoors Logo", stickerImage: "Images/funstickers/AoSimp.png", position: { top: "12%", left: "82%", rotation: "5deg" }, description: "Simple Logo design I did for Aggie Outdoors" },
+      { id: 8, title: "Howdy", stickerImage: "Images/funstickers/Howdy.png", position: { top: "22%", left: "10%", rotation: "18deg" }, description: "Some merch I made for the singer Howdy (Highly recommend to listen to btw)" },
+      { id: 9, title: "Chud World Tour", stickerImage: "Images/funstickers/ChudworldTour.png", position: { top: "35%", left: "25%", rotation: "-8deg" }, description: "Some concept merch I made for a local band" },
+      { id: 10, title: "Stretch & Flex Co", stickerImage: "Images/funstickers/Stretch&Flex co..png", position: { top: "38%", left: "42%", rotation: "10deg" }, description: "Branding work for a local sports thearpy business" },
+      { id: 11, title: "Chud World Tour", stickerImage: "Images/funstickers/ChudComeNoDrop.jpg", position: { top: "40%", left: "76%", rotation: "-10deg" }, description: "Some concept merch I made for a local band" },
+      { id: 13, title: "Collaborative Poetry", stickerImage: "Images/funstickers/CollabriativePeotry.png", position: { top: "40%", left: "58%", rotation: "7deg" }, description: "A event poster I made for a local local sports thearpy business" },
+      { id: 14, title: "Crew A&M Rowing", stickerImage: "Images/funstickers/CrewA&MRowing.png", position: { top: "64%", left: "72%", rotation: "-5deg" }, description: "Merch design I made for my school's collegate rowing team" },
+      { id: 15, title: "Seen And Heard", stickerImage: "Images/funstickers/SeenAndHeard.png", position: { top: "70%", left: "32%", rotation: "12deg" }, description: "I personal project of mine I love" },
+      { id: 16, title: "Ag Radio", stickerImage: "Images/funstickers/AgRadioRev.png", position: { top: "73%", left: "45%", rotation: "-8deg" }, description: "Sticker I made of A&M's student radio featuring the famous mascoct Revelie" },
+      { id: 17, title: "Rowing Sticker", stickerImage: "Images/funstickers/Rowingsticker.png", position: { top: "26%", left: "27%", rotation: "5deg" }, description: "Texas A&M Crew rowing sticker I made" },
+      { id: 18, title: "Halftone Band", stickerImage: "Images/funstickers/HalftoneBand.png", position: { top: "55%", left: "8%", rotation: "15deg" }, description: "I personal project of mine I made for a local band" },
+      { id: 19, title: "Skeggs Design", stickerImage: "Images/funstickers/Skeggs.png", position: { top: "60%", left: "18%", rotation: "-10deg" }, description: "A zine I used to make 'The Garage' that would show off designs and such of grunge bands I listened to" }
+    ];
+
+    /* Canvas & Stacking Logic */
+    const collageCanvas = document.getElementById('collageCanvas');
+    const macTabsContainer = document.getElementById('macTabs');
+    const glassInfoCard = document.getElementById('glassInfoCard');
+    const glassTitle = document.getElementById('glassTitle');
+    const glassDesc = document.getElementById('glassDesc');
+    const glassCardCloseDot = document.getElementById('glassCardCloseDot');
+
+    let activeStickerId = null;
+    let highestZIndex = 10;
+
+    function bringToTop(element) {
+      highestZIndex++;
+      element.style.zIndex = highestZIndex;
+    }
+
+    function enforceBoundaries(element) {
+      const canvasRect = collageCanvas.getBoundingClientRect();
+      
+      let currentLeftPct = parseFloat(element.style.left) || 0;
+      let currentTopPct = parseFloat(element.style.top) || 0;
+      
+      let leftPx = (currentLeftPct / 100) * canvasRect.width;
+      let topPx = (currentTopPct / 100) * canvasRect.height;
+      
+      const elemWidth = element.offsetWidth;
+      const elemHeight = element.offsetHeight;
+      
+      const maxLeft = canvasRect.width - elemWidth;
+      const maxTop = canvasRect.height - elemHeight;
+      
+      let newLeftPx = leftPx;
+      let newTopPx = topPx;
+      
+      if (newLeftPx < 0) newLeftPx = 0;
+      if (newLeftPx > maxLeft) newLeftPx = maxLeft;
+      
+      if (newTopPx < 0) newTopPx = 0;
+      if (newTopPx > maxTop) newTopPx = maxTop;
+      
+      if (newLeftPx !== leftPx || newTopPx !== topPx) {
+        element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
+        element.style.top = (newTopPx / canvasRect.height * 100) + '%';
+      }
+    }
+
+    function initCollage() {
+      stickerData.forEach(sticker => {
+        // Tab Item
+        const tabItem = document.createElement('div');
+        tabItem.className = 'mac-tab-item';
+        tabItem.dataset.id = sticker.id;
+        tabItem.title = sticker.title;
+
+        const tabThumb = document.createElement('img');
+        tabThumb.src = sticker.stickerImage;
+        tabThumb.className = 'mac-tab-thumb';
+        tabThumb.alt = sticker.title;
+
+        const tabTitle = document.createElement('span');
+        tabTitle.className = 'mac-tab-title';
+        tabTitle.textContent = sticker.title;
+
+        tabItem.appendChild(tabThumb);
+        tabItem.appendChild(tabTitle);
+
+        tabItem.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetSticker = document.querySelector(`.sticker-item[data-id="${sticker.id}"]`);
+          
+          if (activeStickerId === sticker.id) {
+            dismissGlassCard();
+          } else {
+            activateItem(sticker.id);
+            if (targetSticker) bringToTop(targetSticker);
+            positionAndOpenGlassCard(sticker);
+          }
+        });
+
+        macTabsContainer.appendChild(tabItem);
+
+        // Sticker Element
+        const stickerEl = document.createElement('div');
+        stickerEl.className = 'sticker-item';
+        stickerEl.dataset.id = sticker.id;
+        
+        stickerEl.style.top = sticker.position.top;
+        stickerEl.style.left = sticker.position.left;
+        stickerEl.style.transform = `rotate(${sticker.position.rotation})`;
+        
+        highestZIndex++;
+        stickerEl.style.zIndex = highestZIndex;
+        
+        const img = document.createElement('img');
+        const baseName = sticker.stickerImage.replace(/\.(jpg|jpeg|png)$/i, '');
+        img.src = baseName + '.webp';
+        img.setAttribute('data-fallback', sticker.stickerImage);
+        img.onerror = function() {
+          if (this.getAttribute('data-fallback')) {
+            this.src = this.getAttribute('data-fallback');
+          }
+        };
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.alt = sticker.title;
+        img.className = 'sticker-image'; 
+        
+        img.onload = () => {
+          enforceBoundaries(stickerEl);
+        };
+        
+        stickerEl.appendChild(img);
+
+        stickerEl.addEventListener('mouseenter', () => {
+          if (activeStickerId !== sticker.id) {
+            bringToTop(stickerEl);
+          }
+        });
+        
+        stickerEl.addEventListener('pointerdown', () => {
+          if (activeStickerId !== sticker.id) {
+            bringToTop(stickerEl);
+          }
+        });
+        
+        stickerEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          
+          if (!stickerEl.classList.contains('has-dragged')) {
+            if (activeStickerId === sticker.id) {
+              dismissGlassCard();
+            } else {
+              activateItem(sticker.id);
+              positionAndOpenGlassCard(sticker);
+            }
+          }
+        });
+        
+        makeDraggable(stickerEl);
+        collageCanvas.appendChild(stickerEl);
+      });
+    }
+
+    function activateItem(id) {
+      activeStickerId = id;
+
+      // Toggle tab active class
+      document.querySelectorAll('.mac-tab-item').forEach(tab => {
+        const isActive = parseInt(tab.dataset.id) === id;
+        tab.classList.toggle('active', isActive);
+        if (isActive) {
+          tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      });
+
+      // Toggle active highlight directly on the single canvas sticker
+      document.querySelectorAll('.sticker-item').forEach(st => {
+        const isHighlight = parseInt(st.dataset.id) === id;
+        st.classList.toggle('active-highlight', isHighlight);
+      });
+
+      // Separate active item from rest of canvas by dimming background stickers
+      collageCanvas.classList.add('has-active');
+    }
+
+    function positionAndOpenGlassCard(sticker) {
+      const stickerEl = document.querySelector(`.sticker-item[data-id="${sticker.id}"]`);
+      if (!stickerEl) return;
+
+      const stickerRect = stickerEl.getBoundingClientRect();
+      const canvasRect = collageCanvas.getBoundingClientRect();
+
+      const relativeTop = stickerRect.top - canvasRect.top;
+      const relativeLeft = stickerRect.left - canvasRect.left;
+
+      glassTitle.textContent = sticker.title;
+      glassDesc.textContent = sticker.description;
+
+      let cardWidth = Math.min(380, canvasRect.width - 30);
+      if (window.innerWidth <= 650) {
+        cardWidth = Math.min(300, canvasRect.width - 20);
+      }
+
+      // Position directly underneath the active sticker, centered horizontally (extending left & right)
+      let cardLeft = relativeLeft + (stickerRect.width / 2) - (cardWidth / 2);
+      let cardTop = relativeTop + stickerRect.height + 12;
+
+      // Prevent card from overflowing left or right boundaries
+      if (cardLeft < 15) cardLeft = 15;
+      if (cardLeft + cardWidth > canvasRect.width - 15) {
+        cardLeft = canvasRect.width - cardWidth - 15;
+      }
+
+      // Fallback: If card pushes off bottom of canvas, anchor slightly above or clamp
+      if (cardTop + 140 > canvasRect.height) {
+        cardTop = Math.max(15, relativeTop - 155);
+      }
+
+      glassInfoCard.style.width = `${cardWidth}px`;
+      glassInfoCard.style.left = `${cardLeft}px`;
+      glassInfoCard.style.top = `${cardTop}px`;
+
+      glassInfoCard.classList.add('active');
+    }
+
+    function dismissGlassCard() {
+      activeStickerId = null;
+      glassInfoCard.classList.remove('active');
+      collageCanvas.classList.remove('has-active');
+      document.querySelectorAll('.mac-tab-item').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.sticker-item').forEach(st => st.classList.remove('active-highlight'));
+    }
+
+    glassCardCloseDot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dismissGlassCard();
+    });
+
+    collageCanvas.addEventListener('click', (e) => {
+      if (!e.target.closest('.sticker-item') && !e.target.closest('.glass-info-card')) {
+        dismissGlassCard();
+      }
+    });
+
+    function makeDraggable(element) {
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      function startDrag(e) {
+        if (isDrawingMode) return;
+        isDragging = true;
+        element.classList.remove('has-dragged');
+        
+        bringToTop(element);
+        
+        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        
+        startX = clientX;
+        startY = clientY;
+        
+        initialLeft = parseFloat(element.style.left) || 0;
+        initialTop = parseFloat(element.style.top) || 0;
+        
+        element.classList.add('dragging');
+        document.body.classList.add('is-dragging-active');
+      }
+
+      function drag(e) {
+        if (!isDragging || isDrawingMode) return;
+        
+        const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+        
+        if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
+          element.classList.add('has-dragged');
+        }
+        
+        const canvasRect = collageCanvas.getBoundingClientRect();
+        
+        let newLeftPx = ((initialLeft / 100) * canvasRect.width) + deltaX;
+        let newTopPx = ((initialTop / 100) * canvasRect.height) + deltaY;
+        
+        const elemWidth = element.offsetWidth;
+        const elemHeight = element.offsetHeight;
+        
+        const maxLeft = canvasRect.width - elemWidth;
+        const maxTop = canvasRect.height - elemHeight;
+        
+        if (newLeftPx < 0) newLeftPx = 0;
+        if (newLeftPx > maxLeft) newLeftPx = maxLeft;
+        
+        if (newTopPx < 0) newTopPx = 0;
+        if (newTopPx > maxTop) newTopPx = maxTop;
+        
+        element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
+        element.style.top = (newTopPx / canvasRect.height * 100) + '%';
+
+        if (activeStickerId === parseInt(element.dataset.id)) {
+          const stickerObj = stickerData.find(s => s.id === activeStickerId);
+          if (stickerObj) positionAndOpenGlassCard(stickerObj);
+        }
+      }
+
+      function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        element.classList.remove('dragging');
+        document.body.classList.remove('is-dragging-active');
+      }
+
+      element.addEventListener('mousedown', startDrag);
+      window.addEventListener('mousemove', drag);
+      window.addEventListener('mouseup', endDrag);
+
+      element.addEventListener('touchstart', startDrag, { passive: true });
+      window.addEventListener('touchmove', drag, { passive: true });
+      window.addEventListener('touchend', endDrag);
+    }
+
+    /* Drawing Canvas System */
+    const drawCanvas = document.getElementById('drawingCanvas');
+    const ctx = drawCanvas.getContext('2d');
+    const penBtn = document.getElementById('penBtn');
+    const penColorInput = document.getElementById('penColor');
+    const clearBtn = document.getElementById('clearBtn');
+    
+    let isDrawingMode = false;
+    let isDrawing = false;
+
+    function resizeDrawCanvas() {
+      drawCanvas.width = collageCanvas.clientWidth;
+      drawCanvas.height = collageCanvas.clientHeight;
+    }
+
+    window.addEventListener('resize', () => {
+      resizeDrawCanvas();
+      document.querySelectorAll('.sticker-item').forEach(enforceBoundaries);
+    });
+
+    penBtn.addEventListener('click', () => {
+      isDrawingMode = !isDrawingMode;
+      penBtn.classList.toggle('active', isDrawingMode);
+      drawCanvas.classList.toggle('draw-mode', isDrawingMode);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    });
+
+    function startDrawing(e) {
+      if (!isDrawingMode) return;
+      isDrawing = true;
+      ctx.beginPath();
+      
+      const rect = drawCanvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches[0].clientX) - rect.left;
+      const y = (e.clientY || e.touches[0].clientY) - rect.top;
+      
+      ctx.moveTo(x, y);
+    }
+
+    function draw(e) {
+      if (!isDrawing || !isDrawingMode) return;
+      
+      const rect = drawCanvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches[0].clientX) - rect.left;
+      const y = (e.clientY || e.touches[0].clientY) - rect.top;
+      
+      ctx.strokeStyle = penColorInput.value;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    drawCanvas.addEventListener('mousedown', startDrawing);
+    drawCanvas.addEventListener('mousemove', draw);
+    window.addEventListener('mouseup', stopDrawing);
+
+    drawCanvas.addEventListener('touchstart', startDrawing, { passive: true });
+    drawCanvas.addEventListener('touchmove', draw, { passive: true });
+    window.addEventListener('touchend', stopDrawing);
+
+    /* Initialization & Transitions */
+    initCollage();
+    resizeDrawCanvas();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile Menu Toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+      
+      function toggleMobileMenu() {
+        const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+        
+        mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.setAttribute('aria-hidden', isExpanded);
+        
+        // Prevent body scroll when menu is open
+        document.body.style.overflow = isExpanded ? '' : 'hidden';
+      }
+      
+      function closeMobileMenu() {
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      
+      if (mobileMenuToggle && mobileMenu) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        
+        // Close menu when clicking on navigation links
+        mobileNavLinks.forEach(link => {
+          link.addEventListener('click', closeMobileMenu);
+        });
+        
+        // Close menu when clicking outside
+        mobileMenu.addEventListener('click', (e) => {
+          if (e.target === mobileMenu) {
+            closeMobileMenu();
+          }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
+            closeMobileMenu();
+            mobileMenuToggle.focus();
+          }
+        });
+      }
+      
+      document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+
+          if (!href || href.startsWith('#') || href.startsWith('mailto:') || link.target === '_blank') {
+            return;
+          }
+
+          e.preventDefault();
+          document.body.classList.add('is-exiting');
+
+          setTimeout(() => {
+            window.location.href = href;
+          }, 380);
+        });
+      });
+
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.remove('is-exiting');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

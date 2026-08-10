@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cole Thompson — Portfolio</title>
+  
+  <!-- Preload critical font -->
+  <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <style>
+    /* ==========================================================================
+       1. Reset & Global Setup (Strict Non-Scrolling Viewport)
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      inset: 0;
+      overflow: hidden !important;
+      touch-action: none;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Edge-Proximity Glowing Window Outline */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9990;
+      border: 1px solid rgba(0, 210, 255, 0.9);
+      box-shadow: 
+        inset 0 0 10px rgba(0, 210, 255, 0.6),
+        inset 0 0 20px rgba(180, 255, 60, 0.4),
+        0 0 15px rgba(0, 210, 255, 0.7);
+      opacity: var(--edge-glow-opacity, 0);
+      transition: opacity 0.2s ease;
+      
+      -webkit-mask-image: radial-gradient(
+        70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+        black 0%,
+        rgba(0, 0, 0, 0.8) 40%,
+        transparent 80%
+      );
+      mask-image: radial-gradient(
+        70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+        black 0%,
+        rgba(0, 0, 0, 0.8) 40%,
+        transparent 80%
+      );
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ==========================================================================
+       2. Top Navigation
+       ========================================================================== */
+    .top-nav {
+      position: fixed;
+      top: 2.2rem;
+      left: 2.5rem;
+      z-index: 2000;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 2rem;
+      height: 2rem;
+      min-width: 44px;
+      min-height: 44px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 2001;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hamburger-line {
+      width: 100%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      transform-origin: center;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    @media (hover: hover) {
+      .mobile-menu-toggle:hover .hamburger-line {
+        background: #ffffff;
+      }
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 6px);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -6px);
+    }
+
+    /* Mobile Menu Panel */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .mobile-menu[aria-hidden="false"] {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .mobile-nav-link {
+      font-size: 2rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.2s ease, transform 0.2s ease;
+      letter-spacing: -0.02em;
+      padding: 1rem 1.5rem;
+      min-height: 48px;
+      min-width: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (hover: hover) {
+      .mobile-nav-link:hover {
+        color: #ffffff;
+        transform: scale(1.05);
+      }
+    }
+
+    .mobile-nav-link.active {
+      color: #ffffff;
+    }
+
+    .nav-link {
+      transition: color 0.2s ease, text-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    @media (hover: hover) {
+      .nav-link:hover {
+        color: #ffffff;
+        text-shadow: 0 0 12px rgba(0, 210, 255, 0.8), 0 0 20px rgba(180, 255, 60, 0.6);
+      }
+    }
+
+    .nav-link.active {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Dynamic Work Link inside Project View Mode */
+    .nav-link-work {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .nav-link-work .nav-text-active,
+    .nav-link-work .nav-text-hover {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-link-work .nav-text-hover {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    @media (hover: hover) {
+      body.is-project-mode .nav-link-work:hover .nav-text-active {
+        opacity: 0;
+      }
+
+      body.is-project-mode .nav-link-work:hover .nav-text-hover {
+        opacity: 1;
+      }
+    }
+
+    /* ==========================================================================
+       3. Main Layout & Stream Structure
+       ========================================================================== */
+    .portfolio-layout {
+      display: flex;
+      width: 100%;
+      max-width: min(1600px, 95vw);
+      margin: 0 auto;
+      height: 100vh;
+      position: relative;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+      overflow: visible;
+    }
+
+    body.is-project-mode .content-left {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .content-left {
+      width: clamp(45%, 50%, 52%);
+      height: 100%;
+      padding: clamp(4rem, 6vw, 7rem) clamp(2rem, 4vw, 4rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: clamp(2rem, 4vw, 3.5rem);
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    .project-container {
+      width: clamp(45%, 50%, 52%);
+      height: 100%;
+      padding: clamp(4rem, 6vw, 7rem) clamp(2rem, 4vw, 4rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: clamp(2rem, 4vw, 3.5rem);
+      z-index: 40;
+      pointer-events: auto;
+    }
+
+    .content-right {
+      width: clamp(45%, 50%, 48%);
+      height: 100%;
+      position: relative;
+      overflow: visible;
+      perspective: 1400px;
+      z-index: 20;
+    }
+
+    body.is-project-mode .content-right {
+      z-index: 150;
+      pointer-events: none !important;
+    }
+
+    .hero-container,
+    .project-header {
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .name,
+    .project-title {
+      font-size: clamp(2.5rem, 5vw, 4.2rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 0;
+      color: #ffffff;
+    }
+
+    .view-project-btn,
+    .go-back-btn,
+    .click-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      font-family: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: fit-content;
+      min-height: 44px;
+      min-width: 44px;
+      transition: opacity 0.2s ease, transform 0.2s ease, text-shadow 0.3s ease;
+      box-shadow: none;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1px;
+      position: relative;
+      z-index: 1000 !important;
+      pointer-events: auto !important;
+    }
+
+    .click-hint {
+      cursor: default;
+    }
+
+    @media (hover: hover) {
+      .view-project-btn:hover,
+      .go-back-btn:hover,
+      .click-hint:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+        text-shadow: 0 0 10px rgba(0, 210, 255, 0.9), 0 0 18px rgba(180, 255, 60, 0.7);
+      }
+    }
+
+    .sections-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      max-width: 100%;
+      align-self: flex-start;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr clamp(100px, 12vw, 160px);
+      gap: 2rem;
+      align-items: start;
+      max-width: 100%;
+    }
+    
+    .section-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      font-size: 0.825rem;
+      line-height: 1.5;
+      color: #a1a1a1;
+      font-weight: 400;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .section-label {
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: left;
+      letter-spacing: -0.01em;
+    }
+
+    .contact-email {
+      font-size: 1.25rem;
+      font-weight: 400;
+      margin-top: auto;
+    }
+
+    .contact-email a {
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-thickness: 1px;
+      color: #ffffff;
+      transition: opacity 0.2s ease, text-shadow 0.3s ease;
+    }
+
+    @media (hover: hover) {
+      .contact-email a:hover {
+        opacity: 1;
+        text-shadow: 0 0 12px rgba(0, 210, 255, 0.8), 0 0 20px rgba(180, 255, 60, 0.6);
+      }
+    }
+
+    /* 3D Stream Container */
+    .image-stream-container {
+      position: absolute;
+      top: -20vh;
+      right: -5vw;
+      width: 110%;
+      height: 140vh;
+      transform-style: preserve-3d;
+      transform: rotateZ(8deg) rotateY(-18deg) rotateX(4deg);
+      transform-origin: top right;
+      cursor: grab;
+      z-index: 60;
+      will-change: transform;
+    }
+
+    body.is-project-mode .image-stream-container {
+      pointer-events: none !important;
+      cursor: default;
+    }
+
+    .image-stream-container:active {
+      cursor: grabbing;
+    }
+
+    .image-stream {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+      transform-style: preserve-3d;
+    }
+
+    .stream-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background-color: transparent;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow, opacity;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.4s ease;
+      z-index: 10;
+      opacity: 1 !important;
+      pointer-events: auto;
+      padding: 0px;
+    }
+
+    .stream-card.is-selected {
+      cursor: zoom-in;
+    }
+
+    .stream-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      overflow: hidden;
+      box-shadow: -10px 20px 40px rgba(0, 0, 0, 0.8);
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transform-style: preserve-3d;
+      will-change: transform, border-color, box-shadow;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.35s ease,
+                  box-shadow 0.35s ease;
+      transform-origin: center center;
+      z-index: 2;
+    }
+
+    .stream-card::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 10px;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(220, 255, 60, 0.85) 0%,
+        rgba(0, 210, 255, 0.75) 35%,
+        rgba(0, 80, 255, 0.5) 65%,
+        transparent 85%
+      );
+      filter: blur(28px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: -1;
+    }
+
+    @media (hover: hover) {
+      .stream-card:hover::before {
+        opacity: 1;
+      }
+
+      .stream-card:hover .stream-card-inner {
+        border-color: rgba(0, 210, 255, 0.85);
+        box-shadow: 
+          -15px 30px 60px rgba(0, 0, 0, 0.9),
+          0 0 30px rgba(0, 210, 255, 0.4),
+          0 0 55px rgba(180, 255, 0, 0.3);
+      }
+    }
+
+    .stream-card.is-hovered .stream-card-inner {
+      transform: scale(1.02);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+    }
+
+    /* Card Text Overlay */
+    .card-overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2.5rem 1.25rem 1.25rem 1.25rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+      color: #ffffff;
+      pointer-events: none;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      text-align: left;
+    }
+
+    .card-overlay-title {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-overlay-desc {
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-weight: 400;
+    }
+
+    .card-action-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    @media (hover: hover) {
+      .stream-card:hover .card-action-badge {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes borderPulse {
+      0% {
+        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 210, 255, 0.5);
+      }
+      50% {
+        box-shadow: -20px 35px 65px rgba(0, 0, 0, 0.95), 0 0 40px rgba(180, 255, 0, 0.5);
+      }
+      100% {
+        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 210, 255, 0.5);
+      }
+    }
+
+    .stream-card.is-selected .stream-card-inner {
+      animation: borderPulse 2s infinite ease-in-out;
+    }
+
+    .stream-card.is-selected {
+      z-index: 50;
+    }
+
+    body.is-project-mode .stream-card:not(.is-active-project) {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.3s ease;
+    }
+
+    body.is-project-mode .stream-card.is-active-project {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: transform 1.15s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease 0.3s !important;
+    }
+
+    .stream-image {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .page-transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.is-exiting .page-transition-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ==========================================================================
+       4. Mobile Specific Viewport Adjustments (< 768px)
+       ========================================================================== */
+    @media (max-width: 767px) {
+      .portfolio-layout {
+        flex-direction: column;
+      }
+      
+      .content-left {
+        display: none !important;
+      }
+      
+      .content-right {
+        width: 100%;
+        display: block !important;
+        height: 100vh;
+        perspective: 900px;
+      }
+
+      .image-stream-container {
+        top: 0;
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        transform: rotateZ(2deg) rotateY(-8deg) rotateX(2deg);
+        transform-origin: center center;
+      }
+
+      .stream-card {
+        padding: 6px;
+      }
+
+      .card-overlay-desc {
+        display: none !important;
+      }
+
+      .card-action-badge {
+        opacity: 1;
+        transform: translateY(0);
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+      }
+
+      .top-nav {
+        top: 1rem;
+        left: 1.25rem;
+        right: 1.25rem;
+      }
+      
+      .mobile-menu-toggle {
+        display: flex;
+      }
+      
+      .main-nav {
+        display: none;
+      }
+
+      .project-container {
+        width: 100%;
+        padding: 2rem 1.5rem 3rem 1.5rem;
+      }
+
+      .project-header {
+        margin-top: 3.5rem;
+      }
+
+      .project-title {
+        font-size: clamp(2rem, 6vw, 2.8rem);
+      }
+
+      #projectLeft {
+        display: none !important;
+      }
+
+      .project-section-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .project-section-label {
+        text-align: left;
+        order: -1;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-toggle {
+        display: none;
+      }
+      
+      .mobile-menu {
+        display: none;
+      }
+    }
+    
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .content-left {
+        width: 55%;
+        padding: clamp(3rem, 5vw, 5rem) clamp(2rem, 3vw, 3rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      }
+      
+      .content-right {
+        width: 45%;
+      }
+      
+      .project-container {
+        width: 45%;
+        padding: clamp(3rem, 5vw, 5rem) clamp(2rem, 3vw, 3rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      }
+      
+      .name,
+      .project-title {
+        font-size: clamp(2.5rem, 4vw, 3.5rem);
+      }
+    }
+    
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      .content-left {
+        padding: clamp(4rem, 5vw, 6rem) clamp(2.5rem, 3vw, 3.5rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      }
+      
+      .project-container {
+        padding: clamp(4rem, 5vw, 6rem) clamp(2.5rem, 3vw, 3.5rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      }
+      
+      .name,
+      .project-title {
+        font-size: clamp(3rem, 4vw, 4rem);
+      }
+    }
+    
+    @media (min-width: 1440px) {
+      .section-grid {
+        grid-template-columns: 1fr clamp(100px, 8vw, 140px);
+      }
+      
+      .name,
+      .project-title {
+        font-size: clamp(3.5rem, 4vw, 4.5rem);
+      }
+    }
+
+    /* ==========================================================================
+       5. Project Detail View & Dynamic Collage Pinboard
+       ========================================================================== */
+    .project-detail-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: transparent;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s step-end;
+      display: flex;
+      overflow: hidden;
+    }
+
+    body.is-project-mode .project-detail-view {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s step-start;
+    }
+
+    .project-left {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .project-section-grid {
+      display: grid;
+      grid-template-columns: 1fr clamp(100px, 12vw, 160px);
+      gap: 2rem;
+      align-items: start;
+      max-width: 90%;
+    }
+
+    .project-section-content {
+      font-size: 0.825rem;
+      line-height: 1.5;
+      color: #a1a1a1;
+      font-weight: 400;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .project-section-label {
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: left;
+      letter-spacing: -0.01em;
+    }
+
+    /* Pinboard Collage Container */
+    .pinboard-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1200;
+      opacity: 0;
+      transition: opacity 0.6s ease 0.3s;
+      overflow: hidden;
+    }
+
+    body.is-project-mode .pinboard-container {
+      opacity: 1;
+    }
+
+    .pinboard-grid-wrapper {
+      position: absolute;
+      top: 8vh;
+      right: 4vw;
+      width: 52vw;
+      height: 84vh;
+      pointer-events: none;
+      display: block;
+    }
+
+    @media (max-width: 767px) {
+      .pinboard-grid-wrapper {
+        top: 10vh;
+        left: 5vw;
+        right: auto;
+        width: 90vw;
+        height: 75vh;
+      }
+    }
+
+    body.is-project-mode .pinboard-grid-wrapper {
+      pointer-events: auto;
+    }
+
+    .pinboard-item {
+      position: absolute;
+      pointer-events: auto;
+      cursor: zoom-in;
+      user-select: none;
+      background-color: transparent;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+      touch-action: none;
+      will-change: transform, left, top;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (hover: hover) {
+      .pinboard-item:hover {
+        filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(0, 210, 255, 0.5));
+      }
+    }
+
+    .pinboard-item img {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      display: block;
+      filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.75));
+    }
+
+    .pinboard-item.is-png img {
+      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+      transform: scale(1.1);
+      transform-origin: center center;
+    }
+
+    /* ==========================================================================
+       6. Image Lightbox Overlay Modal
+       ========================================================================== */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: zoom-out;
+    }
+
+    .lightbox-modal.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-img {
+      max-width: 85vw;
+      max-height: 85vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 210, 255, 0.3);
+      transform: scale(0.92);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: default;
+    }
+
+    .lightbox-modal.is-active .lightbox-img {
+      transform: scale(1);
+    }
+
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 2.5rem;
+      cursor: pointer;
+      z-index: 10001;
+      transition: opacity 0.2s ease, transform 0.2s ease, text-shadow 0.3s ease;
+      line-height: 1;
+      padding: 10px;
+    }
+
+    @media (hover: hover) {
+      .lightbox-arrow:hover {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.15);
+        text-shadow: 0 0 12px rgba(0, 210, 255, 0.9), 0 0 20px rgba(180, 255, 60, 0.7);
+      }
+    }
+
+    .lightbox-arrow-left {
+      left: 2rem;
+    }
+
+    .lightbox-arrow-right {
+      right: 2rem;
+    }
+
+    .lightbox-arrow.is-hidden {
+      display: none !important;
+    }
+
+    .lightbox-close-hint {
+      position: absolute;
+      bottom: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding: 0;
+      font-size: 0.9rem;
+      font-weight: 400;
+      font-family: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: none;
+      cursor: default;
+      width: fit-content;
+      transition: opacity 0.2s ease, transform 0.2s ease, text-shadow 0.3s ease;
+      box-shadow: none;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1px;
+      z-index: 10001;
+      pointer-events: none;
+    }
+
+    @media (hover: hover) {
+      .lightbox-close-hint:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+        text-shadow: 0 0 10px rgba(0, 210, 255, 0.9), 0 0 18px rgba(180, 255, 60, 0.7);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
+
+  <!-- Fullscreen Lightbox Modal -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <button class="lightbox-arrow lightbox-arrow-left" id="lightboxPrevBtn" aria-label="Previous Image">‹</button>
+    <img src="" alt="Enlarged Artwork" class="lightbox-img" id="lightboxImg" />
+    <button class="lightbox-arrow lightbox-arrow-right" id="lightboxNextBtn" aria-label="Next Image">›</button>
+    <span class="lightbox-close-hint">click outside or press esc to close</span>
+  </div>
+
+  <header class="top-nav">
+    <button 
+      class="mobile-menu-toggle" 
+      id="mobileMenuToggle" 
+      aria-expanded="false" 
+      aria-controls="mobileMenu"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    
+    <nav class="main-nav" id="mainNav">
+      <a href="#" class="nav-link nav-link-work active" id="workNavLink">
+        <span class="nav-text-active">Work</span>
+        <span class="nav-text-hover">Work</span>
+      </a>
+      <a href="experience.html" class="nav-link">Contact</a>
+      <a href="fun.html" class="nav-link">Fun</a>
+    </nav>
+    
+    <!-- Mobile Menu Panel -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <nav class="mobile-nav">
+        <a href="#" class="mobile-nav-link active" id="mobileWorkNavLink">Work</a>
+        <a href="experience.html" class="mobile-nav-link">Contact</a>
+        <a href="fun.html" class="mobile-nav-link">Fun</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="portfolio-layout" id="mainLayout">
+    <div class="content-left">
+      <div class="hero-container" id="heroContainer">
+        <h1 class="name" id="heroTitle">My Work</h1>
+        <span class="click-hint" id="clickHint">click a project to see more</span>
+        <button class="view-project-btn" id="viewProjectBtn" style="display: none;">
+          View Full Project ↗
+        </button>
+      </div>
+
+      <div class="sections-container">
+        <div class="section-grid" id="aboutGrid">
+          <div class="section-content"></div>
+          <h2 class="section-label">About Me</h2>
+        </div>
+
+        <div class="section-grid" id="experienceGrid">
+          <div class="section-content"></div>
+          <h2 class="section-label">Experience</h2>
+        </div>
+      </div>
+
+      <p class="contact-email" id="contactEmail">
+        <a href="mailto:colejthompson33@gmail.com">colejthompson33@gmail.com</a>
+      </p>
+    </div>
+
+    <div class="content-right" id="contentRight">
+      <div class="image-stream-container" id="streamContainer">
+        <div class="image-stream" id="imageStream"></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="project-detail-view" id="projectDetailView">
+    <div class="project-container">
+      <header class="project-header">
+        <h1 class="project-title" id="projectTitle">Blue House</h1>
+        <button class="go-back-btn" id="goBackBtn">
+          ← Go Back to All Work
+        </button>
+      </header>
+
+      <div class="project-left" id="projectLeft"></div>
+
+      <p class="contact-email">
+        <a href="mailto:colejthompson33@gmail.com">colejthompson33@gmail.com</a>
+      </p>
+    </div>
+
+    <div class="pinboard-container" id="pinboardContainer">
+      <div class="pinboard-grid-wrapper" id="pinboardGridWrapper"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Prevent body scrolling
+      document.addEventListener('touchmove', (e) => {
+        if (e.target.closest('.mobile-menu')) return;
+        e.preventDefault();
+      }, { passive: false });
+
+      // Mobile Menu Toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+      
+      function toggleMobileMenu() {
+        const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+        mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.setAttribute('aria-hidden', isExpanded);
+      }
+      
+      function closeMobileMenu() {
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      }
+      
+      if (mobileMenuToggle && mobileMenu) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileNavLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
+        mobileMenu.addEventListener('click', (e) => {
+          if (e.target === mobileMenu) closeMobileMenu();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
+            closeMobileMenu();
+            mobileMenuToggle.focus();
+          }
+        });
+      }
+      
+      const EDGE_THRESHOLD = 90;
+
+      // Mouse tracking & Edge glow
+      window.addEventListener('mousemove', (e) => {
+        document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
+        document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
+
+        const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
+
+        if (minEdgeDist < EDGE_THRESHOLD) {
+          const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
+          document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
+        } else {
+          document.body.style.setProperty('--edge-glow-opacity', '0');
+        }
+      });
+
+      // Gallery & Lightbox Management
+      const lightboxModal = document.getElementById('lightboxModal');
+      const lightboxImg = document.getElementById('lightboxImg');
+      const lightboxPrevBtn = document.getElementById('lightboxPrevBtn');
+      const lightboxNextBtn = document.getElementById('lightboxNextBtn');
+
+      let currentGalleryList = [];
+      let currentGalleryIndex = 0;
+
+      function updateLightboxView() {
+        if (!currentGalleryList.length) return;
+        
+        const imgSrc = currentGalleryList[currentGalleryIndex];
+        // Try WebP first, fallback to original
+        if (imgSrc.includes('.jpg') || imgSrc.includes('.jpeg') || imgSrc.includes('.png')) {
+          const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+          lightboxImg.src = webpSrc;
+          lightboxImg.onerror = () => { lightboxImg.src = imgSrc; };
+        } else {
+          lightboxImg.src = imgSrc;
+        }
+        lightboxImg.loading = 'eager';
+        lightboxImg.decoding = 'sync';
+
+        if (currentGalleryIndex === 0) {
+          lightboxPrevBtn.classList.add('is-hidden');
+        } else {
+          lightboxPrevBtn.classList.remove('is-hidden');
+        }
+
+        if (currentGalleryIndex === currentGalleryList.length - 1) {
+          lightboxNextBtn.classList.add('is-hidden');
+        } else {
+          lightboxNextBtn.classList.remove('is-hidden');
+        }
+      }
+
+      function openLightbox(index) {
+        currentGalleryIndex = index;
+        updateLightboxView();
+        lightboxModal.classList.add('is-active');
+      }
+
+      function closeLightbox() {
+        lightboxModal.classList.remove('is-active');
+      }
+
+      lightboxPrevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentGalleryIndex > 0) {
+          currentGalleryIndex--;
+          updateLightboxView();
+        }
+      });
+
+      lightboxNextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentGalleryIndex < currentGalleryList.length - 1) {
+          currentGalleryIndex++;
+          updateLightboxView();
+        }
+      });
+
+      lightboxModal.addEventListener('click', (e) => {
+        if (!e.target.closest('.lightbox-img') && !e.target.closest('.lightbox-arrow')) {
+          closeLightbox();
+        }
+      });
+
+      const defaultLeftContent = {
+        hero: { title: 'My Work' },
+        about: {
+          label: 'About Me',
+          paragraphs: [
+            "I'm Cole Thompson, a Texas A&M graduate with a Visualization Major and Graphic Design Minor.",
+            "My first love is design. I have found interest through my career in anything that moves - from merchandise design, branding, web design, data visualization, you name it."
+          ]
+        },
+        experience: { 
+          label: 'Experience', 
+          paragraphs: [
+            "I have years of experience in freelance work, like with Bill Young Productions, and with agencies like GDC Marketing and Hahn.",
+            "These experiences have deepened my understanding of how high-level creative work integrates with strategic marketing. Here are some of the brands I've had the opportunity to support."
+          ] 
+        }
+      };
+
+      const streamImages = [
+        { 
+          src: 'images/BlueHouse/VinylBH.webp', fallback: 'images/BlueHouse/VinylBH.jpg', 
+          title: 'Blue House',
+          pinboardItems: [
+            { src: 'images/BlueHouse/Elevator Poster Mockup.webp', fallback: 'images/BlueHouse/Elevator Poster Mockup.png', isPng: false },
+            { src: 'images/BlueHouse/Vinyl_Record_Mockup_01_S.webp', fallback: 'images/BlueHouse/Vinyl_Record_Mockup_01_S.png', isPng: true },
+            { src: 'images/BlueHouse/CD_Slim_Case2.webp', fallback: 'images/BlueHouse/CD_Slim_Case2.png', isPng: true },
+            { src: 'images/BlueHouse/DSC04235.JPEG.webp', fallback: 'images/BlueHouse/DSC04235.JPEG', isPng: false },
+            { src: 'images/BlueHouse/DSC04589.JPEG.webp', fallback: 'images/BlueHouse/DSC04589.JPEG', isPng: false },
+            { src: 'images/BlueHouse/TEE.webp', fallback: 'images/BlueHouse/TEE.png', isPng: true },
+            { src: 'images/BlueHouse/IMG_1078.webp', fallback: 'images/BlueHouse/IMG_1078.jpg', isPng: false }
+          ],
+          about: { 
+            label: 'Project Preview', 
+            paragraphs: ["A full-spectrum visual identity for an indie band, blending tangible merch with real-time audio-reactive stage graphics."] 
+          },
+          experience: { 
+            label: 'Creative Tech', 
+            paragraphs: ["Custom interactive TouchDesigner patches programmed to turn live concert frequency data into fluid stage art."] 
+          },
+          detailedAbout: { 
+            label: 'The Vision', 
+            paragraphs: [
+              "Blue House is an immersive visual ecosystem crafted for high-energy indie rock performances. The goal was to bridge physical tactile merchandise with digital live environments.",
+              "From vinyl packaging and screen-printed apparel to custom GLSL visual shaders, every touchpoint echoes the raw, dynamic energy of the music."
+            ] 
+          },
+          detailedExperience: { 
+            label: 'Execution & Tech', 
+            paragraphs: [
+              "Lead Visual Designer & Creative Technologist.",
+              "Designed album art, physical merch kits, and live stage visuals in TouchDesigner that react to live audio stems in real time."
+            ] 
+          }
+        },
+        { 
+          src: 'images/HUM/HumMockup.webp', fallback: 'images/HUM/HumMockup.jpg', 
+          title: 'hum.fm',
+          pinboardItems: [
+            { src: 'images/HUM/AlyssaProfile.webp', fallback: 'images/HUM/AlyssaProfile.png', isPng: false },
+            { src: 'images/HUM/Log.webp', fallback: 'images/HUM/Log.png', isPng: false },
+            { src: 'images/HUM/GenreDisc.webp', fallback: 'images/HUM/GenreDisc.png', isPng: false },
+            { src: 'images/HUM/JulieProfile.webp', fallback: 'images/HUM/JulieProfile.png', isPng: false },
+            { src: 'images/HUM/Genre.webp', fallback: 'images/HUM/Genre.png', isPng: false },
+            { src: 'images/HUM/single.webp', fallback: 'images/HUM/single.png', isPng: false }
+          ],
+          about: { 
+            label: 'Project Preview', 
+            paragraphs: ["Reimagining music discovery through fluid, community-driven social streaming and visual waveforms."] 
+          },
+          experience: { 
+            label: 'Product Design', 
+            paragraphs: ["Full-stack UI/UX architectural design built around seamless navigation and real-time listening rooms."] 
+          },
+          detailedAbout: { 
+            label: 'The Concept', 
+            paragraphs: [
+              "hum.fm breaks away from sterile algorithmic music queues, turning audio exploration into a visual, human-centric playground.",
+              "The platform maps genre connections visually, allowing listeners to discover underground talent while curating digital spaces with friends."
+            ] 
+          },
+          detailedExperience: { 
+            label: 'Design System', 
+            paragraphs: [
+              "Principal Product Designer.",
+              "Architected end-to-end Figma design systems, dynamic micro-interactions, waveform visualizer components, and mobile layout frameworks."
+            ] 
+          }
+        },
+        { 
+          src: 'images/Guidelines/BrandTitle.webp', fallback: 'images/Guidelines/BrandTitle.png', 
+          title: 'Hahn Guidelines',
+          pinboardItems: [
+            { src: 'images/Guidelines/1.webp', fallback: 'images/Guidelines/1.png', isPng: false },
+            { src: 'images/Guidelines/2.webp', fallback: 'images/Guidelines/2.png', isPng: false },
+            { src: 'images/Guidelines/3.webp', fallback: 'images/Guidelines/3.png', isPng: false },
+            { src: 'images/Guidelines/4.webp', fallback: 'images/Guidelines/4.png', isPng: false },
+            { src: 'images/Guidelines/5.webp', fallback: 'images/Guidelines/5.png', isPng: false },
+            { src: 'images/Guidelines/6.webp', fallback: 'images/Guidelines/6.png', isPng: false },
+            { src: 'images/Guidelines/7.webp', fallback: 'images/Guidelines/7.png', isPng: false },
+            { src: 'images/Guidelines/8.webp', fallback: 'images/Guidelines/8.png', isPng: false },
+            { src: 'images/Guidelines/9.webp', fallback: 'images/Guidelines/9.png', isPng: false },
+            { src: 'images/Guidelines/10.webp', fallback: 'images/Guidelines/10.png', isPng: false }
+          ],
+          about: { 
+            label: 'Project Preview', 
+            paragraphs: ["A comprehensive identity system and brand overhaul for Hahn Marketing & Ideation."] 
+          },
+          experience: { 
+            label: 'Brand Strategy', 
+            paragraphs: ["Establishing clear visual hierarchy, precision grid layouts, and versatile digital brand guidelines."] 
+          },
+          detailedAbout: { 
+            label: 'Brand Transformation', 
+            paragraphs: [
+              "A modern, robust brand identity overhaul built to unify agency communications across print, web, and internal collateral.",
+              "The updated guidelines introduce structured typography scales, vibrant color palettes, and modular grid frameworks for scalable growth."
+            ] 
+          },
+          detailedExperience: { 
+            label: 'Deliverables & Art Direction', 
+            paragraphs: [
+              "Art Director & Lead Brand Designer.",
+              "Authored the complete 60-page Brand Standards Manual, laying out strict rules for logo placement, typography hierarchy, and digital templates."
+            ] 
+          }
+        },
+        { 
+          src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', 
+          title: 'Univ. of North Texas',
+          pinboardItems: [
+            { src: 'images/UNT/UNT Design2.webp', fallback: 'images/UNT/UNT Design2.png', isPng: true },
+            { src: 'images/UNT/UNT Design3.webp', fallback: 'images/UNT/UNT Design3.png', isPng: true },
+            { src: 'images/UNT/UNT Design4.webp', fallback: 'images/UNT/UNT Design4.png', isPng: true },
+            { src: 'images/UNT/UNT Design5.webp', fallback: 'images/UNT/UNT Design5.png', isPng: true },
+            { src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', isPng: true }
+          ],
+          about: { 
+            label: 'Project Preview', 
+            paragraphs: ["Bold, high-energy promotional campaigns engineered to capture campus culture and recruit prospective talent."] 
+          },
+          experience: { 
+            label: 'Campaign Art', 
+            paragraphs: ["Designing high-impact print collateral, environmental graphics, and social campaign assets."] 
+          },
+          detailedAbout: { 
+            label: 'Campaign Overview', 
+            paragraphs: [
+              "A dynamic recruitment and visual media push designed to elevate the university's presence across digital and physical touchpoints.",
+              "Bold kinetic typography meets textured graphic overlays to showcase student life and campus energy in an unmissable way."
+            ] 
+          },
+          detailedExperience: { 
+            label: 'Creative Production', 
+            paragraphs: [
+              "Graphic Designer & Content Strategist.",
+              "Produced large-scale environmental banners, interactive digital signage, print brochures, and targeted digital advertising assets."
+            ] 
+          }
+        },
+        { 
+          src: 'images/Claire/ClaireFish.webp', fallback: 'images/Claire/ClaireFish.jpg', 
+          title: 'Claire Justice',
+          pinboardItems: [
+            { src: 'images/Claire/1.JPG.webp', fallback: 'images/Claire/1.JPG', isPng: false },
+            { src: 'images/Claire/2.JPG.webp', fallback: 'images/Claire/2.JPG', isPng: false },
+            { src: 'images/Claire/print.webp', fallback: 'images/Claire/print.png', isPng: false },
+            { src: 'images/Claire/sketch.webp', fallback: 'images/Claire/sketch.jpeg', isPng: false },
+            { src: 'images/Claire/text.JPG.webp', fallback: 'images/Claire/text.JPG', isPng: false },
+            { src: 'images/Claire/Claire-08.webp', fallback: 'images/Claire/Claire-08.png', isPng: true },
+            { src: 'images/Claire/Claire-09.webp', fallback: 'images/Claire/Claire-09.png', isPng: true }
+          ],
+          about: { 
+            label: 'Project Preview', 
+            paragraphs: ["Personal artist branding filled with organic textures, custom vector marks, and editorial design flair."] 
+          },
+          experience: { 
+            label: 'Visual Identity', 
+            paragraphs: ["Hand-crafted logomarks and cohesive visual direction for merch, social, and web presence."] 
+          },
+          detailedAbout: { 
+            label: 'Artist Identity', 
+            paragraphs: [
+              "A bespoke, organic visual identity built for artist Claire Justice. The aesthetic balances structured typography with raw, hand-drawn motifs.",
+              "Designed to feel tactile and expressive, the brand system effortlessly translates onto apparel, social media kits, and physical print releases."
+            ] 
+          },
+          detailedExperience: { 
+            label: 'Brand Direction', 
+            paragraphs: [
+              "Visual Identity Specialist.",
+              "Created custom vector logomarks, color systems, web assets, and tactile packaging designs for merchandise releases."
+            ] 
+          }
+        }
+      ];
+
+      const streamContainer = document.getElementById('streamContainer');
+      const imageStream = document.getElementById('imageStream');
+      const heroTitle = document.getElementById('heroTitle');
+      const clickHint = document.getElementById('clickHint');
+      const viewProjectBtn = document.getElementById('viewProjectBtn');
+      const goBackBtn = document.getElementById('goBackBtn');
+      const aboutGrid = document.getElementById('aboutGrid');
+      const experienceGrid = document.getElementById('experienceGrid');
+
+      let currentY = 0;
+      let targetY = 0;
+      let velocityY = 0;
+      let baseAutoSpeed = 0.4;
+      let isDragging = false;
+      let startPointerX = 0;
+      let startPointerY = 0;
+      let lastPointerY = 0;
+      let pointerMoved = false;
+      let selectedKey = null;
+      let isProjectViewMode = false;
+      let activeProjectCard = null;
+      let highestZIndex = 1400;
+      let activeCardOriginalKey = null;
+      let hoveredKey = null;
+
+      const FRICTION = 0.92;
+      const DRAG_SENSITIVITY = 1.1;
+      const GAP = 28;
+      const PUSH_OFFSET = 70; 
+      
+      let cardHeight = 0;
+      let itemTotalHeight = 0;
+
+      const activeCardsMap = new Map();
+
+      function calculateDimensions() {
+        if (!streamContainer) return;
+        const containerWidth = streamContainer.clientWidth;
+        cardHeight = containerWidth * (9 / 16);
+        itemTotalHeight = cardHeight + GAP;
+      }
+
+      function renderVisibleCards() {
+        const viewportHeight = window.innerHeight * 1.5;
+        const minVisibleY = -currentY - (itemTotalHeight * 4);
+        const maxVisibleY = -currentY + viewportHeight + (itemTotalHeight * 4);
+
+        const startIdx = Math.floor(minVisibleY / itemTotalHeight);
+        const endIdx = Math.ceil(maxVisibleY / itemTotalHeight);
+
+        const neededKeys = new Set();
+
+        for (let i = startIdx; i <= endIdx; i++) {
+          neededKeys.add(i);
+
+          if (!activeCardsMap.has(i)) {
+            const imageIndex = ((i % streamImages.length) + streamImages.length) % streamImages.length;
+            const imageData = streamImages[imageIndex];
+
+            const card = document.createElement('div');
+            card.className = 'stream-card';
+            card.dataset.key = i;
+            card.style.height = `${cardHeight}px`;
+
+            const cardInner = document.createElement('div');
+            cardInner.className = 'stream-card-inner';
+
+            const img = document.createElement('img');
+            if (imageData.fallback) {
+              img.src = imageData.fallback;
+              img.setAttribute('data-src', imageData.src);
+              img.onerror = function() {
+                if (this.getAttribute('data-src')) {
+                  this.src = this.getAttribute('data-src');
+                }
+              };
+            } else {
+              img.src = imageData.src;
+            }
+            img.alt = imageData.title;
+            img.className = 'stream-image';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            const overlayText = document.createElement('div');
+            overlayText.className = 'card-overlay-text';
+            overlayText.innerHTML = `
+              <h3 class="card-overlay-title">${imageData.title}</h3>
+              <p class="card-overlay-desc">${imageData.about ? imageData.about.paragraphs[0] : ''}</p>
+            `;
+
+            const actionBadge = document.createElement('div');
+            actionBadge.className = 'card-action-badge';
+            actionBadge.textContent = 'View Project ↗';
+
+            cardInner.appendChild(img);
+            cardInner.appendChild(overlayText);
+            cardInner.appendChild(actionBadge);
+            card.appendChild(cardInner);
+
+            card.addEventListener('mouseenter', () => {
+              hoveredKey = i;
+              renderVisibleCards();
+            });
+
+            card.addEventListener('mouseleave', () => {
+              if (hoveredKey === i) {
+                hoveredKey = null;
+                renderVisibleCards();
+              }
+            });
+
+            card.addEventListener('click', (e) => {
+              if (pointerMoved) return;
+              e.stopPropagation();
+              
+              if (selectedKey === i || window.innerWidth < 768) {
+                if (!isProjectViewMode) {
+                  openProjectView(i, card);
+                }
+              } else {
+                selectImage(i);
+              }
+            });
+
+            imageStream.appendChild(card);
+            activeCardsMap.set(i, card);
+          }
+
+          let cardPosY = i * itemTotalHeight;
+
+          if (selectedKey !== null) {
+            if (i < selectedKey) {
+              cardPosY -= PUSH_OFFSET;
+            } else if (i > selectedKey) {
+              cardPosY += PUSH_OFFSET;
+            }
+          }
+
+          const cardNode = activeCardsMap.get(i);
+          if (cardNode) {
+            const badgeNode = cardNode.querySelector('.card-action-badge');
+
+            if (badgeNode) {
+              badgeNode.textContent = (selectedKey === i) ? 'Open Project ↗' : 'View Project ↗';
+            }
+
+            if (isProjectViewMode && i === activeCardOriginalKey) {
+              cardNode.style.transform = `translate3d(150vw, ${cardPosY}px, 0)`;
+            } else {
+              cardNode.style.transform = `translate3d(0, ${cardPosY}px, 0)`;
+
+              if (hoveredKey === i && !isProjectViewMode) {
+                cardNode.classList.add('is-hovered');
+              } else {
+                cardNode.classList.remove('is-hovered');
+              }
+            }
+
+            if (selectedKey === i) {
+              cardNode.classList.add('is-selected');
+            } else {
+              cardNode.classList.remove('is-selected');
+            }
+          }
+        }
+
+        activeCardsMap.forEach((node, key) => {
+          if (!neededKeys.has(key) && key !== activeCardOriginalKey) {
+            node.remove();
+            activeCardsMap.delete(key);
+          }
+        });
+
+        if (!isProjectViewMode) {
+          imageStream.style.transform = `translate3d(0, ${currentY}px, 0)`;
+        }
+      }
+
+      function updateLeftColumn(data, showCta = false) {
+        heroTitle.textContent = data.hero.title;
+        
+        if (showCta) {
+          viewProjectBtn.style.display = 'inline-flex';
+          if (clickHint) clickHint.style.display = 'none';
+        } else {
+          viewProjectBtn.style.display = 'none';
+          if (clickHint) clickHint.style.display = 'inline-flex';
+        }
+
+        aboutGrid.querySelector('.section-label').textContent = data.about.label;
+        aboutGrid.querySelector('.section-content').innerHTML = data.about.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+        experienceGrid.querySelector('.section-label').textContent = data.experience.label;
+        experienceGrid.querySelector('.section-content').innerHTML = data.experience.paragraphs.map(p => `<p>${p}</p>`).join('');
+      }
+
+      function selectImage(key) {
+        selectedKey = key;
+        const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
+        const imageData = streamImages[imageIndex];
+
+        updateLeftColumn({
+          hero: { title: imageData.title },
+          about: imageData.about,
+          experience: imageData.experience
+        }, true);
+
+        const vh = window.innerHeight;
+        const containerTopOffset = vh * 0.20; 
+        const perspectiveTiltOffset = vh * 0.12; 
+        const screenCenter = vh * 0.50;
+
+        targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
+      }
+
+      function deselectImage() {
+        if (selectedKey === null) return;
+        selectedKey = null;
+        updateLeftColumn(defaultLeftContent, false);
+      }
+
+      if (viewProjectBtn) {
+        viewProjectBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (selectedKey !== null) {
+            let cardNode = activeCardsMap.get(selectedKey);
+            if (!cardNode) {
+              cardNode = document.querySelector(`.stream-card[data-key="${selectedKey}"]`);
+            }
+            if (cardNode) {
+              openProjectView(selectedKey, cardNode);
+            }
+          }
+        });
+      }
+
+      if (goBackBtn) {
+        goBackBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (isProjectViewMode) closeProjectView();
+        };
+      }
+
+      // Build Collage with LARGER Objects and initial positioning within bounds
+      function buildCollageLayout(items) {
+        const gridWrapper = document.getElementById('pinboardGridWrapper');
+        gridWrapper.innerHTML = '';
+        if (!items || items.length === 0) return;
+
+        const count = items.length;
+        const isMobile = window.innerWidth < 768;
+
+        // Increased sizes for pinboard items
+        let baseWidthVW = isMobile ? 42 : (count <= 2 ? 38 : (count <= 4 ? 26 : 21));
+        let baseHeightVH = isMobile ? 26 : (count <= 2 ? 45 : (count <= 4 ? 35 : 28));
+
+        const columns = isMobile ? 2 : (count > 3 ? 3 : (count === 3 ? 3 : count));
+        
+        items.forEach((item, idx) => {
+          const pinboardItem = document.createElement('div');
+          pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
+
+          const col = idx % columns;
+          const row = Math.floor(idx / columns);
+
+          const staggerOffset = (col === 1) ? 3 : (col === 2 ? 6 : 0); 
+          const rotDeg = item.isPng ? (idx % 2 === 0 ? 3 : -4) : (idx % 2 === 0 ? -2 : 2);
+
+          const posX = col * (baseWidthVW * (isMobile ? 1.02 : 0.88)) + (item.isPng ? 1 : 0);
+          const posY = row * (baseHeightVH * (isMobile ? 1.05 : 1.12)) + staggerOffset;
+
+          pinboardItem.style.width = `${baseWidthVW}vw`;
+          pinboardItem.style.height = `${baseHeightVH}vh`;
+          pinboardItem.style.left = `${posX}vw`;
+          pinboardItem.style.top = `${posY}vh`;
+          pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
+          
+          pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
+
+          const img = document.createElement('img');
+          img.src = item.src;
+          img.alt = `Project Asset ${idx + 1}`;
+
+          pinboardItem.appendChild(img);
+          gridWrapper.appendChild(pinboardItem);
+
+          makeDraggableAndZoomable(pinboardItem, idx);
+        });
+      }
+
+      function openProjectView(key, cardNode) {
+        isProjectViewMode = true;
+        activeProjectCard = cardNode;
+        activeCardOriginalKey = key;
+
+        cardNode.classList.add('is-active-project');
+
+        const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
+        const imageData = streamImages[imageIndex];
+
+        currentGalleryList = (imageData.pinboardItems || []).map(item => item.src);
+
+        const workNavLink = document.getElementById('workNavLink');
+        if (workNavLink) {
+          workNavLink.querySelector('.nav-text-active').textContent = imageData.title;
+          workNavLink.querySelector('.nav-text-hover').textContent = 'Work';
+        }
+
+        document.getElementById('projectTitle').textContent = imageData.title;
+        
+        const detailedAboutObj = imageData.detailedAbout || imageData.about;
+        const detailedExpObj = imageData.detailedExperience || imageData.experience;
+
+        document.getElementById('projectLeft').innerHTML = `
+          <div class="project-section-grid">
+            <div class="project-section-content">
+              ${detailedAboutObj.paragraphs.map(p => `<p>${p}</p>`).join('')}
+            </div>
+            <h2 class="project-section-label">${detailedAboutObj.label}</h2>
+          </div>
+
+          <div class="project-section-grid">
+            <div class="project-section-content">
+              ${detailedExpObj.paragraphs.map(p => `<p>${p}</p>`).join('')}
+            </div>
+            <h2 class="project-section-label">${detailedExpObj.label}</h2>
+          </div>
+        `;
+
+        buildCollageLayout(imageData.pinboardItems);
+
+        document.body.classList.add('is-project-mode');
+        renderVisibleCards();
+      }
+
+      function closeProjectView() {
+        if (!isProjectViewMode) return;
+
+        document.body.classList.remove('is-project-mode');
+
+        const workNavLink = document.getElementById('workNavLink');
+        if (workNavLink) {
+          workNavLink.querySelector('.nav-text-active').textContent = 'Work';
+          workNavLink.querySelector('.nav-text-hover').textContent = 'Work';
+        }
+
+        if (selectedKey !== null) {
+          const imageIndex = ((selectedKey % streamImages.length) + streamImages.length) % streamImages.length;
+          const imageData = streamImages[imageIndex];
+          updateLeftColumn({
+            hero: { title: imageData.title },
+            about: imageData.about,
+            experience: imageData.experience
+          }, true);
+        } else {
+          updateLeftColumn(defaultLeftContent, false);
+        }
+
+        if (activeProjectCard) {
+          setTimeout(() => {
+            if (activeProjectCard) {
+              activeProjectCard.classList.remove('is-active-project');
+            }
+            isProjectViewMode = false;
+            activeCardOriginalKey = null;
+            activeProjectCard = null;
+            document.getElementById('pinboardGridWrapper').innerHTML = '';
+            renderVisibleCards();
+          }, 300);
+        } else {
+          isProjectViewMode = false;
+          activeCardOriginalKey = null;
+          activeProjectCard = null;
+          document.getElementById('pinboardGridWrapper').innerHTML = '';
+          renderVisibleCards();
+        }
+      }
+
+      // Dragging logic with Window Constraint Clamping
+      function makeDraggableAndZoomable(element, galleryIdx) {
+        let isItemDragging = false;
+        let startX = 0, startY = 0;
+        let initialLeft = 0, initialTop = 0;
+        let dragDistance = 0;
+
+        function startDrag(clientX, clientY) {
+          isItemDragging = true;
+          dragDistance = 0;
+          highestZIndex += 1;
+          element.style.zIndex = highestZIndex;
+          element.style.transition = 'none';
+
+          startX = clientX;
+          startY = clientY;
+
+          initialLeft = element.offsetLeft;
+          initialTop = element.offsetTop;
+        }
+
+        function moveDrag(clientX, clientY) {
+          if (!isItemDragging) return;
+
+          const dx = clientX - startX;
+          const dy = clientY - startY;
+          dragDistance += Math.hypot(dx, dy);
+
+          let newLeft = initialLeft + dx;
+          let newTop = initialTop + dy;
+
+          // Clamp position strictly within Window Constraints
+          const parentRect = element.offsetParent 
+            ? element.offsetParent.getBoundingClientRect() 
+            : { left: 0, top: 0 };
+
+          const elemWidth = element.offsetWidth;
+          const elemHeight = element.offsetHeight;
+
+          const minLeft = -parentRect.left + 10;
+          const maxLeft = window.innerWidth - parentRect.left - elemWidth - 10;
+          const minTop = -parentRect.top + 10;
+          const maxTop = window.innerHeight - parentRect.top - elemHeight - 10;
+
+          if (maxLeft >= minLeft) {
+            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+          }
+          if (maxTop >= minTop) {
+            newTop = Math.max(minTop, Math.min(maxTop, newTop));
+          }
+
+          element.style.left = `${newLeft}px`;
+          element.style.top = `${newTop}px`;
+        }
+
+        function stopDrag() {
+          if (isItemDragging) {
+            isItemDragging = false;
+            element.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease';
+          }
+        }
+
+        element.addEventListener('click', (e) => {
+          if (dragDistance < 5) {
+            e.stopPropagation();
+            openLightbox(galleryIdx);
+          }
+        });
+
+        element.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          startDrag(e.clientX, e.clientY);
+        });
+
+        element.addEventListener('touchstart', (e) => {
+          if (e.touches.length > 0) {
+            e.stopPropagation();
+            startDrag(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }, { passive: true });
+
+        window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+          if (e.touches.length > 0) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+
+        window.addEventListener('mouseup', stopDrag);
+        window.addEventListener('touchend', stopDrag);
+      }
+
+      const workNavLink = document.getElementById('workNavLink');
+      if (workNavLink) {
+        workNavLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (isProjectViewMode) closeProjectView();
+        });
+      }
+
+      // Wheel Event Handling
+      window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (isProjectViewMode) return;
+        if (selectedKey !== null) {
+          deselectImage();
+        }
+        currentY -= e.deltaY * 0.8;
+        velocityY = -e.deltaY * 0.15;
+      }, { passive: false });
+
+      function tick() {
+        if (selectedKey !== null && !isProjectViewMode) {
+          currentY += (targetY - currentY) * 0.08;
+        } else if (!isDragging && !isProjectViewMode) {
+          velocityY *= FRICTION;
+          if (Math.abs(velocityY) < 0.1) {
+            velocityY = 0;
+            currentY -= baseAutoSpeed;
+          } else {
+            currentY += velocityY;
+          }
+        }
+
+        renderVisibleCards();
+        requestAnimationFrame(tick);
+      }
+
+      function onPointerDown(clientX, clientY) {
+        if (isProjectViewMode) return;
+        isDragging = true;
+        pointerMoved = false;
+        startPointerX = clientX;
+        startPointerY = clientY;
+        lastPointerY = clientY;
+        velocityY = 0;
+      }
+
+      function onPointerMove(clientX, clientY) {
+        if (!isDragging || isProjectViewMode) return;
+
+        const totalMovedDist = Math.hypot(clientX - startPointerX, clientY - startPointerY);
+        const deltaY = (clientY - lastPointerY) * DRAG_SENSITIVITY;
+
+        if (totalMovedDist > 6) {
+          pointerMoved = true;
+        }
+
+        currentY += deltaY;
+        velocityY = deltaY;
+        lastPointerY = clientY;
+      }
+
+      function onPointerUp() {
+        isDragging = false;
+      }
+
+      if (streamContainer) {
+        streamContainer.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+        streamContainer.addEventListener('touchstart', (e) => {
+          if (e.touches.length > 0) onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+      }
+
+      window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', onPointerUp);
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchend', onPointerUp);
+
+      window.addEventListener('click', (e) => {
+        if (isProjectViewMode || selectedKey === null) return;
+        if (pointerMoved) return;
+        
+        const isCardClick = e.target.closest('.stream-card');
+        const isNavClick = e.target.closest('.top-nav');
+        const isBtnClick = e.target.closest('#viewProjectBtn');
+
+        if (!isCardClick && !isNavClick && !isBtnClick) {
+          deselectImage();
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (lightboxModal.classList.contains('is-active')) {
+          if (e.key === 'ArrowLeft' && currentGalleryIndex > 0) {
+            currentGalleryIndex--;
+            updateLightboxView();
+          } else if (e.key === 'ArrowRight' && currentGalleryIndex < currentGalleryList.length - 1) {
+            currentGalleryIndex++;
+            updateLightboxView();
+          } else if (e.key === 'Escape') {
+            closeLightbox();
+          }
+        } else if (e.key === 'Escape') {
+          if (isProjectViewMode) {
+            closeProjectView();
+          } else {
+            deselectImage();
+          }
+        }
+      });
+
+      window.addEventListener('resize', calculateDimensions);
+
+      document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+
+          if (!href || 
+              href.startsWith('#') || 
+              href.startsWith('javascript:') || 
+              href.startsWith('mailto:') || 
+              link.target === '_blank' ||
+              window.location.pathname.endsWith(href)) {
+            return;
+          }
+
+          e.preventDefault();
+          document.body.classList.add('is-exiting');
+
+          setTimeout(() => {
+            window.location.href = href;
+          }, 380);
+        });
+      });
+
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.remove('is-exiting');
+        }
+      });
+
+      updateLeftColumn(defaultLeftContent, false);
+      calculateDimensions();
+      tick();
+    });
+  </script>
+
+</body>
+</html>

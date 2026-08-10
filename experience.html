@@ -3,35 +3,1290 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Experience — Portfolio</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <title>Cole Thompson — Portfolio</title>
+  
+  <!-- Preload critical font -->
+  <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    /* ==========================================================================
+       1. Reset & Global Setup (Strict Non-Scrolling Viewport)
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      inset: 0;
+      overflow: hidden !important;
+      touch-action: none;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Edge-Proximity Glowing Window Outline */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9990;
+      border: 1px solid rgba(0, 210, 255, 0.9);
+      box-shadow: 
+        inset 0 0 10px rgba(0, 210, 255, 0.6),
+        inset 0 0 20px rgba(180, 255, 60, 0.4),
+        0 0 15px rgba(0, 210, 255, 0.7);
+      opacity: var(--edge-glow-opacity, 0);
+      transition: opacity 0.2s ease;
+      
+      -webkit-mask-image: radial-gradient(
+        70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+        black 0%,
+        rgba(0, 0, 0, 0.8) 40%,
+        transparent 80%
+      );
+      mask-image: radial-gradient(
+        70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+        black 0%,
+        rgba(0, 0, 0, 0.8) 40%,
+        transparent 80%
+      );
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ==========================================================================
+       2. Fixed Top Navigation
+       ========================================================================== */
+    .top-nav {
+      position: fixed;
+      top: 2.2rem;
+      left: 2.5rem;
+      z-index: 2000;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 2rem;
+      height: 2rem;
+      min-width: 44px;
+      min-height: 44px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 2001;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hamburger-line {
+      width: 100%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      transform-origin: center;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    @media (hover: hover) {
+      .mobile-menu-toggle:hover .hamburger-line {
+        background: #ffffff;
+      }
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 6px);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -6px);
+    }
+
+    /* Mobile Menu Panel */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .mobile-menu[aria-hidden="false"] {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .mobile-nav-link {
+      font-size: 2rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.2s ease, transform 0.2s ease;
+      letter-spacing: -0.02em;
+      padding: 1rem 1.5rem;
+      min-height: 48px;
+      min-width: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (hover: hover) {
+      .mobile-nav-link:hover {
+        color: #ffffff;
+        transform: scale(1.05);
+      }
+    }
+
+    .mobile-nav-link.active {
+      color: #ffffff;
+    }
+
+    .nav-link {
+      transition: color 0.2s ease, text-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    @media (hover: hover) {
+      .nav-link:hover {
+        color: #ffffff;
+        text-shadow: 0 0 12px rgba(0, 210, 255, 0.8), 0 0 20px rgba(180, 255, 60, 0.6);
+      }
+    }
+
+    .nav-link.active {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* ==========================================================================
+       3. Main Layout Structure
+       ========================================================================== */
+    .portfolio-layout {
+      display: flex;
+      width: 100%;
+      max-width: min(1600px, 95vw);
+      margin: 0 auto;
+      height: 100vh;
+      position: relative;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+      overflow: visible;
+    }
+
+    .content-left {
+      width: clamp(45%, 50%, 52%);
+      height: 100%;
+      padding: clamp(4rem, 6vw, 7rem) clamp(2rem, 4vw, 4rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: clamp(2rem, 4vw, 3.5rem);
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    .content-right {
+      width: clamp(45%, 50%, 48%);
+      height: 100%;
+      position: relative;
+      overflow: visible;
+      perspective: 1400px;
+      z-index: 20;
+    }
+
+    /* ==========================================================================
+       4. Left Column Typography & Subtitles
+       ========================================================================== */
+    .hero-container {
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: opacity 0.2s ease;
+    }
+
+    .name {
+      font-size: clamp(2.5rem, 5vw, 4.2rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 0;
+      color: #ffffff;
+    }
+
+    .click-hint,
+    .go-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      font-family: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: fit-content;
+      min-height: 44px;
+      min-width: 44px;
+      transition: opacity 0.2s ease, transform 0.2s ease, text-shadow 0.3s ease;
+      box-shadow: none;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1px;
+      position: relative;
+      z-index: 1000 !important;
+      pointer-events: auto !important;
+    }
+
+    .click-hint {
+      cursor: default;
+    }
+
+    .click-hint.hidden {
+      display: none;
+    }
+
+    .go-back-btn {
+      display: none;
+    }
+
+    .go-back-btn.visible {
+      display: inline-flex;
+    }
+
+    @media (hover: hover) {
+      .click-hint:hover,
+      .go-back-btn:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+        text-shadow: 0 0 10px rgba(0, 210, 255, 0.9), 0 0 18px rgba(180, 255, 60, 0.7);
+      }
+    }
+
+    .sections-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      max-width: 100%;
+      align-self: flex-start;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr clamp(100px, 12vw, 160px);
+      gap: 2rem;
+      align-items: start;
+      max-width: 100%;
+      transition: opacity 0.2s ease;
+    }
+
+    .section-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      font-size: 0.825rem;
+      line-height: 1.5;
+      color: #a1a1a1;
+      font-weight: 400;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .section-label {
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: left;
+      letter-spacing: -0.01em;
+    }
+
+    .contact-email {
+      font-size: 1.25rem;
+      font-weight: 400;
+      margin-top: auto;
+    }
+
+    .contact-email a {
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-thickness: 1px;
+      color: #ffffff;
+      transition: opacity 0.2s ease, text-shadow 0.3s ease;
+    }
+
+    @media (hover: hover) {
+      .contact-email a:hover {
+        opacity: 1;
+        text-shadow: 0 0 12px rgba(0, 210, 255, 0.8), 0 0 20px rgba(180, 255, 60, 0.6);
+      }
+    }
+
+    /* ==========================================================================
+       5. 3D Stream Layout & Hover Effects
+       ========================================================================== */
+    .image-stream-container {
+      position: absolute;
+      top: -20vh;
+      right: -5vw;
+      width: 110%;
+      height: 140vh;
+      transform-style: preserve-3d;
+      transform: rotateZ(8deg) rotateY(-18deg) rotateX(4deg);
+      transform-origin: top right;
+      cursor: grab;
+      z-index: 60;
+      will-change: transform;
+    }
+
+    .image-stream-container:active {
+      cursor: grabbing;
+    }
+
+    .image-stream {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+      transform-style: preserve-3d;
+    }
+
+    .stream-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background-color: transparent;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow, opacity;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.4s ease;
+      z-index: 10;
+      opacity: 1 !important;
+      pointer-events: auto;
+      padding: 0px;
+    }
+
+    .stream-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      overflow: hidden;
+      box-shadow: -10px 20px 40px rgba(0, 0, 0, 0.8);
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transform-style: preserve-3d;
+      will-change: transform, border-color, box-shadow;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.35s ease,
+                  box-shadow 0.35s ease;
+      transform-origin: center center;
+      z-index: 2;
+    }
+
+    /* Gradient Bloom Backdrop */
+    .stream-card::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 10px;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(220, 255, 60, 0.85) 0%,
+        rgba(0, 210, 255, 0.75) 35%,
+        rgba(0, 80, 255, 0.5) 65%,
+        transparent 85%
+      );
+      filter: blur(28px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: -1;
+    }
+
+    @media (hover: hover) {
+      .stream-card:hover::before {
+        opacity: 1;
+      }
+
+      .stream-card:hover .stream-card-inner {
+        border-color: rgba(0, 210, 255, 0.85);
+        box-shadow: 
+          -15px 30px 60px rgba(0, 0, 0, 0.9),
+          0 0 30px rgba(0, 210, 255, 0.4),
+          0 0 55px rgba(180, 255, 0, 0.3);
+      }
+    }
+
+    .stream-card.is-hovered .stream-card-inner {
+      transform: scale(1.02);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+    }
+
+    /* Card Text Overlay */
+    .card-overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2.5rem 1.25rem 1.25rem 1.25rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+      color: #ffffff;
+      pointer-events: none;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      text-align: left;
+    }
+
+    .card-overlay-title {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-overlay-desc {
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-weight: 400;
+    }
+
+    .card-action-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    @media (hover: hover) {
+      .stream-card:hover .card-action-badge {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes borderPulse {
+      0% {
+        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 210, 255, 0.5);
+      }
+      50% {
+        box-shadow: -20px 35px 65px rgba(0, 0, 0, 0.95), 0 0 40px rgba(180, 255, 0, 0.5);
+      }
+      100% {
+        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 210, 255, 0.5);
+      }
+    }
+
+    .stream-card.is-selected .stream-card-inner {
+      animation: borderPulse 2s infinite ease-in-out;
+    }
+
+    .stream-card.is-selected {
+      z-index: 50;
+    }
+
+    .stream-image {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       6. Mobile Specific Viewport Adjustments (< 768px)
+       ========================================================================== */
+    @media (max-width: 767px) {
+      .portfolio-layout {
+        flex-direction: column;
+      }
+      
+      .content-left {
+        display: none !important;
+      }
+      
+      .content-right {
+        width: 100%;
+        display: block !important;
+        height: 100vh;
+        perspective: 900px;
+      }
+
+      .image-stream-container {
+        top: 0;
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        transform: rotateZ(2deg) rotateY(-8deg) rotateX(2deg);
+        transform-origin: center center;
+      }
+
+      .stream-card {
+        padding: 6px;
+      }
+
+      .card-action-badge {
+        opacity: 1;
+        transform: translateY(0);
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+      }
+
+      .top-nav {
+        top: 1rem;
+        left: 1.25rem;
+        right: 1.25rem;
+      }
+      
+      .mobile-menu-toggle {
+        display: flex;
+      }
+      
+      .main-nav {
+        display: none;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-toggle {
+        display: none;
+      }
+      
+      .mobile-menu {
+        display: none;
+      }
+    }
+    
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .content-left {
+        width: 55%;
+        padding: clamp(3rem, 5vw, 5rem) clamp(2rem, 3vw, 3rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      }
+      
+      .content-right {
+        width: 45%;
+      }
+      
+      .name {
+        font-size: clamp(2.5rem, 4vw, 3.5rem);
+      }
+    }
+    
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      .content-left {
+        padding: clamp(4rem, 5vw, 6rem) clamp(2.5rem, 3vw, 3.5rem) clamp(2rem, 3vw, 3rem) 2.5rem;
+      }
+      
+      .name {
+        font-size: clamp(3rem, 4vw, 4rem);
+      }
+    }
+    
+    @media (min-width: 1440px) {
+      .section-grid {
+        grid-template-columns: 1fr clamp(100px, 8vw, 140px);
+      }
+      
+      .name {
+        font-size: clamp(3.5rem, 4vw, 4.5rem);
+      }
+    }
+
+    /* ==========================================================================
+       7. Transition Overlay
+       ========================================================================== */
+    .page-transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.is-exiting .page-transition-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
 </head>
 <body>
 
-  <header class="topbar">
-    <a href="index.html">Home</a>
-    <span class="crumb-sep">/</span>
-    <a href="about.html">About</a>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">Experience</span>
+  <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <button 
+      class="mobile-menu-toggle" 
+      id="mobileMenuToggle" 
+      aria-expanded="false" 
+      aria-controls="mobileMenu"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    
+    <nav class="main-nav" id="mainNav">
+      <a href="work.html" class="nav-link">Work</a>
+      <a href="#" class="nav-link active">Contact</a>
+      <a href="fun.html" class="nav-link">Fun</a>
+    </nav>
+    
+    <!-- Mobile Menu Panel -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <nav class="mobile-nav">
+        <a href="work.html" class="mobile-nav-link">Work</a>
+        <a href="#" class="mobile-nav-link active">Contact</a>
+        <a href="fun.html" class="mobile-nav-link">Fun</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="hero hero-sky">
-    <section class="panel">
-      <hr class="divider" />
-      <h1>Experience</h1>
-      <p>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-        nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-        volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-        ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-        consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate
-        velit esse molestie consequat, vel illum dolore eu feugiat nulla
-        facilisis at vero eros et accumsan.
+  <main class="portfolio-layout" id="mainLayout">
+    <!-- Left Column: Content -->
+    <div class="content-left">
+      <!-- Hero Section -->
+      <div class="hero-container" id="heroContainer">
+        <h1 class="name" id="heroTitle">Cole Thompson</h1>
+        <span class="click-hint" id="heroHint">click a project to see more</span>
+        <button class="go-back-btn" id="backToWorkBtn">&larr; Go Back to All Work</button>
+      </div>
+
+      <!-- Sections Container -->
+      <div class="sections-container">
+        <!-- About Section -->
+        <div class="section-grid">
+          <div class="section-content">
+            <p>
+              Hi, I'm Cole Thompson—a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.
+            </p>
+            <p>
+              Design is my first love. Throughout my career, I've developed a passion for anything in motion—from dynamic branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.
+            </p>
+            <p>
+              Have a project in mind, a question about my work, or just want to connect? Feel free to reach out anytime!
+            </p>
+          </div>
+          <h2 class="section-label">About Me</h2>
+        </div>
+
+        <!-- Experience Section -->
+        <div class="section-grid">
+          <div class="section-content">
+            <p>
+              Alongside my freelance work with Bill Young Productions—where I dove headfirst into the fast-paced world of music industry design—I've held creative internships at GDC Ideation & Marketing and Hahn. These experiences sharpened my ability to bridge high-level creative direction with strategic marketing, producing work that resonates and performs.
+            </p>
+          </div>
+          <h2 class="section-label">Experience</h2>
+        </div>
+      </div>
+
+      <p class="contact-email">
+        <a href="mailto:colejthompson33@gmail.com">colejthompson33@gmail.com</a>
       </p>
-      <a href="about.html" class="back-link" aria-label="Back to About">&lt;</a>
-    </section>
+    </div>
+
+    <!-- Right Column: Interactive Stream -->
+    <div class="content-right" id="contentRight">
+      <div class="image-stream-container" id="streamContainer">
+        <div class="image-stream" id="imageStream"></div>
+      </div>
+    </div>
   </main>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Prevent non-mobile window scroll
+      document.addEventListener('touchmove', (e) => {
+        if (e.target.closest('.mobile-menu')) return;
+        e.preventDefault();
+      }, { passive: false });
+
+      // Mobile Menu Toggle
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+      
+      function toggleMobileMenu() {
+        const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+        mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.setAttribute('aria-hidden', isExpanded);
+      }
+      
+      function closeMobileMenu() {
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      }
+      
+      if (mobileMenuToggle && mobileMenu) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileNavLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
+        mobileMenu.addEventListener('click', (e) => {
+          if (e.target === mobileMenu) closeMobileMenu();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
+            closeMobileMenu();
+            mobileMenuToggle.focus();
+          }
+        });
+      }
+      
+      const EDGE_THRESHOLD = 90;
+
+      // Mouse tracking & Edge glow
+      window.addEventListener('mousemove', (e) => {
+        document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
+        document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
+
+        const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
+
+        if (minEdgeDist < EDGE_THRESHOLD) {
+          const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
+          document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
+        } else {
+          document.body.style.setProperty('--edge-glow-opacity', '0');
+        }
+      });
+
+      /* ==========================================================================
+         CONTENT DEFINITIONS
+         ========================================================================== */
+
+      const defaultLeftContent = {
+        hero: {
+          title: 'Cole Thompson'
+        },
+        about: {
+          label: 'About Me',
+          paragraphs: [
+            "Hi, I'm Cole Thompson—a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.",
+            "Design is my first love. Throughout my career, I've developed a passion for anything in motion—from dynamic branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.",
+            "Have a project in mind, a question about my work, or just want to connect? Feel free to reach out anytime!"
+          ]
+        },
+        experience: {
+          label: 'Experience',
+          paragraphs: [
+            "Alongside my freelance work with Bill Young Productions—where I dove headfirst into the fast-paced world of music industry design—I've held creative internships at GDC Ideation & Marketing and Hahn. These experiences sharpened my ability to bridge high-level creative direction with strategic marketing, producing work that resonates and performs."
+          ]
+        }
+      };
+
+      const streamImages = [
+        { 
+          src: 'images/Personal/Cole.webp', fallback: 'images/Personal/Cole.jpg', 
+          title: 'Bio', 
+          about: {
+            label: 'Background',
+            paragraphs: [
+              "Born and raised in San Antonio, I’ve spent almost my entire life in Texas. I graduated Magna Cum Laude from Texas A&M University with a B.S. in Visualization and a minor in Graphic Design.",
+              "My time in College Station was shaped as much by my community involvement as my studies. I competed as a collegiate rower, served as a counselor for Fish Camp, and regularly volunteered with the Special Olympics, Camp Howdy, and local cleanups across Bryan/College Station."
+            ]
+          },
+          experience: {
+            label: 'Community',
+            paragraphs: [
+              "Giving back through design has always been central to my work. I’ve frequently donated graphic design services to local organizations including UNICEF, Wayne’s Wings, and a local band Blue House, helping support the community that supported me."
+            ]
+          }
+        },
+        { 
+          src: 'images/Personal/000017140003.webp', fallback: 'images/Personal/000017140003.jpg', 
+          title: 'Exerience Design', 
+          about: {
+            label: 'My Passion',
+            paragraphs: [
+              "Music is something I deeply love. I believe design is one of the most powerful tools for empowering artists to fully express their art and identity",
+              "Live music is the ultimate convergence where musicians, visual artists, lighting tech, sound engineers, and so many artists combine their crafts to build something awesome"
+            ]
+          },
+          experience: {
+            label: 'Creative Focus',
+            paragraphs: [
+              "From concert posters to tour merch and album art, I strive to design visuals that capture the sound of live music."
+            ]
+          }
+        },
+        { 
+          src: 'images/Personal/000017140026.webp', fallback: 'images/Personal/000017140026.jpg', 
+          title: 'Learning Abroad', 
+          about: {
+            label: 'Florence',
+            paragraphs: [
+              "Other people charge my inspiration. So I spent half a year living, studying, and working abroad in Florence, being taught classical and Renaissance art techniques",
+              "Studying the best artists who have ever lived firsthand gave me a respect for composition, light, and other design principles.",
+              "(And they didn't have Illistrator??)"
+            ]
+          },
+          experience: {
+            label: 'My Work',
+            paragraphs: [
+              "Ask to wee my work!"
+            ]
+          }
+        },
+        { 
+          src: 'images/Personal/canyon.webp', fallback: 'images/Personal/canyon.jpg', 
+          title: 'The Outdoors & Sustainable Design', 
+          about: {
+            label: 'The Outdoors',
+            paragraphs: [
+              "Nature has always been a second home to me. That connection to the outdoors inspired my extensive work with Aggie Outdoors, where I led branding efforts and created merchandise.",
+              "My time in nature defines my work and reinforces my commitment to ethical, sustainable design practices that respects both the environment and its audiences."
+            ]
+          },
+          experience: {
+            label: 'Branding & Merch',
+            paragraphs: [
+              "Building apparel and brand identities for outdoor communities is a special interest of mine as it needs to rough yet design friendly, soft and scalable, and all other beatiful paradoxes"
+            ]
+          }
+        }
+      ];
+
+      /* ==========================================================================
+         ENGINE & SCROLL LOGIC
+         ========================================================================== */
+
+      const streamContainer = document.getElementById('streamContainer');
+      const imageStream = document.getElementById('imageStream');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroHint = document.getElementById('heroHint');
+      const backToWorkBtn = document.getElementById('backToWorkBtn');
+
+      let currentY = 0;
+      let targetY = 0;
+      let velocityY = 0;
+      let baseAutoSpeed = 0.4;
+      let isDragging = false;
+      let startPointerX = 0;
+      let startPointerY = 0;
+      let lastPointerY = 0;
+      let pointerMoved = false;
+      let selectedKey = null;
+      let hoveredKey = null;
+
+      const FRICTION = 0.92;
+      const DRAG_SENSITIVITY = 1.1;
+
+      const GAP = 28;
+      const PUSH_OFFSET = 70;
+      let cardHeight = 0;
+      let itemTotalHeight = 0;
+
+      const activeCardsMap = new Map();
+
+      function calculateDimensions() {
+        if (!streamContainer) return;
+        const containerWidth = streamContainer.clientWidth;
+        cardHeight = containerWidth * (9 / 16);
+        itemTotalHeight = cardHeight + GAP;
+      }
+
+      function renderVisibleCards() {
+        const viewportHeight = window.innerHeight * 1.5;
+        const minVisibleY = -currentY - (itemTotalHeight * 4);
+        const maxVisibleY = -currentY + viewportHeight + (itemTotalHeight * 4);
+
+        const startIdx = Math.floor(minVisibleY / itemTotalHeight);
+        const endIdx = Math.ceil(maxVisibleY / itemTotalHeight);
+
+        const neededKeys = new Set();
+
+        for (let i = startIdx; i <= endIdx; i++) {
+          neededKeys.add(i);
+
+          if (!activeCardsMap.has(i)) {
+            const imageIndex = ((i % streamImages.length) + streamImages.length) % streamImages.length;
+            const imageData = streamImages[imageIndex];
+
+            const card = document.createElement('div');
+            card.className = 'stream-card';
+            card.dataset.key = i;
+            card.style.height = `${cardHeight}px`;
+
+            const cardInner = document.createElement('div');
+            cardInner.className = 'stream-card-inner';
+
+            const img = document.createElement('img');
+            if (imageData.fallback) {
+              img.src = imageData.fallback;
+              img.setAttribute('data-src', imageData.src);
+              img.onerror = function() {
+                if (this.getAttribute('data-src')) {
+                  this.src = this.getAttribute('data-src');
+                }
+              };
+            } else {
+              img.src = imageData.src;
+            }
+            img.alt = imageData.title;
+            img.className = 'stream-image';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            const overlayText = document.createElement('div');
+            overlayText.className = 'card-overlay-text';
+            overlayText.innerHTML = `
+              <h3 class="card-overlay-title">${imageData.title}</h3>
+              <p class="card-overlay-desc">${imageData.about ? imageData.about.paragraphs[0] : ''}</p>
+            `;
+
+            const badge = document.createElement('div');
+            badge.className = 'card-action-badge';
+            badge.textContent = 'Click to Select';
+
+            cardInner.appendChild(img);
+            cardInner.appendChild(overlayText);
+            cardInner.appendChild(badge);
+            card.appendChild(cardInner);
+
+            card.addEventListener('mouseenter', () => {
+              hoveredKey = i;
+              renderVisibleCards();
+            });
+
+            card.addEventListener('mouseleave', () => {
+              if (hoveredKey === i) {
+                hoveredKey = null;
+                renderVisibleCards();
+              }
+            });
+
+            card.addEventListener('click', (e) => {
+              if (pointerMoved) return;
+              e.stopPropagation();
+              
+              if (selectedKey === i) {
+                deselectImage();
+              } else {
+                selectImage(i);
+              }
+            });
+
+            imageStream.appendChild(card);
+            activeCardsMap.set(i, card);
+          }
+
+          let cardPosY = i * itemTotalHeight;
+          if (selectedKey !== null) {
+            if (i < selectedKey) {
+              cardPosY -= PUSH_OFFSET;
+            } else if (i > selectedKey) {
+              cardPosY += PUSH_OFFSET;
+            }
+          }
+
+          const cardNode = activeCardsMap.get(i);
+          if (cardNode) {
+            const badgeNode = cardNode.querySelector('.card-action-badge');
+
+            if (badgeNode) {
+              if (selectedKey === i) {
+                badgeNode.style.display = 'none';
+              } else {
+                badgeNode.style.display = '';
+                badgeNode.textContent = 'Click to Select';
+              }
+            }
+
+            cardNode.style.transform = `translate3d(0, ${cardPosY}px, 0)`;
+
+            if (hoveredKey === i) {
+              cardNode.classList.add('is-hovered');
+            } else {
+              cardNode.classList.remove('is-hovered');
+            }
+
+            if (selectedKey === i) {
+              cardNode.classList.add('is-selected');
+            } else {
+              cardNode.classList.remove('is-selected');
+            }
+          }
+        }
+
+        activeCardsMap.forEach((node, key) => {
+          if (!neededKeys.has(key)) {
+            node.remove();
+            activeCardsMap.delete(key);
+          }
+        });
+
+        imageStream.style.transform = `translate3d(0, ${currentY}px, 0)`;
+      }
+
+      function updateLeftColumn(data) {
+        const sectionGrids = document.querySelectorAll('.content-left .section-grid');
+        const aboutGrid = sectionGrids[0];
+        const experienceGrid = sectionGrids[1];
+
+        const heroContainer = document.getElementById('heroContainer');
+
+        heroContainer.style.opacity = '0';
+        aboutGrid.style.opacity = '0';
+        experienceGrid.style.opacity = '0';
+
+        setTimeout(() => {
+          heroTitle.textContent = data.hero.title;
+
+          aboutGrid.querySelector('.section-label').textContent = data.about.label;
+          aboutGrid.querySelector('.section-content').innerHTML = data.about.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+          experienceGrid.querySelector('.section-label').textContent = data.experience.label;
+          experienceGrid.querySelector('.section-content').innerHTML = data.experience.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+          heroContainer.style.opacity = '1';
+          aboutGrid.style.opacity = '1';
+          experienceGrid.style.opacity = '1';
+        }, 180);
+      }
+
+      function selectImage(key) {
+        selectedKey = key;
+        const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
+        const imageData = streamImages[imageIndex];
+
+        heroHint.classList.add('hidden');
+        backToWorkBtn.classList.add('visible');
+
+        updateLeftColumn({
+          hero: {
+            title: imageData.title
+          },
+          about: imageData.about,
+          experience: imageData.experience
+        });
+
+        const vh = window.innerHeight;
+        const containerTopOffset = vh * 0.20; 
+        const perspectiveTiltOffset = vh * 0.12; 
+        const screenCenter = vh * 0.50;
+
+        targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
+      }
+
+      function deselectImage() {
+        if (selectedKey === null) return;
+        selectedKey = null;
+
+        backToWorkBtn.classList.remove('visible');
+        heroHint.classList.remove('hidden');
+
+        updateLeftColumn(defaultLeftContent);
+      }
+
+      backToWorkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deselectImage();
+      });
+
+      // Wheel Event Handling
+      window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (selectedKey !== null) {
+          deselectImage();
+        }
+        currentY -= e.deltaY * 0.8;
+        velocityY = -e.deltaY * 0.15;
+      }, { passive: false });
+
+      function tick() {
+        if (selectedKey !== null) {
+          currentY += (targetY - currentY) * 0.08;
+        } else if (!isDragging) {
+          velocityY *= FRICTION;
+          if (Math.abs(velocityY) < 0.1) {
+            velocityY = 0;
+            currentY -= baseAutoSpeed;
+          } else {
+            currentY += velocityY;
+          }
+        }
+
+        renderVisibleCards();
+        requestAnimationFrame(tick);
+      }
+
+      function onPointerDown(clientX, clientY) {
+        isDragging = true;
+        pointerMoved = false;
+        startPointerX = clientX;
+        startPointerY = clientY;
+        lastPointerY = clientY;
+        velocityY = 0;
+      }
+
+      function onPointerMove(clientX, clientY) {
+        if (!isDragging) return;
+
+        const totalMovedDist = Math.hypot(clientX - startPointerX, clientY - startPointerY);
+        const deltaY = (clientY - lastPointerY) * DRAG_SENSITIVITY;
+
+        if (totalMovedDist > 6) {
+          pointerMoved = true;
+        }
+
+        currentY += deltaY;
+        velocityY = deltaY;
+        lastPointerY = clientY;
+      }
+
+      function onPointerUp() {
+        isDragging = false;
+      }
+
+      if (streamContainer) {
+        streamContainer.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+        streamContainer.addEventListener('touchstart', (e) => {
+          if (e.touches.length > 0) onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+      }
+
+      window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', onPointerUp);
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchend', onPointerUp);
+
+      window.addEventListener('click', (e) => {
+        if (selectedKey === null) return;
+        if (pointerMoved) return;
+        
+        const isCardClick = e.target.closest('.stream-card');
+        const isNavClick = e.target.closest('.top-nav');
+        const isBtnClick = e.target.closest('#backToWorkBtn');
+
+        if (!isCardClick && !isNavClick && !isBtnClick) {
+          deselectImage();
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          deselectImage();
+        }
+      });
+
+      window.addEventListener('resize', calculateDimensions);
+
+      document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+
+          if (!href || 
+              href.startsWith('#') || 
+              href.startsWith('javascript:') || 
+              href.startsWith('mailto:') || 
+              link.target === '_blank' ||
+              window.location.pathname.endsWith(href)) {
+            return;
+          }
+
+          e.preventDefault();
+          document.body.classList.add('is-exiting');
+
+          setTimeout(() => {
+            window.location.href = href;
+          }, 380);
+        });
+      });
+
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.remove('is-exiting');
+        }
+      });
+
+      calculateDimensions();
+      tick();
+    });
+  </script>
 </body>
 </html>
