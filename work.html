@@ -208,39 +208,6 @@
       color: rgba(255, 255, 255, 0.9);
     }
 
-    /* Dynamic Work Link inside Project View Mode */
-    .nav-link-work {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .nav-link-work .nav-text-active,
-    .nav-link-work .nav-text-hover {
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .nav-link-work .nav-text-hover {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    @media (hover: hover) {
-      body.is-project-mode .nav-link-work:hover .nav-text-active {
-        opacity: 0;
-      }
-
-      body.is-project-mode .nav-link-work:hover .nav-text-hover {
-        opacity: 1;
-      }
-    }
-
     /* ==========================================================================
        3. Main Layout & Stream Structure
        ========================================================================== */
@@ -1064,10 +1031,8 @@
     </button>
     
     <nav class="main-nav" id="mainNav">
-      <a href="#" class="nav-link nav-link-work active" id="workNavLink">
-        <span class="nav-text-active">Work</span>
-        <span class="nav-text-hover">Work</span>
-      </a>
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="work.html" class="nav-link active">Work</a>
       <a href="contact.html" class="nav-link">Contact</a>
       <a href="fun.html" class="nav-link">Fun</a>
     </nav>
@@ -1075,7 +1040,8 @@
     <!-- Mobile Menu Panel -->
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
       <nav class="mobile-nav">
-        <a href="#" class="mobile-nav-link active" id="mobileWorkNavLink">Work</a>
+        <a href="index.html" class="mobile-nav-link">Home</a>
+        <a href="work.html" class="mobile-nav-link active">Work</a>
         <a href="contact.html" class="mobile-nav-link">Contact</a>
         <a href="fun.html" class="mobile-nav-link">Fun</a>
       </nav>
@@ -1763,12 +1729,6 @@
 
         currentGalleryList = (imageData.pinboardItems || []).map(item => item.src);
 
-        const workNavLink = document.getElementById('workNavLink');
-        if (workNavLink) {
-          workNavLink.querySelector('.nav-text-active').textContent = imageData.title;
-          workNavLink.querySelector('.nav-text-hover').textContent = 'Work';
-        }
-
         document.getElementById('projectTitle').textContent = imageData.title;
         
         const detailedAboutObj = imageData.detailedAbout || imageData.about;
@@ -1800,12 +1760,6 @@
         if (!isProjectViewMode) return;
 
         document.body.classList.remove('is-project-mode');
-
-        const workNavLink = document.getElementById('workNavLink');
-        if (workNavLink) {
-          workNavLink.querySelector('.nav-text-active').textContent = 'Work';
-          workNavLink.querySelector('.nav-text-hover').textContent = 'Work';
-        }
 
         if (selectedKey !== null) {
           const imageIndex = ((selectedKey % streamImages.length) + streamImages.length) % streamImages.length;
@@ -1927,14 +1881,6 @@
 
         window.addEventListener('mouseup', stopDrag);
         window.addEventListener('touchend', stopDrag);
-      }
-
-      const workNavLink = document.getElementById('workNavLink');
-      if (workNavLink) {
-        workNavLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          if (isProjectViewMode) closeProjectView();
-        });
       }
 
       // Wheel Event Handling

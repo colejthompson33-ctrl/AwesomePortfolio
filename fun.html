@@ -70,7 +70,7 @@
     }
 
     /* ==========================================================================
-       2. Fixed Top Navigation (Matched to work.html)
+       2. Fixed Top Navigation
        ========================================================================== */
     .top-nav {
       position: fixed;
@@ -316,7 +316,6 @@
     .mac-tab-thumb {
       width: 16px;
       height: 16px;
-      max-width: 100%;
       object-fit: contain;
       border-radius: 2px;
       flex-shrink: 0;
@@ -423,11 +422,6 @@
         right: 1.5rem;
       }
       
-      .main-nav {
-        gap: 1rem;
-      }
-      
-      /* Mobile Navigation */
       .mobile-menu-toggle {
         display: flex;
       }
@@ -436,7 +430,6 @@
         display: none;
       }
       
-      /* Ensure header doesn't obscure content */
       html {
         scroll-padding-top: 4rem;
       }
@@ -445,15 +438,6 @@
         bottom: 15px;
         right: 15px;
         padding: 4px 8px;
-      }
-      
-      .project-showcase-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      
-      .project-card-image {
-        height: 180px;
       }
     }
     
@@ -468,18 +452,12 @@
         width: clamp(150px, 18vw, 170px);
       }
       
-      /* Hide mobile navigation on tablet/desktop */
       .mobile-menu-toggle {
         display: none;
       }
       
       .mobile-menu {
         display: none;
-      }
-      
-      .project-showcase-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
       }
     }
     
@@ -490,18 +468,12 @@
         height: 84vh;
       }
       
-      /* Hide mobile navigation on laptop/desktop */
       .mobile-menu-toggle {
         display: none;
       }
       
       .mobile-menu {
         display: none;
-      }
-      
-      .project-showcase-grid {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2rem;
       }
     }
     
@@ -516,7 +488,6 @@
         width: clamp(160px, 12vw, 200px);
       }
       
-      /* Hide mobile navigation on ultra-wide */
       .mobile-menu-toggle {
         display: none;
       }
@@ -524,14 +495,9 @@
       .mobile-menu {
         display: none;
       }
-      
-      .project-showcase-grid {
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 2rem;
-      }
     }
 
-    /* Dim and push back non-selected stickers when an image is active */
+    /* Dim non-selected stickers */
     .collage-canvas.has-active .sticker-item:not(.active-highlight) {
       opacity: 0.25;
       filter: grayscale(40%) blur(1px);
@@ -628,7 +594,6 @@
       touch-action: none;
       display: inline-block;
       width: fit-content;
-      height: fit-content;
       max-width: 200px;
     }
 
@@ -646,7 +611,6 @@
       }
     }
 
-    /* Highlights the single canvas image on selection to separate it from rest */
     .sticker-item.active-highlight {
       z-index: 2000 !important;
       transform: scale(1.08) rotate(0deg) !important;
@@ -667,66 +631,17 @@
       filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.8));
     }
 
+    /* Fixed Aspect Ratio & Quality Rule */
     .sticker-image {
-      width: auto;
+      width: 100%;
       height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
       display: block;
       pointer-events: none;
       transition: filter 0.25s ease;
     }
-    
-    /* Responsive Project Showcase Grid */
-    .project-showcase-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      width: 100%;
-    }
-    
-    .project-card {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    @media (hover: hover) {
-      .project-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-      }
-    }
-    
-    .project-card-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-    
-    .project-card-content {
-      padding: 1.5rem;
-    }
-    
-    .project-card-title {
-      font-size: 1.25rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      color: #ffffff;
-    }
-    
-    .project-card-description {
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.5;
-    }
 
     /* ==========================================================================
-       7. Info Glass Card (No Duplicate Image - Directly Below & Centered)
+       7. Info Glass Card
        ========================================================================== */
     .glass-info-card {
       position: absolute;
@@ -867,17 +782,19 @@
     </button>
     
     <nav class="main-nav" id="mainNav">
+      <a href="index.html" class="nav-link">Home</a>
       <a href="work.html" class="nav-link">Work</a>
       <a href="contact.html" class="nav-link">Contact</a>
-      <a href="#" class="nav-link active">Fun</a>
+      <a href="fun.html" class="nav-link active">Fun</a>
     </nav>
     
     <!-- Mobile Menu Panel -->
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
       <nav class="mobile-nav">
+        <a href="index.html" class="mobile-nav-link">Home</a>
         <a href="work.html" class="mobile-nav-link">Work</a>
         <a href="contact.html" class="mobile-nav-link">Contact</a>
-        <a href="#" class="mobile-nav-link active">Fun</a>
+        <a href="fun.html" class="mobile-nav-link active">Fun</a>
       </nav>
     </div>
   </header>
@@ -911,7 +828,7 @@
         <!-- Drawing Canvas -->
         <canvas class="drawing-canvas" id="drawingCanvas"></canvas>
 
-        <!-- Dark Glass Info Card (NO duplicate image) -->
+        <!-- Dark Glass Info Card -->
         <div class="glass-info-card" id="glassInfoCard">
           <div class="glass-card-header">
             <div class="glass-card-dots">
@@ -961,9 +878,8 @@
       }
     });
 
-    /* Sticker Configuration Data */
+    /* Sticker Configuration Data - Restored Original File Paths */
     const stickerData = [
-      // Top Row
       { id: 1, title: "Aggie Outdoors Logo Design", stickerImage: "images/funstickers/AO.png", position: { top: "5%", left: "5%", rotation: "-12deg" }, description: "I designed a logo for Aggie Outdoors" },
       { id: 2, title: "Aggie Outdoors Apparel", stickerImage: "images/funstickers/AOShirt.png", position: { top: "4%", left: "20%", rotation: "8deg" }, description: "Printed and sold this shirt for the organization" },
       { id: 3, title: "Aggie Outdoors Bandana", stickerImage: "images/funstickers/BANDANA.png", position: { top: "6%", left: "40%", rotation: "-5deg" }, description: "Wanted to make a traditional bandana and would 10/10 print and sell again" },
@@ -972,14 +888,14 @@
       { id: 6, title: "Aggie Outdoors Logo", stickerImage: "images/funstickers/AoSimp.png", position: { top: "12%", left: "82%", rotation: "5deg" }, description: "Simple Logo design I did for Aggie Outdoors" },
       { id: 8, title: "Howdy", stickerImage: "images/funstickers/Howdy.png", position: { top: "22%", left: "10%", rotation: "18deg" }, description: "Some merch I made for the singer Howdy (Highly recommend to listen to btw)" },
       { id: 9, title: "Chud World Tour", stickerImage: "images/funstickers/ChudworldTour.png", position: { top: "35%", left: "25%", rotation: "-8deg" }, description: "Some concept merch I made for a local band" },
-      { id: 10, title: "Stretch & Flex Co", stickerImage: "images/funstickers/Stretch&Flex co..png", position: { top: "38%", left: "42%", rotation: "10deg" }, description: "Branding work for a local sports thearpy business" },
+      { id: 10, title: "Stretch & Flex Co", stickerImage: "images/funstickers/Stretch&Flex co..png", position: { top: "38%", left: "42%", rotation: "10deg" }, description: "Branding work for a local sports therapy business" },
       { id: 11, title: "Chud World Tour", stickerImage: "images/funstickers/ChudComeNoDrop.jpg", position: { top: "40%", left: "76%", rotation: "-10deg" }, description: "Some concept merch I made for a local band" },
-      { id: 13, title: "Collaborative Poetry", stickerImage: "images/funstickers/CollabriativePeotry.png", position: { top: "40%", left: "58%", rotation: "7deg" }, description: "A event poster I made for a local local sports thearpy business" },
-      { id: 14, title: "Crew A&M Rowing", stickerImage: "images/funstickers/CrewA&MRowing.png", position: { top: "64%", left: "72%", rotation: "-5deg" }, description: "Merch design I made for my school's collegate rowing team" },
-      { id: 15, title: "Seen And Heard", stickerImage: "images/funstickers/SeenAndHeard.png", position: { top: "70%", left: "32%", rotation: "12deg" }, description: "I personal project of mine I love" },
-      { id: 16, title: "Ag Radio", stickerImage: "images/funstickers/AgRadioRev.png", position: { top: "73%", left: "45%", rotation: "-8deg" }, description: "Sticker I made of A&M's student radio featuring the famous mascoct Revelie" },
+      { id: 13, title: "Collaborative Poetry", stickerImage: "images/funstickers/CollabriativePeotry.png", position: { top: "40%", left: "58%", rotation: "7deg" }, description: "An event poster I made for a local sports therapy business" },
+      { id: 14, title: "Crew A&M Rowing", stickerImage: "images/funstickers/CrewA&MRowing.png", position: { top: "64%", left: "72%", rotation: "-5deg" }, description: "Merch design I made for my school's collegiate rowing team" },
+      { id: 15, title: "Seen And Heard", stickerImage: "images/funstickers/SeenAndHeard.png", position: { top: "70%", left: "32%", rotation: "12deg" }, description: "A personal project of mine I love" },
+      { id: 16, title: "Ag Radio", stickerImage: "images/funstickers/AgRadioRev.png", position: { top: "73%", left: "45%", rotation: "-8deg" }, description: "Sticker I made of A&M's student radio featuring the famous mascot Reveille" },
       { id: 17, title: "Rowing Sticker", stickerImage: "images/funstickers/Rowingsticker.png", position: { top: "26%", left: "27%", rotation: "5deg" }, description: "Texas A&M Crew rowing sticker I made" },
-      { id: 18, title: "Halftone Band", stickerImage: "images/funstickers/HalftoneBand.png", position: { top: "55%", left: "8%", rotation: "15deg" }, description: "I personal project of mine I made for a local band" },
+      { id: 18, title: "Halftone Band", stickerImage: "images/funstickers/HalftoneBand.png", position: { top: "55%", left: "8%", rotation: "15deg" }, description: "A personal project of mine I made for a local band" },
       { id: 19, title: "Skeggs Design", stickerImage: "images/funstickers/Skeggs.png", position: { top: "60%", left: "18%", rotation: "-10deg" }, description: "A zine I used to make 'The Garage' that would show off designs and such of grunge bands I listened to" }
     ];
 
@@ -1042,9 +958,7 @@
         tabThumb.className = 'mac-tab-thumb';
         tabThumb.alt = sticker.title;
         tabThumb.loading = 'lazy';
-        tabThumb.onerror = function() {
-          console.error('Failed to load tab thumb:', sticker.stickerImage);
-        };
+        tabThumb.decoding = 'async';
 
         const tabTitle = document.createElement('span');
         tabTitle.className = 'mac-tab-title';
@@ -1081,19 +995,14 @@
         stickerEl.style.zIndex = highestZIndex;
         
         const img = document.createElement('img');
-        // Use original image directly to avoid case sensitivity issues
         img.src = sticker.stickerImage;
         img.loading = 'lazy';
         img.decoding = 'async';
         img.alt = sticker.title;
-        img.className = 'sticker-image'; 
+        img.className = 'sticker-image';
         
         img.onload = () => {
           enforceBoundaries(stickerEl);
-        };
-        
-        img.onerror = function() {
-          console.error('Failed to load sticker:', sticker.stickerImage);
         };
         
         stickerEl.appendChild(img);
@@ -1131,7 +1040,6 @@
     function activateItem(id) {
       activeStickerId = id;
 
-      // Toggle tab active class
       document.querySelectorAll('.mac-tab-item').forEach(tab => {
         const isActive = parseInt(tab.dataset.id) === id;
         tab.classList.toggle('active', isActive);
@@ -1140,13 +1048,11 @@
         }
       });
 
-      // Toggle active highlight directly on the single canvas sticker
       document.querySelectorAll('.sticker-item').forEach(st => {
         const isHighlight = parseInt(st.dataset.id) === id;
         st.classList.toggle('active-highlight', isHighlight);
       });
 
-      // Separate active item from rest of canvas by dimming background stickers
       collageCanvas.classList.add('has-active');
     }
 
@@ -1168,17 +1074,14 @@
         cardWidth = Math.min(300, canvasRect.width - 20);
       }
 
-      // Position directly underneath the active sticker, centered horizontally (extending left & right)
       let cardLeft = relativeLeft + (stickerRect.width / 2) - (cardWidth / 2);
       let cardTop = relativeTop + stickerRect.height + 12;
 
-      // Prevent card from overflowing left or right boundaries
       if (cardLeft < 15) cardLeft = 15;
       if (cardLeft + cardWidth > canvasRect.width - 15) {
         cardLeft = canvasRect.width - cardWidth - 15;
       }
 
-      // Fallback: If card pushes off bottom of canvas, anchor slightly above or clamp
       if (cardTop + 140 > canvasRect.height) {
         cardTop = Math.max(15, relativeTop - 155);
       }
@@ -1363,7 +1266,6 @@
     resizeDrawCanvas();
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Mobile Menu Toggle
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
       const mobileMenu = document.getElementById('mobileMenu');
       const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
@@ -1373,8 +1275,6 @@
         
         mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
         mobileMenu.setAttribute('aria-hidden', isExpanded);
-        
-        // Prevent body scroll when menu is open
         document.body.style.overflow = isExpanded ? '' : 'hidden';
       }
       
@@ -1387,19 +1287,16 @@
       if (mobileMenuToggle && mobileMenu) {
         mobileMenuToggle.addEventListener('click', toggleMobileMenu);
         
-        // Close menu when clicking on navigation links
         mobileNavLinks.forEach(link => {
           link.addEventListener('click', closeMobileMenu);
         });
         
-        // Close menu when clicking outside
         mobileMenu.addEventListener('click', (e) => {
           if (e.target === mobileMenu) {
             closeMobileMenu();
           }
         });
         
-        // Close menu on escape key
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
             closeMobileMenu();

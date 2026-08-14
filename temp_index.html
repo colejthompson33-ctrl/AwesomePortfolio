@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home — Cole Thompson</title>
+  <title>Contact — Cole Thompson</title>
   
   <!-- Preload critical font -->
   <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
@@ -79,7 +79,7 @@
 
     .main-nav {
       display: flex;
-      gap: 1.5rem;
+      gap: 1.2rem;
       font-size: 0.9rem;
       font-weight: 400;
       color: rgba(255, 255, 255, 0.45);
@@ -282,137 +282,9 @@
       .contact-title-normal {
         font-size: clamp(1.8rem, 4vw, 2.8rem);
       }
-
-      .top-nav {
-        top: 1rem;
-        left: 1.25rem;
-        right: 1.25rem;
-      }
-      
-      .mobile-menu-toggle {
-        display: flex;
-      }
-      
-      .main-nav {
-        display: none;
-      }
     }
-  </style>
-</head>
-<body>
 
-  <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
-
-  <!-- Top Navigation -->
-  <header class="top-nav">
-    <button 
-      class="mobile-menu-toggle" 
-      id="mobileMenuToggle" 
-      aria-expanded="false" 
-      aria-controls="mobileMenu"
-      aria-label="Toggle navigation menu"
-    >
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-    </button>
-    
-    <nav class="main-nav" id="mainNav">
-      <a href="index.html" class="nav-link active">Home</a>
-      <a href="work.html" class="nav-link">Work</a>
-      <a href="contact.html" class="nav-link">Contact</a>
-      <a href="fun.html" class="nav-link">Fun</a>
-    </nav>
-    
-    <!-- Mobile Menu Panel -->
-    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-      <nav class="mobile-nav">
-        <a href="index.html" class="mobile-nav-link active">Home</a>
-        <a href="work.html" class="mobile-nav-link">Work</a>
-        <a href="contact.html" class="mobile-nav-link">Contact</a>
-        <a href="fun.html" class="mobile-nav-link">Fun</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Fullscreen Cover Layout -->
-  <main class="contact-page">
-    <div class="contact-background">
-      <picture>
-        <source srcset="images/000097000012.avif" type="image/avif">
-        <source srcset="images/000097000012.webp" type="image/webp">
-        <img src="images/000097000012.jpg" alt="Mountain landscape" class="contact-bg-image" loading="eager" fetchpriority="high" width="1920" height="1080" />
-      </picture>
-    </div>
-
-    <div class="contact-content">
-      <div class="contact-title">
-        <span class="contact-title-italic">Design</span>
-        <span class="contact-title-normal">Portfolio</span>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Mobile Menu Toggle
-      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-      const mobileMenu = document.getElementById('mobileMenu');
-      const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-      
-      function toggleMobileMenu() {
-        const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
-        
-        mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
-        mobileMenu.setAttribute('aria-hidden', isExpanded);
-        
-        // Prevent body scroll when menu is open
-        document.body.style.overflow = isExpanded ? '' : 'hidden';
-      }
-      
-      function closeMobileMenu() {
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileMenu.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-      
-      if (mobileMenuToggle && mobileMenu) {
-        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-        
-        // Close menu when clicking on navigation links
-        mobileNavLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
-        
-        // Close menu when clicking outside
-        mobileMenu.addEventListener('click', (e) => {
-          if (e.target === mobileMenu) closeMobileMenu();
-        });
-        
-        // Close menu on Escape key
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
-            closeMobileMenu();
-            mobileMenuToggle.focus();
-          }
-        });
-      }
-      
-      const EDGE_THRESHOLD = 90;
-
-      // Mouse tracking & Edge glow
-      window.addEventListener('mousemove', (e) => {
-        document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
-        document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
-
-        const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
-
-        if (minEdgeDist < EDGE_THRESHOLD) {
-          const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
-          document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
-        } else {
-          document.body.style.setProperty('--edge-glow-opacity', '0');
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+    .contact-email {
+      margin-top: 2rem;
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      font-weight: 400;
