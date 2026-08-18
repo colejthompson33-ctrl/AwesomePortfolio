@@ -5,8 +5,25 @@
    ========================================================= */
 
 /* Image aspect ratios to prevent CLS */
+/* Note: Removed aspect-ratio from .contact-bg-image to allow full viewport coverage for video */
 .contact-bg-image {
-  aspect-ratio: 16/9;
+  aspect-ratio: auto;
+}
+
+.contact-bg-video {
+  aspect-ratio: auto;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .contact-bg-video {
+    display: none;
+  }
+  .contact-background {
+    background-image: url('../images/000097000012.jpg');
+    background-size: cover;
+    background-position: center;
+  }
 }
 
 .stream-image {
@@ -54,11 +71,6 @@ img[loading="lazy"].loaded {
 
 .image-stream {
   contain: layout style paint;
-}
-
-/* Font loading optimization */
-@font-face {
-  font-display: swap;
 }
 
 /* Will-change hints for animated elements */

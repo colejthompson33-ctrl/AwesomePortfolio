@@ -228,59 +228,77 @@
       object-fit: cover;
     }
 
-    .contact-content {
+    .contact-bg-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       position: absolute;
-      top: 22vh;
-      left: 65vw;
-      z-index: 2;
+      inset: 0;
+      z-index: 1;
     }
 
-    .contact-title {
+    /* Respect user motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      .contact-bg-video {
+        display: none;
+      }
+      .contact-background {
+        background-image: url('images/000097000012.jpg');
+        background-size: cover;
+        background-position: center;
+      }
+    }
+
+    .home-content {
+      position: absolute;
+      top: clamp(7rem, 16vh, 11rem);
+      left: clamp(2rem, 5vw, 5rem);
+      max-width: clamp(320px, 32vw, 480px);
+      z-index: 10;
       display: flex;
       flex-direction: column;
-      line-height: 0.9;
-      letter-spacing: -0.03em;
+      gap: 1.5rem;
     }
 
-    .contact-title-italic {
-      font-size: clamp(2.5rem, 6vw, 4.8rem);
-      font-style: italic;
-      font-weight: 300;
-      color: rgba(255, 255, 255, 0.92);
-      margin-left: 0.2rem;
-    }
-
-    .contact-title-normal {
-      font-size: clamp(2.5rem, 6vw, 5rem);
+    .home-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
       font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
       color: #ffffff;
+      margin: 0;
+    }
+
+    .home-description {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .home-description p {
+      font-size: 0.825rem;
+      line-height: 1.55;
+      color: #a1a1a1;
+      font-weight: 400;
+      letter-spacing: -0.01em;
     }
 
     /* Responsive adjustment for smaller screens */
     @media (max-width: 900px) {
-      .contact-content {
-        left: 50vw;
-      }
-      .contact-title-italic {
-        font-size: clamp(2rem, 5vw, 3.5rem);
-      }
-      .contact-title-normal {
-        font-size: clamp(2rem, 5vw, 3.8rem);
+      .home-content {
+        top: clamp(6rem, 14vh, 9rem);
+        left: clamp(1.5rem, 4vw, 3rem);
+        max-width: clamp(280px, 35vw, 400px);
       }
     }
     
     /* Mobile-specific adjustments */
     @media (max-width: 767px) {
-      .contact-content {
-        left: 50%;
-        transform: translateX(-50%);
-        top: 15vh;
-      }
-      .contact-title-italic {
-        font-size: clamp(1.8rem, 4vw, 2.5rem);
-      }
-      .contact-title-normal {
-        font-size: clamp(1.8rem, 4vw, 2.8rem);
+      .home-content {
+        top: 6rem;
+        left: 1.5rem;
+        right: 1.5rem;
+        max-width: calc(100vw - 3rem);
       }
 
       .top-nav {
@@ -338,17 +356,30 @@
   <!-- Fullscreen Cover Layout -->
   <main class="contact-page">
     <div class="contact-background">
-      <picture>
-        <source srcset="images/000097000012.avif" type="image/avif">
-        <source srcset="images/000097000012.webp" type="image/webp">
-        <img src="images/000097000012.jpg" alt="Mountain landscape" class="contact-bg-image" loading="eager" fetchpriority="high" width="1920" height="1080" />
-      </picture>
+      <video 
+        class="contact-bg-video" 
+        autoplay 
+        loop 
+        muted 
+        playsinline 
+        preload="auto"
+        poster="images/000097000012.jpg"
+      >
+        <source src="images/Indexhometest.mp4" type="video/mp4" />
+        <!-- Fallback image if video fails to load or low-power mode blocks autoplay -->
+        <img src="images/000097000012.jpg" alt="Background fallback" class="contact-bg-image" />
+      </video>
     </div>
 
-    <div class="contact-content">
-      <div class="contact-title">
-        <span class="contact-title-italic">Design</span>
-        <span class="contact-title-normal">Portfolio</span>
+    <div class="home-content">
+      <h1 class="home-title">Design Portfolio</h1>
+      <div class="home-description">
+        <p>
+          This is Cole Thompson's Portfolio
+        </p>
+        <p>
+          Available for work! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
       </div>
     </div>
   </main>

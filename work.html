@@ -630,22 +630,33 @@
       
       .content-right {
         width: 100%;
+        max-width: 100vw;
         display: block !important;
         height: 100vh;
-        perspective: 900px;
+        perspective: none;
+        overflow: hidden;
       }
 
+      /* Requirement 1: Strictly center-justify stream on mobile without edge clipping */
       .image-stream-container {
         top: 0;
+        left: 0;
         right: 0;
-        width: 100vw;
+        width: 100%;
+        max-width: 100vw;
         height: 100vh;
-        transform: rotateZ(2deg) rotateY(-8deg) rotateX(2deg);
+        margin: 0 auto;
+        transform: none !important;
         transform-origin: center center;
       }
 
       .stream-card {
         padding: 6px;
+        margin: 0 auto;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
 
       .card-overlay-desc {
@@ -675,15 +686,68 @@
 
       .project-container {
         width: 100%;
-        padding: 2rem 1.5rem 3rem 1.5rem;
+        padding: 1.25rem;
       }
 
-      .project-header {
-        margin-top: 3.5rem;
+      /* Requirement 3: Mobile Project View Navigation Alignment */
+      body.is-project-mode .mobile-menu-toggle {
+        display: none !important;
       }
 
-      .project-title {
-        font-size: clamp(2rem, 6vw, 2.8rem);
+      body.is-project-mode .go-back-btn {
+        display: none !important;
+      }
+
+      .mobile-back-btn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0.5rem;
+        min-width: 44px;
+        min-height: 44px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 1rem;
+        left: 1.25rem;
+        z-index: 3000;
+      }
+
+      body.is-project-mode .mobile-back-btn {
+        display: inline-flex !important;
+      }
+
+      body.is-project-mode .project-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-end;
+        position: fixed;
+        top: 1rem;
+        right: 1.25rem;
+        left: auto;
+        margin: 0 !important;
+        padding: 0;
+        z-index: 2999;
+        min-height: auto;
+      }
+
+      body.is-project-mode .project-title {
+        font-size: clamp(0.95rem, 3.8vw, 1.35rem) !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: calc(100vw - 6rem);
+        text-align: right;
+        margin: 0;
+      }
+
+      body.is-project-mode .project-title::after {
+        content: ' ↗';
+        margin-left: 0.25rem;
       }
 
       #projectLeft {
@@ -701,6 +765,7 @@
       }
     }
 
+    /* Requirement 2: Strict Desktop Back Button & Hide Mobile Back Button on Desktop */
     @media (min-width: 768px) {
       .mobile-menu-toggle {
         display: none;
@@ -708,6 +773,11 @@
       
       .mobile-menu {
         display: none;
+      }
+
+      #mobileBackBtn,
+      .mobile-back-btn {
+        display: none !important;
       }
     }
     
@@ -845,13 +915,15 @@
       display: block;
     }
 
+    /* Requirement 4: Mobile Pinboard Stacked Wrapper */
     @media (max-width: 767px) {
       .pinboard-grid-wrapper {
-        top: 10vh;
+        top: 12vh;
         left: 5vw;
-        right: auto;
+        right: 5vw;
         width: 90vw;
-        height: 75vh;
+        height: 80vh;
+        margin: 0 auto;
       }
     }
 
@@ -1085,6 +1157,9 @@
   <div class="project-detail-view" id="projectDetailView">
     <div class="project-container">
       <header class="project-header">
+        <button class="mobile-back-btn" id="mobileBackBtn" aria-label="Go back to work">
+          ←
+        </button>
         <h1 class="project-title" id="projectTitle">Blue House</h1>
         <button class="go-back-btn" id="goBackBtn">
           ← Go Back to All Work
@@ -1171,7 +1246,6 @@
         if (!currentGalleryList.length) return;
         
         const imgSrc = currentGalleryList[currentGalleryIndex];
-        // Try WebP first, fallback to original
         if (imgSrc.includes('.jpg') || imgSrc.includes('.jpeg') || imgSrc.includes('.png')) {
           const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
           lightboxImg.src = webpSrc;
@@ -1670,7 +1744,17 @@
         };
       }
 
-      // Build Collage with LARGER Objects and initial positioning within bounds
+      // Mobile back button for project mode
+      const mobileBackBtn = document.getElementById('mobileBackBtn');
+      if (mobileBackBtn) {
+        mobileBackBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (isProjectViewMode) closeProjectView();
+        };
+      }
+
+      /* Requirement 4: Stacked image layout for mobile pinboard (fun.html sticker setup) */
       function buildCollageLayout(items) {
         const gridWrapper = document.getElementById('pinboardGridWrapper');
         gridWrapper.innerHTML = '';
@@ -1679,42 +1763,75 @@
         const count = items.length;
         const isMobile = window.innerWidth < 768;
 
-        // Increased sizes for pinboard items
-        let baseWidthVW = isMobile ? 42 : (count <= 2 ? 38 : (count <= 4 ? 26 : 21));
-        let baseHeightVH = isMobile ? 26 : (count <= 2 ? 45 : (count <= 4 ? 35 : 28));
+        if (isMobile) {
+          // Compact stacked arrangement on mobile preserving vertical viewport height
+          const itemWidthVW = 62;
+          const itemHeightVH = 32;
 
-        const columns = isMobile ? 2 : (count > 3 ? 3 : (count === 3 ? 3 : count));
-        
-        items.forEach((item, idx) => {
-          const pinboardItem = document.createElement('div');
-          pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
+          items.forEach((item, idx) => {
+            const pinboardItem = document.createElement('div');
+            pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
 
-          const col = idx % columns;
-          const row = Math.floor(idx / columns);
+            // Centered stacked card coordinates with slight offsetting & rotation
+            const xOffsets = [0, 12, -12, 16, -16, 8, -8];
+            const yOffsets = [0, 18, 36, 54, 72, 90, 108];
+            const rotations = [-3, 4, -5, 3, -2, 5, -4];
 
-          const staggerOffset = (col === 1) ? 3 : (col === 2 ? 6 : 0); 
-          const rotDeg = item.isPng ? (idx % 2 === 0 ? 3 : -4) : (idx % 2 === 0 ? -2 : 2);
+            const offsetX = xOffsets[idx % xOffsets.length];
+            const offsetY = yOffsets[idx % yOffsets.length];
+            const rotDeg = rotations[idx % rotations.length];
 
-          const posX = col * (baseWidthVW * (isMobile ? 1.02 : 0.88)) + (item.isPng ? 1 : 0);
-          const posY = row * (baseHeightVH * (isMobile ? 1.05 : 1.12)) + staggerOffset;
+            pinboardItem.style.width = `${itemWidthVW}vw`;
+            pinboardItem.style.height = `${itemHeightVH}vh`;
+            pinboardItem.style.left = `calc(50% - ${itemWidthVW / 2}vw + ${offsetX}px)`;
+            pinboardItem.style.top = `${offsetY}px`;
+            pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
+            pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
 
-          pinboardItem.style.width = `${baseWidthVW}vw`;
-          pinboardItem.style.height = `${baseHeightVH}vh`;
-          pinboardItem.style.left = `${posX}vw`;
-          pinboardItem.style.top = `${posY}vh`;
-          pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
-          
-          pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
+            const img = document.createElement('img');
+            img.src = item.src;
+            img.alt = `Project Asset ${idx + 1}`;
 
-          const img = document.createElement('img');
-          img.src = item.src;
-          img.alt = `Project Asset ${idx + 1}`;
+            pinboardItem.appendChild(img);
+            gridWrapper.appendChild(pinboardItem);
 
-          pinboardItem.appendChild(img);
-          gridWrapper.appendChild(pinboardItem);
+            makeDraggableAndZoomable(pinboardItem, idx);
+          });
+        } else {
+          // Desktop Pinboard Grid
+          let baseWidthVW = count <= 2 ? 38 : (count <= 4 ? 26 : 21);
+          let baseHeightVH = count <= 2 ? 45 : (count <= 4 ? 35 : 28);
+          const columns = count > 3 ? 3 : (count === 3 ? 3 : count);
 
-          makeDraggableAndZoomable(pinboardItem, idx);
-        });
+          items.forEach((item, idx) => {
+            const pinboardItem = document.createElement('div');
+            pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
+
+            const col = idx % columns;
+            const row = Math.floor(idx / columns);
+            const staggerOffset = (col === 1) ? 3 : (col === 2 ? 6 : 0); 
+            const rotDeg = item.isPng ? (idx % 2 === 0 ? 3 : -4) : (idx % 2 === 0 ? -2 : 2);
+
+            const posX = col * (baseWidthVW * 0.88) + (item.isPng ? 1 : 0);
+            const posY = row * (baseHeightVH * 1.12) + staggerOffset;
+
+            pinboardItem.style.width = `${baseWidthVW}vw`;
+            pinboardItem.style.height = `${baseHeightVH}vh`;
+            pinboardItem.style.left = `${posX}vw`;
+            pinboardItem.style.top = `${posY}vh`;
+            pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
+            pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
+
+            const img = document.createElement('img');
+            img.src = item.src;
+            img.alt = `Project Asset ${idx + 1}`;
+
+            pinboardItem.appendChild(img);
+            gridWrapper.appendChild(pinboardItem);
+
+            makeDraggableAndZoomable(pinboardItem, idx);
+          });
+        }
       }
 
       function openProjectView(key, cardNode) {
@@ -1824,7 +1941,6 @@
           let newLeft = initialLeft + dx;
           let newTop = initialTop + dy;
 
-          // Clamp position strictly within Window Constraints
           const parentRect = element.offsetParent 
             ? element.offsetParent.getBoundingClientRect() 
             : { left: 0, top: 0 };
