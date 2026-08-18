@@ -34,18 +34,6 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Background Video Styling */
-    .bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      z-index: -1;
-      pointer-events: none;
-    }
-
     /* Edge-Proximity Glowing Window Outline */
     body::after {
       content: '';
@@ -649,6 +637,7 @@
         overflow: hidden;
       }
 
+      /* Requirement 1: Strictly center-justify stream on mobile without edge clipping */
       .image-stream-container {
         top: 0;
         left: 0;
@@ -700,6 +689,7 @@
         padding: 1.25rem;
       }
 
+      /* Requirement 3: Mobile Project View Navigation Alignment */
       body.is-project-mode .mobile-menu-toggle {
         display: none !important;
       }
@@ -770,6 +760,7 @@
       }
     }
 
+    /* Requirement 2: Strict Desktop Back Button & Hide Mobile Back Button on Desktop */
     @media (min-width: 768px) {
       .mobile-menu-toggle {
         display: none;
@@ -919,6 +910,7 @@
       display: block;
     }
 
+    /* Requirement 4: Mobile Pinboard Stacked Wrapper */
     @media (max-width: 767px) {
       .pinboard-grid-wrapper {
         top: 12vh;
@@ -1081,11 +1073,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Background Video Element -->
-  <video class="bg-video" autoplay loop muted playsinline>
-    <source src="images/IndexhomeTest.mp4" type="video/mp4" />
-  </video>
 
   <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
 
@@ -1771,6 +1758,7 @@
         const isMobile = window.innerWidth < 768;
 
         if (isMobile) {
+          // Compact stacked arrangement on mobile preserving vertical viewport height
           const itemWidthVW = 62;
           const itemHeightVH = 32;
 
@@ -1778,6 +1766,7 @@
             const pinboardItem = document.createElement('div');
             pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
 
+            // Centered stacked card coordinates with slight offsetting & rotation
             const xOffsets = [0, 12, -12, 16, -16, 8, -8];
             const yOffsets = [0, 18, 36, 54, 72, 90, 108];
             const rotations = [-3, 4, -5, 3, -2, 5, -4];
@@ -1803,6 +1792,7 @@
             makeDraggableAndZoomable(pinboardItem, idx);
           });
         } else {
+          // Desktop Pinboard Grid
           let baseWidthVW = count <= 2 ? 38 : (count <= 4 ? 26 : 21);
           let baseHeightVH = count <= 2 ? 45 : (count <= 4 ? 35 : 28);
           const columns = count > 3 ? 3 : (count === 3 ? 3 : count);
@@ -1914,6 +1904,7 @@
         }
       }
 
+      // Dragging logic with Window Constraint Clamping
       function makeDraggableAndZoomable(element, galleryIdx) {
         let isItemDragging = false;
         let startX = 0, startY = 0;
@@ -2002,6 +1993,7 @@
         window.addEventListener('touchend', stopDrag);
       }
 
+      // Wheel Event Handling
       window.addEventListener('wheel', (e) => {
         e.preventDefault();
         if (isProjectViewMode) return;

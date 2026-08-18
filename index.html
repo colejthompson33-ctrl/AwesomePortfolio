@@ -222,6 +222,16 @@
       height: 100%;
     }
 
+    /* Dark gradient scrim overlay to maintain high text contrast over video */
+    .contact-background::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.75) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
     .contact-bg-image {
       width: 100%;
       height: 100%;
@@ -235,6 +245,7 @@
       position: absolute;
       inset: 0;
       z-index: 1;
+      pointer-events: none;
     }
 
     /* Respect user motion preferences */
@@ -267,6 +278,7 @@
       line-height: 1.05;
       color: #ffffff;
       margin: 0;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
     .home-description {
@@ -278,9 +290,10 @@
     .home-description p {
       font-size: 0.825rem;
       line-height: 1.55;
-      color: #a1a1a1;
+      color: #d1d1d1;
       font-weight: 400;
       letter-spacing: -0.01em;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
     }
 
     /* Responsive adjustment for smaller screens */
@@ -358,15 +371,17 @@
     <div class="contact-background">
       <video 
         class="contact-bg-video" 
+        id="bgVideo"
         autoplay 
         loop 
         muted 
         playsinline 
+        webkit-playsinline
         preload="auto"
         poster="images/000097000012.jpg"
       >
-        <source src="images/Indexhometest.mp4" type="video/mp4" />
-        <!-- Fallback image if video fails to load or low-power mode blocks autoplay -->
+        <source src="images/IndexhomeTest.mp4" type="video/mp4" />
+        <!-- Fallback image if video fails to load or unsupported -->
         <img src="images/000097000012.jpg" alt="Background fallback" class="contact-bg-image" />
       </video>
     </div>
@@ -386,6 +401,24 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Background Video Autoplay Enforcement for Mobile / Low Power Modes
+      const bgVideo = document.getElementById('bgVideo');
+      if (bgVideo) {
+        const attemptPlay = () => {
+          bgVideo.play().catch(() => {
+            // Re-attempt play on first user interaction if blocked by battery-saver policy
+            const handleTouch = () => {
+              bgVideo.play().catch(() => {});
+              window.removeEventListener('touchstart', handleTouch);
+              window.removeEventListener('click', handleTouch);
+            };
+            window.addEventListener('touchstart', handleTouch, { passive: true });
+            window.addEventListener('click', handleTouch, { passive: true });
+          });
+        };
+        attemptPlay();
+      }
+
       // Mobile Menu Toggle
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
       const mobileMenu = document.getElementById('mobileMenu');
@@ -397,7 +430,6 @@
         mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
         mobileMenu.setAttribute('aria-hidden', isExpanded);
         
-        // Prevent body scroll when menu is open
         document.body.style.overflow = isExpanded ? '' : 'hidden';
       }
       
@@ -409,16 +441,12 @@
       
       if (mobileMenuToggle && mobileMenu) {
         mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-        
-        // Close menu when clicking on navigation links
         mobileNavLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
         
-        // Close menu when clicking outside
         mobileMenu.addEventListener('click', (e) => {
           if (e.target === mobileMenu) closeMobileMenu();
         });
         
-        // Close menu on Escape key
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
             closeMobileMenu();
