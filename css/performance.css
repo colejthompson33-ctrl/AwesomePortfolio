@@ -113,4 +113,131 @@ body::after {
     rgba(0, 0, 0, 0.8) 40%,
     transparent 80%
   );
+}/* =========================================================
+   Performance Optimization CSS
+   - Prevents Cumulative Layout Shift (CLS)
+   - Ensures proper image loading and rendering
+   ========================================================= */
+
+/* Image aspect ratios to prevent CLS */
+/* Note: Removed aspect-ratio from .contact-bg-image to allow full viewport coverage for video */
+.contact-bg-image {
+  aspect-ratio: auto;
+}
+
+.contact-bg-video {
+  aspect-ratio: auto;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .contact-bg-video {
+    display: none;
+  }
+  .contact-background {
+    background-image: url('../images/000097000012.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+.stream-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.stream-image.loaded {
+  opacity: 1;
+}
+
+.sticker-image {
+  aspect-ratio: 1/1;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.3s ease-out, filter 0.25s ease;
+}
+
+.sticker-image.loaded {
+  opacity: 1;
+}
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  aspect-ratio: auto;
+}
+
+/* Image loading states */
+img[loading="lazy"] {
+  background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+img[loading="lazy"].loaded {
+  background: none;
+  animation: none;
+}
+
+/* Content visibility for better rendering */
+.portfolio-layout {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
+}
+
+.image-stream {
+  contain: layout style paint;
+}
+
+/* Will-change hints for animated elements */
+.stream-card {
+  will-change: transform;
+}
+
+.image-stream {
+  will-change: transform;
+}
+
+.sticker-item {
+  will-change: transform, z-index;
+}
+
+/* Edge Glow Effect - for experience/work/fun pages */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  border: 1px solid rgba(0, 210, 255, 0.9);
+  box-shadow: 
+    inset 0 0 10px rgba(0, 210, 255, 0.6),
+    inset 0 0 20px rgba(180, 255, 60, 0.4),
+    0 0 15px rgba(0, 210, 255, 0.7);
+  opacity: var(--edge-glow-opacity, 0);
+  transition: opacity 0.2s ease;
+  
+  -webkit-mask-image: radial-gradient(
+    70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+    black 0%,
+    rgba(0, 0, 0, 0.8) 40%,
+    transparent 80%
+  );
+  mask-image: radial-gradient(
+    70px circle at var(--bg-mouse-x, 50vw) var(--bg-mouse-y, 50vh),
+    black 0%,
+    rgba(0, 0, 0, 0.8) 40%,
+    transparent 80%
+  );
 }
