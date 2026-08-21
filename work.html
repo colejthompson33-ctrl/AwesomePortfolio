@@ -913,11 +913,11 @@
     /* Requirement 4: Mobile Pinboard Stacked Wrapper */
     @media (max-width: 767px) {
       .pinboard-grid-wrapper {
-        top: 12vh;
+        top: 10vh;
         left: 5vw;
         right: 5vw;
         width: 90vw;
-        height: 80vh;
+        height: 85vh;
         margin: 0 auto;
       }
     }
@@ -1758,29 +1758,29 @@
         const isMobile = window.innerWidth < 768;
 
         if (isMobile) {
-          // Compact stacked arrangement on mobile preserving vertical viewport height
-          const itemWidthVW = 62;
-          const itemHeightVH = 32;
+          // Spread out grid layout for mobile instead of stacked
+          const itemWidthVW = 42;
+          const itemHeightVH = 25;
+          const columns = 2;
+          const gapX = 4;
+          const gapY = 6;
 
           items.forEach((item, idx) => {
             const pinboardItem = document.createElement('div');
             pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
 
-            // Centered stacked card coordinates with slight offsetting & rotation
-            const xOffsets = [0, 12, -12, 16, -16, 8, -8];
-            const yOffsets = [0, 18, 36, 54, 72, 90, 108];
-            const rotations = [-3, 4, -5, 3, -2, 5, -4];
+            const col = idx % columns;
+            const row = Math.floor(idx / columns);
 
-            const offsetX = xOffsets[idx % xOffsets.length];
-            const offsetY = yOffsets[idx % yOffsets.length];
-            const rotDeg = rotations[idx % rotations.length];
+            const posX = col * (itemWidthVW + gapX) + gapX;
+            const posY = row * (itemHeightVH + gapY) + gapY;
 
             pinboardItem.style.width = `${itemWidthVW}vw`;
             pinboardItem.style.height = `${itemHeightVH}vh`;
-            pinboardItem.style.left = `calc(50% - ${itemWidthVW / 2}vw + ${offsetX}px)`;
-            pinboardItem.style.top = `${offsetY}px`;
-            pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
-            pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
+            pinboardItem.style.left = `${posX}vw`;
+            pinboardItem.style.top = `${posY}vh`;
+            pinboardItem.style.transform = `rotate(0deg)`;
+            pinboardItem.style.zIndex = 1300 + idx;
 
             const img = document.createElement('img');
             img.src = item.src;

@@ -377,7 +377,6 @@
         playsinline 
         webkit-playsinline
         preload="auto"
-        poster="images/000097000012.jpg"
       >
         <source src="images/Run2.mp4" type="video/mp4" />
         <source src="images/Run3.mp4" type="video/mp4" />
@@ -405,7 +404,7 @@
       const videos = ['images/Run2.mp4', 'images/Run3.mp4'];
       let currentVideoIndex = 0;
       let loopCount = 0;
-      const loopsPerVideo = 4;
+      const loopsPerVideo = 3;
 
       function switchVideo() {
         currentVideoIndex = (currentVideoIndex + 1) % videos.length;

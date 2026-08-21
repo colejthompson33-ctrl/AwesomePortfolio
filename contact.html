@@ -586,16 +586,29 @@
         width: 100%;
         display: block !important;
         height: 100vh;
-        perspective: 900px;
+        perspective: none;
+        overflow: hidden;
       }
 
       .image-stream-container {
         top: 0;
+        left: 0;
         right: 0;
-        width: 100vw;
+        width: 100%;
+        max-width: 100vw;
         height: 100vh;
-        transform: rotateZ(2deg) rotateY(-8deg) rotateX(2deg);
+        margin: 0 auto;
+        transform: none !important;
         transform-origin: center center;
+      }
+
+      .stream-card {
+        padding: 6px;
+        margin: 0 auto;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
 
       .stream-card {
@@ -734,7 +747,7 @@
       <div class="hero-container" id="heroContainer">
         <h1 class="name" id="heroTitle">Cole Thompson</h1>
         <span class="click-hint" id="heroHint">click a project to see more</span>
-        <button class="go-back-btn" id="backToWorkBtn">&larr; Go Back to All Work</button>
+        <button class="go-back-btn" id="backToWorkBtn">&larr; Go Back</button>
       </div>
 
       <!-- Sections Container -->
@@ -743,10 +756,10 @@
         <div class="section-grid">
           <div class="section-content">
             <p>
-              Hi, I'm Cole Thompson—a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.
+              Hi, I'm Cole Thompson - a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.
             </p>
             <p>
-              Design is my first love. Throughout my career, I've developed a passion for anything in motion—from dynamic branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.
+              Design is my first love. Throughout my career, I've developed a passion for anything in motion - from dynamic branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.
             </p>
             <p>
               Have a project in mind, a question about my work, or just want to connect? Feel free to reach out anytime!
