@@ -915,6 +915,17 @@
       element.style.zIndex = highestZIndex;
     }
 
+    // Define boundary zones where images can be placed (red outlined areas)
+    // Each zone: { left: %, top: %, width: %, height: % }
+    const boundaryZones = [
+      { left: 5, top: 5, width: 40, height: 40 },    // Top-left zone
+      { left: 55, top: 5, width: 40, height: 40 },   // Top-right zone  
+      { left: 5, top: 55, width: 40, height: 40 },   // Bottom-left zone
+      { left: 55, top: 55, width: 40, height: 40 }, // Bottom-right zone
+      { left: 25, top: 25, width: 50, height: 50 },  // Center zone
+      { left: 0, top: 0, width: 100, height: 100 } // Full canvas fallback
+    ];
+
     function enforceBoundaries(element) {
       const canvasRect = collageCanvas.getBoundingClientRect();
       
@@ -927,21 +938,73 @@
       const elemWidth = element.offsetWidth;
       const elemHeight = element.offsetHeight;
       
-      const maxLeft = canvasRect.width - elemWidth;
-      const maxTop = canvasRect.height - elemHeight;
-      
-      let newLeftPx = leftPx;
-      let newTopPx = topPx;
-      
-      if (newLeftPx < 0) newLeftPx = 0;
-      if (newLeftPx > maxLeft) newLeftPx = maxLeft;
-      
-      if (newTopPx < 0) newTopPx = 0;
-      if (newTopPx > maxTop) newTopPx = maxTop;
-      
-      if (newLeftPx !== leftPx || newTopPx !== topPx) {
-        element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
-        element.style.top = (newTopPx / canvasRect.height * 100) + '%';
+      // Check if current position is within any boundary zone
+      let withinAnyZone = false;
+      let closestZone = null;
+      let minDistance = Infinity;
+
+      for (const zone of boundaryZones) {
+        const zoneLeft = (zone.left / 100) * canvasRect.width;
+        const zoneTop = (zone.top / 100) * canvasRect.height;
+        const zoneRight = zoneLeft + (zone.width / 100) * canvasRect.width;
+        const zoneBottom = zoneTop + (zone.height / 100) * canvasRect.height;
+
+        // Check if element is within this zone
+        if (leftPx >= zoneLeft && leftPx + elemWidth <= zoneRight &&
+            topPx >= zoneTop && topPx + elemHeight <= zoneBottom) {
+          withinAnyZone = true;
+          break;
+        }
+
+        // Calculate distance to zone center for fallback
+        const zoneCenterX = zoneLeft + (zone.width / 200) * canvasRect.width;
+        const zoneCenterY = zoneTop + (zone.height / 200) * canvasRect.height;
+        const elemCenterX = leftPx + elemWidth / 2;
+        const elemCenterY = topPx + elemHeight / 2;
+        const distance = Math.hypot(elemCenterX - zoneCenterX, elemCenterY - zoneCenterY);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestZone = zone;
+        }
+      }
+
+      // If not within any zone, constrain to closest zone or canvas bounds
+      if (!withinAnyZone && closestZone) {
+        const zoneLeft = (closestZone.left / 100) * canvasRect.width;
+        const zoneTop = (closestZone.top / 100) * canvasRect.height;
+        const zoneRight = zoneLeft + (closestZone.width / 100) * canvasRect.width;
+        const zoneBottom = zoneTop + (closestZone.height / 100) * canvasRect.height;
+
+        // Clamp position to within the closest zone
+        const maxLeft = zoneRight - elemWidth;
+        const maxTop = zoneBottom - elemHeight;
+
+        let newLeftPx = Math.max(zoneLeft, Math.min(leftPx, maxLeft));
+        let newTopPx = Math.max(zoneTop, Math.min(topPx, maxTop));
+
+        if (newLeftPx !== leftPx || newTopPx !== topPx) {
+          element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
+          element.style.top = (newTopPx / canvasRect.height * 100) + '%';
+        }
+      } else {
+        // Standard canvas boundary enforcement
+        const maxLeft = canvasRect.width - elemWidth;
+        const maxTop = canvasRect.height - elemHeight;
+        
+        let newLeftPx = leftPx;
+        let newTopPx = topPx;
+        
+        if (newLeftPx < 0) newLeftPx = 0;
+        if (newLeftPx > maxLeft) newLeftPx = maxLeft;
+        
+        if (newTopPx < 0) newTopPx = 0;
+        if (newTopPx > maxTop) newTopPx = maxTop;
+        
+        if (newLeftPx !== leftPx || newTopPx !== topPx) {
+          element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
+          element.style.top = (newTopPx / canvasRect.height * 100) + '%';
+        }
       }
     }
 

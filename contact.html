@@ -323,6 +323,16 @@
       align-self: flex-start;
     }
 
+    .project-header {
+      display: none;
+    }
+
+    .project-title {
+      color: #ffffff;
+      font-weight: 600;
+      margin: 0;
+    }
+
     .section-grid {
       display: grid;
       grid-template-columns: 1fr clamp(100px, 12vw, 160px);
@@ -611,15 +621,95 @@
         max-width: 100% !important;
       }
 
-      .stream-card {
-        padding: 6px;
-      }
-
       .card-action-badge {
         opacity: 1;
         transform: translateY(0);
         font-size: 0.7rem;
         padding: 0.3rem 0.6rem;
+      }
+
+      /* Mobile Project View Header Styles */
+      body.is-project-mode .mobile-menu-toggle {
+        display: none !important;
+      }
+
+      #mobileBackBtn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0.5rem;
+        min-width: 44px;
+        min-height: 44px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 1rem;
+        left: 1.25rem;
+        z-index: 3000;
+      }
+
+      body.is-project-mode #mobileBackBtn {
+        display: inline-flex !important;
+      }
+
+      body.is-project-mode #projectHeader {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-end;
+        position: fixed;
+        top: 1rem;
+        right: 1.25rem;
+        left: auto;
+        margin: 0 !important;
+        padding: 0;
+        z-index: 2999;
+        min-height: auto;
+      }
+
+      body.is-project-mode #projectTitle {
+        font-size: clamp(0.95rem, 3.8vw, 1.35rem) !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: calc(100vw - 6rem);
+        text-align: right;
+        margin: 0;
+      }
+
+      /* Mobile Project Description */
+      #mobileProjectDescription {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.95);
+        padding: 1.5rem;
+        z-index: 2998;
+        max-height: 40vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      body.is-project-mode #mobileProjectDescription {
+        display: block;
+      }
+
+      #mobileProjectDescription h3 {
+        color: #ffffff;
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+      }
+
+      #mobileProjectDescription p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
       }
 
       .top-nav {
@@ -644,6 +734,11 @@
       
       .mobile-menu {
         display: none;
+      }
+
+      #mobileBackBtn,
+      #mobileProjectDescription {
+        display: none !important;
       }
     }
     
@@ -740,6 +835,18 @@
     </div>
   </header>
 
+  <!-- Mobile Project View Header -->
+  <button class="mobile-back-btn" id="mobileBackBtn">←</button>
+  <div class="project-header" id="projectHeader" style="display: none;">
+    <h2 class="project-title" id="projectTitle">Project Title</h2>
+  </div>
+
+  <!-- Mobile Project Description -->
+  <div class="mobile-project-description" id="mobileProjectDescription">
+    <h3 id="mobileProjectTitle">Project Title</h3>
+    <div id="mobileProjectContent"></div>
+  </div>
+
   <main class="portfolio-layout" id="mainLayout">
     <!-- Left Column: Content -->
     <div class="content-left">
@@ -804,6 +911,14 @@
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
       const mobileMenu = document.getElementById('mobileMenu');
       const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+      
+      // Mobile Project View Elements
+      const mobileBackBtn = document.getElementById('mobileBackBtn');
+      const projectHeader = document.getElementById('projectHeader');
+      const projectTitle = document.getElementById('projectTitle');
+      const mobileProjectDescription = document.getElementById('mobileProjectDescription');
+      const mobileProjectTitle = document.getElementById('mobileProjectTitle');
+      const mobileProjectContent = document.getElementById('mobileProjectContent');
       
       function toggleMobileMenu() {
         const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
@@ -1157,10 +1272,27 @@
           experience: imageData.experience
         });
 
+        // Mobile project view setup
+        if (window.innerWidth < 768) {
+          document.body.classList.add('is-project-mode');
+          if (projectTitle) projectTitle.textContent = imageData.title;
+          if (mobileProjectTitle) mobileProjectTitle.textContent = imageData.title;
+          
+          // Combine about and experience paragraphs for mobile description
+          const aboutText = imageData.about.paragraphs.join(' ');
+          const experienceText = imageData.experience.paragraphs.join(' ');
+          if (mobileProjectContent) {
+            mobileProjectContent.innerHTML = `
+              <p><strong>About:</strong> ${aboutText}</p>
+              <p><strong>Experience:</strong> ${experienceText}</p>
+            `;
+          }
+        }
+
         const vh = window.innerHeight;
-        const containerTopOffset = vh * 0.20; 
-        const perspectiveTiltOffset = vh * 0.12; 
-        const screenCenter = vh * 0.50;
+        const containerTopOffset = vh * 0.05; // Reduced from 0.20 to move highlight up
+        const perspectiveTiltOffset = vh * 0.02; // Reduced from 0.12 for less offset
+        const screenCenter = vh * 0.35; // Reduced from 0.50 to move highlight closer to top
 
         targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
       }
@@ -1172,6 +1304,9 @@
         backToWorkBtn.classList.remove('visible');
         heroHint.classList.remove('hidden');
 
+        // Remove mobile project view
+        document.body.classList.remove('is-project-mode');
+
         updateLeftColumn(defaultLeftContent);
       }
 
@@ -1179,6 +1314,15 @@
         e.stopPropagation();
         deselectImage();
       });
+
+      // Mobile back button
+      if (mobileBackBtn) {
+        mobileBackBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          deselectImage();
+        });
+      }
 
       // Wheel Event Handling
       window.addEventListener('wheel', (e) => {
