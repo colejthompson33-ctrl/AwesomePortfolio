@@ -373,7 +373,6 @@
         class="contact-bg-video" 
         id="bgVideo"
         autoplay 
-        loop 
         muted 
         playsinline 
         webkit-playsinline
@@ -381,6 +380,7 @@
         poster="images/000097000012.jpg"
       >
         <source src="images/Run2.mp4" type="video/mp4" />
+        <source src="images/Run3.mp4" type="video/mp4" />
         <!-- Fallback image if video fails to load or unsupported -->
         <img src="images/000097000012.jpg" alt="Background fallback" class="contact-bg-image" />
       </video>
@@ -400,22 +400,52 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Background Video Autoplay Enforcement for Mobile / Low Power Modes
+      // Background Video Alternation Logic
       const bgVideo = document.getElementById('bgVideo');
+      const videos = ['images/Run2.mp4', 'images/Run3.mp4'];
+      let currentVideoIndex = 0;
+      let loopCount = 0;
+      const loopsPerVideo = 4;
+
+      function switchVideo() {
+        currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+        loopCount = 0;
+        bgVideo.src = videos[currentVideoIndex];
+        bgVideo.load();
+        bgVideo.play().catch(() => {
+          // Re-attempt play on user interaction if blocked
+          const handleInteraction = () => {
+            bgVideo.play().catch(() => {});
+            window.removeEventListener('touchstart', handleInteraction);
+            window.removeEventListener('click', handleInteraction);
+          };
+          window.addEventListener('touchstart', handleInteraction, { passive: true });
+          window.addEventListener('click', handleInteraction, { passive: true });
+        });
+      }
+
       if (bgVideo) {
-        const attemptPlay = () => {
-          bgVideo.play().catch(() => {
-            // Re-attempt play on first user interaction if blocked by battery-saver policy
-            const handleTouch = () => {
-              bgVideo.play().catch(() => {});
-              window.removeEventListener('touchstart', handleTouch);
-              window.removeEventListener('click', handleTouch);
-            };
-            window.addEventListener('touchstart', handleTouch, { passive: true });
-            window.addEventListener('click', handleTouch, { passive: true });
-          });
-        };
-        attemptPlay();
+        bgVideo.addEventListener('ended', () => {
+          loopCount++;
+          if (loopCount >= loopsPerVideo) {
+            switchVideo();
+          } else {
+            bgVideo.currentTime = 0;
+            bgVideo.play();
+          }
+        });
+
+        // Initial play attempt
+        bgVideo.play().catch(() => {
+          // Re-attempt play on first user interaction if blocked by battery-saver policy
+          const handleTouch = () => {
+            bgVideo.play().catch(() => {});
+            window.removeEventListener('touchstart', handleTouch);
+            window.removeEventListener('click', handleTouch);
+          };
+          window.addEventListener('touchstart', handleTouch, { passive: true });
+          window.addEventListener('click', handleTouch, { passive: true });
+        });
       }
 
       // Mobile Menu Toggle
