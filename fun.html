@@ -1066,6 +1066,10 @@
         
         img.onload = () => {
           enforceBoundaries(stickerEl);
+          // Set aspect ratio after image loads to prevent CLS
+          if (img.naturalWidth && img.naturalHeight) {
+            img.style.aspectRatio = `${img.naturalWidth}/${img.naturalHeight}`;
+          }
         };
         
         stickerEl.appendChild(img);

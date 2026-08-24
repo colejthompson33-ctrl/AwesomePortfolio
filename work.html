@@ -596,6 +596,7 @@
       object-fit: cover;
       display: block;
       pointer-events: none;
+      aspect-ratio: 16/9;
     }
 
     .page-transition-overlay {
@@ -913,11 +914,11 @@
     /* Requirement 4: Mobile Pinboard Stacked Wrapper */
     @media (max-width: 767px) {
       .pinboard-grid-wrapper {
-        top: 10vh;
-        left: 5vw;
-        right: 5vw;
-        width: 90vw;
-        height: 85vh;
+        top: 8vh;
+        left: 4vw;
+        right: 4vw;
+        width: 92vw;
+        height: 88vh;
         margin: 0 auto;
       }
     }
@@ -1575,6 +1576,7 @@
             img.className = 'stream-image';
             img.loading = 'lazy';
             img.decoding = 'async';
+            img.style.aspectRatio = '16/9';
 
             const overlayText = document.createElement('div');
             overlayText.className = 'card-overlay-text';
@@ -1758,12 +1760,12 @@
         const isMobile = window.innerWidth < 768;
 
         if (isMobile) {
-          // Spread out grid layout for mobile instead of stacked
-          const itemWidthVW = 42;
-          const itemHeightVH = 25;
+          // Tight grid layout for mobile matching fun.html stacking style
+          const itemWidthVW = 45;
+          const itemHeightVH = 28;
           const columns = 2;
-          const gapX = 4;
-          const gapY = 6;
+          const gapX = 2;
+          const gapY = 3;
 
           items.forEach((item, idx) => {
             const pinboardItem = document.createElement('div');
@@ -1785,6 +1787,14 @@
             const img = document.createElement('img');
             img.src = item.src;
             img.alt = `Project Asset ${idx + 1}`;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            img.onload = () => {
+              if (img.naturalWidth && img.naturalHeight) {
+                img.style.aspectRatio = `${img.naturalWidth}/${img.naturalHeight}`;
+              }
+            };
 
             pinboardItem.appendChild(img);
             gridWrapper.appendChild(pinboardItem);
@@ -1819,6 +1829,14 @@
             const img = document.createElement('img');
             img.src = item.src;
             img.alt = `Project Asset ${idx + 1}`;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            img.onload = () => {
+              if (img.naturalWidth && img.naturalHeight) {
+                img.style.aspectRatio = `${img.naturalWidth}/${img.naturalHeight}`;
+              }
+            };
 
             pinboardItem.appendChild(img);
             gridWrapper.appendChild(pinboardItem);
