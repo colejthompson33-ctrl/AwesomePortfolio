@@ -59,7 +59,8 @@ img.alt = 'Description';
 - **Fallback**: Always include original JPEG/PNG for older browsers
 
 ### Quality Settings
-- **WebP Quality**: 75-80% (good balance of compression vs quality)
+- **General WebP Quality**: 75-80% (good balance of compression vs quality)
+- **Funstickers (with transparency)**: 95% quality with alpha transparency enabled
 - **File Size Reduction**: Typically 25-35% smaller than JPEG
 - **Browser Support**: WebP supported by 95%+ of modern browsers
 
@@ -81,10 +82,10 @@ img.alt = 'Description';
 >
 ```
 
-### Method 2: CSS Aspect Ratio
+### Method 2: CSS Object-Fit
 ```css
 img {
-  aspect-ratio: 4/3;
+  object-fit: contain;
   width: 100%;
   height: auto;
 }
@@ -104,8 +105,28 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
+```
+
+## Image Quality & Aspect Ratio Fixes
+
+### For Sticker/Fun Images (fun.html)
+- **CSS**: Use `object-fit: contain` to preserve native aspect ratios
+- **JavaScript**: Remove forced aspect-ratio setting to let browser handle natural dimensions
+- **Conversion**: Use high-quality WebP (95%+) with alpha transparency for PNG stickers
+- **No Clipping**: Ensure images maintain original proportions without cropping
+
+### Conversion Settings
+```javascript
+// High-quality WebP with transparency (for funstickers)
+await sharp(inputPath)
+  .webp({ 
+    quality: 95,
+    alphaQuality: 95,
+    effort: 6
+  })
+  .toFile(outputPath);
 ```
 
 ## Browser Compatibility
@@ -145,11 +166,11 @@ If you prefer manual conversion using command-line tools:
 brew install webp  # macOS
 apt-get install webp  # Ubuntu/Debian
 
-# Convert single image
-cwebp -q 75 input.jpg -o output.webp
+# Convert single image (high quality with transparency)
+cwebp -q 95 -alpha_q 95 input.png -o output.webp
 
 # Convert with max width for mobile
-cwebp -q 75 -resize 800 0 input.jpg -o output-mobile.webp
+cwebp -q 95 -resize 800 0 input.jpg -o output-mobile.webp
 ```
 
 ### Using ImageMagick
@@ -158,8 +179,8 @@ cwebp -q 75 -resize 800 0 input.jpg -o output-mobile.webp
 brew install imagemagick  # macOS
 apt-get install imagemagick  # Ubuntu/Debian
 
-# Convert
-convert input.jpg -quality 75 -define webp:lossless=false output.webp
+# Convert with transparency
+convert input.png -quality 95 -define webp:lossless=false output.webp
 ```
 
 ## Implementation Checklist
@@ -168,7 +189,9 @@ convert input.jpg -quality 75 -define webp:lossless=false output.webp
 - [ ] Update hero images with `fetchpriority="high"`
 - [ ] Add `loading="lazy"` and `decoding="async"` to all non-hero images
 - [ ] Implement `<picture>` tags or srcset for responsive images
-- [ ] Add explicit dimensions or aspect-ratio CSS to prevent CLS
+- [ ] Add `object-fit: contain` to sticker images to prevent clipping
+- [ ] Remove forced aspect-ratio JavaScript for fun stickers
 - [ ] Test on mobile devices for performance improvements
 - [ ] Verify fallback behavior on older browsers
+- [ ] Check image quality and transparency preservation
 - [ ] Monitor Core Web Vitals after deployment

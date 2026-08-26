@@ -1167,11 +1167,11 @@
 
             const img = document.createElement('img');
             if (imageData.fallback) {
-              img.src = imageData.fallback;
-              img.setAttribute('data-src', imageData.src);
+              img.src = imageData.src;
+              img.setAttribute('data-fallback', imageData.fallback);
               img.onerror = function() {
-                if (this.getAttribute('data-src')) {
-                  this.src = this.getAttribute('data-src');
+                if (this.getAttribute('data-fallback')) {
+                  this.src = this.getAttribute('data-fallback');
                 }
               };
             } else {

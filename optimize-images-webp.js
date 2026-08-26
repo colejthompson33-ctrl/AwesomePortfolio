@@ -23,6 +23,7 @@ const IMAGE_DIRECTORIES = [
 ];
 
 const WEBP_QUALITY = 75; // 75-80% quality for high compression
+const FUNSTICKERS_QUALITY = 95; // High quality for funstickers with transparency
 const MOBILE_MAX_WIDTH = 800; // Max width for mobile versions
 
 console.log('🚀 Image Optimization Script Started');
@@ -52,6 +53,24 @@ async function convertToWebP(inputPath, outputPath, quality = WEBP_QUALITY) {
       .webp({ quality: quality })
       .toFile(outputPath);
     console.log(`✅ Converted: ${inputPath} → ${outputPath}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Failed to convert ${inputPath}:`, error.message);
+    return false;
+  }
+}
+
+// Function to convert single image to high-quality WebP with transparency
+async function convertToWebPTransparent(inputPath, outputPath, quality = FUNSTICKERS_QUALITY) {
+  try {
+    await sharp(inputPath)
+      .webp({ 
+        quality: quality,
+        alphaQuality: 95,
+        effort: 6
+      })
+      .toFile(outputPath);
+    console.log(`✅ High-quality converted: ${inputPath} → ${outputPath}`);
     return true;
   } catch (error) {
     console.error(`❌ Failed to convert ${inputPath}:`, error.message);
@@ -111,20 +130,43 @@ async function optimizeImages() {
       const webpPath = path.join(fullPath, `${baseName}.webp`);
       const mobileWebpPath = path.join(fullPath, `${baseName}-mobile.webp`);
       
-      // Skip if WebP already exists
-      if (fs.existsSync(webpPath)) {
-        console.log(`⏭️  WebP already exists: ${webpPath}`);
-      } else {
-        const converted = await convertToWebP(filePath, webpPath);
+      // Use high-quality conversion for funstickers (with transparency)
+      const isFunsticker = dir.includes('funstickers');
+      const useHighQuality = isFunsticker;
+      
+      // Force reconvert funstickers with high quality
+      if (isFunsticker) {
+        console.log(`🔄 Reconverting funsticker with high quality: ${file}`);
+        let converted;
+        if (useHighQuality) {
+          converted = await convertToWebPTransparent(filePath, webpPath);
+        } else {
+          converted = await convertToWebP(filePath, webpPath);
+        }
         if (converted) totalConverted++;
+      } else {
+        // Skip if WebP already exists for non-funstickers
+        if (fs.existsSync(webpPath)) {
+          console.log(`⏭️  WebP already exists: ${webpPath}`);
+        } else {
+          let converted;
+          if (useHighQuality) {
+            converted = await convertToWebPTransparent(filePath, webpPath);
+          } else {
+            converted = await convertToWebP(filePath, webpPath);
+          }
+          if (converted) totalConverted++;
+        }
       }
       
-      // Create mobile version if it doesn't exist
-      if (fs.existsSync(mobileWebpPath)) {
-        console.log(`⏭️  Mobile WebP already exists: ${mobileWebpPath}`);
-      } else {
-        const mobileCreated = await createMobileVersion(filePath, mobileWebpPath);
-        if (mobileCreated) totalMobile++;
+      // Create mobile version if it doesn't exist (skip for funstickers)
+      if (!isFunsticker) {
+        if (fs.existsSync(mobileWebpPath)) {
+          console.log(`⏭️  Mobile WebP already exists: ${mobileWebpPath}`);
+        } else {
+          const mobileCreated = await createMobileVersion(filePath, mobileWebpPath);
+          if (mobileCreated) totalMobile++;
+        }
       }
     }
   }
@@ -133,10 +175,11 @@ async function optimizeImages() {
   console.log('🎉 Optimization Complete!');
   console.log(`📊 Total WebP conversions: ${totalConverted}`);
   console.log(`📱 Total mobile versions: ${totalMobile}`);
+  console.log(`🎨 Funstickers: High-quality WebP with transparency enabled`);
   console.log('\n💡 Next steps:');
-  console.log('1. Update HTML to use WebP sources with <picture> tags');
-  console.log('2. Test mobile performance improvements');
-  console.log('3. Consider adding CDN for further optimization');
+  console.log('1. Test image quality in fun.html');
+  console.log('2. Verify transparency preservation in funstickers');
+  console.log('3. Check aspect ratios and no clipping issues');
 }
 
 // Run the optimization
