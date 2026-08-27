@@ -87,52 +87,9 @@
       color: rgba(255, 255, 255, 0.45);
     }
 
-    /* Mobile Menu Toggle Button */
+    /* Mobile Menu Toggle Button - Using shared CSS from mobile-optimizations.css */
     .mobile-menu-toggle {
       display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 2rem;
-      height: 2rem;
-      min-width: 44px;
-      min-height: 44px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0.5rem;
-      z-index: 2001;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .hamburger-line {
-      width: 100%;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-      transform-origin: center;
-      flex-shrink: 0;
-      display: block;
-    }
-
-    @media (hover: hover) {
-      .mobile-menu-toggle:hover .hamburger-line {
-        background: #ffffff;
-      }
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 6px);
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -6px);
     }
 
     /* Mobile Menu Panel */

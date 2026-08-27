@@ -1,0 +1,119 @@
+/* Shared Mobile Optimizations */
+/* Consolidated mobile breakpoints and performance optimizations */
+
+@media (max-width: 767px) {
+  /* Disable GPU-heavy backdrop filters for mobile performance */
+  .mac-window, .glass-info-card, .pen-toolbar, .mobile-menu {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Disable edge glow effects on mobile */
+  body::after {
+    display: none !important;
+  }
+
+  /* Disable complex drop-shadow filters on mobile */
+  .sticker-item, .sticker-item .sticker-image {
+    filter: none !important;
+  }
+
+  /* Hide tab thumbnails on mobile to save memory */
+  .mac-tab-thumb {
+    display: none !important;
+  }
+
+  /* Flatten 3D transforms for mobile performance */
+  .mac-window {
+    perspective: none !important;
+    transform: none !important;
+  }
+  
+  .mac-viewport {
+    perspective: none !important;
+    transform: none !important;
+  }
+  
+  .mac-content {
+    perspective: none !important;
+    transform: none !important;
+  }
+
+  /* Disable hover drop-shadow filters on mobile */
+  .sticker-item:hover .sticker-image {
+    filter: none !important;
+  }
+
+  .sticker-item.active-highlight .sticker-image {
+    filter: none !important;
+  }
+
+  .sticker-item.dragging .sticker-image {
+    filter: none !important;
+  }
+
+  /* Ensure images maintain aspect ratio and prevent CLS */
+  .stream-image {
+    aspect-ratio: 16/9;
+  }
+
+  .sticker-image {
+    object-fit: contain;
+  }
+
+  /* Disable lightbox backdrop on mobile for performance */
+  .lightbox-modal {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Unified Mobile Menu Toggle Button - Symmetrical X Transition */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2001;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
+  display: block;
+}
+
+@media (hover: hover) {
+  .mobile-menu-toggle:hover .hamburger-line {
+    background: #ffffff;
+  }
+}
+
+/* Symmetrical 'X' Transformation */
+.mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}

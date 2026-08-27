@@ -8,6 +8,9 @@
   <!-- Preload critical font -->
   <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
   
+  <!-- Shared Mobile Optimizations -->
+  <link rel="stylesheet" href="css/mobile-optimizations.css">
+  
   <style>
     /* ==========================================================================
        1. Reset & Global Setup (Strict Non-Scrolling Viewport)
@@ -86,52 +89,9 @@
       color: rgba(255, 255, 255, 0.45);
     }
 
-    /* Mobile Menu Toggle Button */
+    /* Mobile Menu Toggle Button - Using shared CSS from mobile-optimizations.css */
     .mobile-menu-toggle {
       display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 2rem;
-      height: 2rem;
-      min-width: 44px;
-      min-height: 44px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0.5rem;
-      z-index: 2001;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .hamburger-line {
-      width: 100%;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-      transform-origin: center;
-      flex-shrink: 0;
-      display: block;
-    }
-
-    @media (hover: hover) {
-      .mobile-menu-toggle:hover .hamburger-line {
-        background: #ffffff;
-      }
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 6px);
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -6px);
     }
 
     /* Mobile Menu Panel */
@@ -1174,13 +1134,13 @@
     </div>
   </div>
 
+  <!-- Shared Mobile Image Utilities -->
+  <script src="js/mobile-image-utils.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Prevent body scrolling
-      document.addEventListener('touchmove', (e) => {
-        if (e.target.closest('.mobile-menu')) return;
-        e.preventDefault();
-      }, { passive: false });
+      // Use shared touch scroll lock
+      setupTouchScrollLock(['.pinboard-item', '.image-stream-container']);
 
       // Mobile Menu Toggle
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -1242,15 +1202,8 @@
         if (!currentGalleryList.length) return;
         
         const imgSrc = currentGalleryList[currentGalleryIndex];
-        if (imgSrc.includes('.jpg') || imgSrc.includes('.jpeg') || imgSrc.includes('.png')) {
-          const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-          lightboxImg.src = webpSrc;
-          lightboxImg.onerror = () => { lightboxImg.src = imgSrc; };
-        } else {
-          lightboxImg.src = imgSrc;
-        }
-        lightboxImg.loading = 'eager';
-        lightboxImg.decoding = 'sync';
+        const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+        setupWebPFallback(lightboxImg, webpSrc, imgSrc);
 
         if (currentGalleryIndex === 0) {
           lightboxPrevBtn.classList.add('is-hidden');
@@ -1559,23 +1512,14 @@
             const cardInner = document.createElement('div');
             cardInner.className = 'stream-card-inner';
 
-            const img = document.createElement('img');
-            if (imageData.fallback) {
-              img.src = imageData.src;
-              img.setAttribute('data-fallback', imageData.fallback);
-              img.onerror = function() {
-                if (this.getAttribute('data-fallback')) {
-                  this.src = this.getAttribute('data-fallback');
-                }
-              };
-            } else {
-              img.src = imageData.src;
-            }
-            img.alt = imageData.title;
-            img.className = 'stream-image';
-            img.loading = 'lazy';
-            img.decoding = 'async';
-            img.style.aspectRatio = '16/9';
+            const img = createOptimizedImage(
+              imageData.src,
+              imageData.fallback,
+              imageData.title,
+              'stream-image',
+              'lazy',
+              { aspectRatio: '16/9' }
+            );
 
             const overlayText = document.createElement('div');
             overlayText.className = 'card-overlay-text';
@@ -1783,27 +1727,16 @@
             pinboardItem.style.transform = `rotate(0deg)`;
             pinboardItem.style.zIndex = 1300 + idx;
 
-            const img = document.createElement('img');
-            if (item.fallback) {
-              img.src = item.src;
-              img.setAttribute('data-fallback', item.fallback);
-              img.onerror = function() {
-                if (this.getAttribute('data-fallback')) {
-                  this.src = this.getAttribute('data-fallback');
-                }
-              };
-            } else {
-              img.src = item.src;
-            }
-            img.alt = `Project Asset ${idx + 1}`;
-            img.loading = 'lazy';
-            img.decoding = 'async';
-
-            img.onload = () => {
-              if (img.naturalWidth && img.naturalHeight) {
-                img.style.aspectRatio = `${img.naturalWidth}/${img.naturalHeight}`;
-              }
-            };
+            const img = createOptimizedImage(
+              item.src,
+              item.fallback,
+              `Project Asset ${idx + 1}`,
+              '',
+              'lazy',
+              {}
+            );
+            
+            setNaturalAspectRatio(img);
 
             pinboardItem.appendChild(img);
             gridWrapper.appendChild(pinboardItem);
@@ -1835,27 +1768,16 @@
             pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
             pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
 
-            const img = document.createElement('img');
-            if (item.fallback) {
-              img.src = item.src;
-              img.setAttribute('data-fallback', item.fallback);
-              img.onerror = function() {
-                if (this.getAttribute('data-fallback')) {
-                  this.src = this.getAttribute('data-fallback');
-                }
-              };
-            } else {
-              img.src = item.src;
-            }
-            img.alt = `Project Asset ${idx + 1}`;
-            img.loading = 'lazy';
-            img.decoding = 'async';
-
-            img.onload = () => {
-              if (img.naturalWidth && img.naturalHeight) {
-                img.style.aspectRatio = `${img.naturalWidth}/${img.naturalHeight}`;
-              }
-            };
+            const img = createOptimizedImage(
+              item.src,
+              item.fallback,
+              `Project Asset ${idx + 1}`,
+              '',
+              'lazy',
+              {}
+            );
+            
+            setNaturalAspectRatio(img);
 
             pinboardItem.appendChild(img);
             gridWrapper.appendChild(pinboardItem);

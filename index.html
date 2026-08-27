@@ -7,6 +7,10 @@
   
   <!-- Preload critical font -->
   <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Shared Mobile Optimizations -->
+  <link rel="stylesheet" href="css/mobile-optimizations.css">
+  
   <style>
     /* ==========================================================================
        1. Reset & Global Setup (Strict Non-Scrolling Viewport)
@@ -85,52 +89,9 @@
       color: rgba(255, 255, 255, 0.45);
     }
 
-    /* Mobile Menu Toggle Button */
+    /* Mobile Menu Toggle Button - Using shared CSS from mobile-optimizations.css */
     .mobile-menu-toggle {
       display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 2rem;
-      height: 2rem;
-      min-width: 44px;
-      min-height: 44px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0.5rem;
-      z-index: 2001;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .hamburger-line {
-      width: 100%;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-      transform-origin: center;
-      flex-shrink: 0;
-      display: block;
-    }
-
-    @media (hover: hover) {
-      .mobile-menu-toggle:hover .hamburger-line {
-        background: #ffffff;
-      }
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 6px);
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-
-    .mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -6px);
     }
 
     /* Mobile Menu Panel */
@@ -381,7 +342,10 @@
         <source src="images/Run2.mp4" type="video/mp4" />
         <source src="images/Run3.mp4" type="video/mp4" />
         <!-- Fallback image if video fails to load or unsupported -->
-        <img src="images/000097000012.jpg" alt="Background fallback" class="contact-bg-image" fetchpriority="high" />
+        <picture>
+          <source srcset="images/000097000012.webp" type="image/webp">
+          <img src="images/000097000012.jpg" alt="Background fallback" class="contact-bg-image" fetchpriority="high" loading="eager" decoding="async" width="1920" height="1080" />
+        </picture>
       </video>
     </div>
 
@@ -396,6 +360,9 @@
       </div>
     </div>
   </main>
+
+  <!-- Shared Mobile Image Utilities -->
+  <script src="js/mobile-image-utils.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
