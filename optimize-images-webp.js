@@ -19,7 +19,9 @@ const IMAGE_DIRECTORIES = [
   'images/',
   'images/Personal/',
   'images/BlueHouse/',
-  'images/funstickers/'
+  'images/funstickers/',
+  'images/Waynes Wings/',
+  'images/Aggie Outdoors/'
 ];
 
 const WEBP_QUALITY = 75; // 75-80% quality for high compression

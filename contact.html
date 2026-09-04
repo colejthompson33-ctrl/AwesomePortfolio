@@ -7,6 +7,10 @@
   
   <!-- Preload critical font -->
   <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Shared Mobile Optimizations -->
+  <link rel="stylesheet" href="css/mobile-optimizations.css">
+  
   <style>
     /* ==========================================================================
        1. Reset & Global Setup (Strict Non-Scrolling Viewport)
@@ -899,13 +903,13 @@
     </div>
   </main>
 
+  <!-- Shared Mobile Image Utilities -->
+  <script src="js/mobile-image-utils.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Prevent non-mobile window scroll
-      document.addEventListener('touchmove', (e) => {
-        if (e.target.closest('.mobile-menu')) return;
-        e.preventDefault();
-      }, { passive: false });
+      // Use shared touch scroll lock
+      setupTouchScrollLock(['.image-stream-container']);
 
       // Mobile Menu Toggle
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -1122,23 +1126,14 @@
             const cardInner = document.createElement('div');
             cardInner.className = 'stream-card-inner';
 
-            const img = document.createElement('img');
-            if (imageData.fallback) {
-              img.src = imageData.src;
-              img.setAttribute('data-fallback', imageData.fallback);
-              img.onerror = function() {
-                if (this.getAttribute('data-fallback')) {
-                  this.src = this.getAttribute('data-fallback');
-                }
-              };
-            } else {
-              img.src = imageData.src;
-            }
-            img.alt = imageData.title;
-            img.className = 'stream-image';
-            img.loading = 'lazy';
-            img.decoding = 'async';
-            img.style.aspectRatio = '16/9';
+            const img = createOptimizedImage(
+              imageData.src,
+              imageData.fallback,
+              imageData.title,
+              'stream-image',
+              'lazy',
+              { aspectRatio: '16/9' }
+            );
 
             const overlayText = document.createElement('div');
             overlayText.className = 'card-overlay-text';

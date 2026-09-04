@@ -854,7 +854,7 @@
       z-index: 1200;
       opacity: 0;
       transition: opacity 0.6s ease 0.3s;
-      overflow: hidden;
+      overflow: visible;
     }
 
     body.is-project-mode .pinboard-container {
@@ -863,23 +863,38 @@
 
     .pinboard-grid-wrapper {
       position: absolute;
-      top: 8vh;
-      right: 4vw;
-      width: 52vw;
-      height: 84vh;
+      top: 5vh;
+      left: min(480px, 42vw);
+      right: 3vw;
+      bottom: 5vh;
+      width: auto;
+      height: 90vh;
       pointer-events: none;
-      display: block;
+      overflow: visible;
     }
 
-    /* Requirement 4: Mobile Pinboard Stacked Wrapper */
+    /* Mobile Pinboard Stacked Wrapper */
     @media (max-width: 767px) {
       .pinboard-grid-wrapper {
-        top: 8vh;
-        left: 4vw;
-        right: 4vw;
-        width: 92vw;
-        height: 88vh;
-        margin: 0 auto;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 20px 16px 100px 16px;
+      }
+
+      .pinboard-item {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: calc(50% - 8px) !important;
+        height: auto !important;
+        transform: none !important;
       }
     }
 
@@ -1136,963 +1151,1012 @@
 
   <!-- Shared Mobile Image Utilities -->
   <script src="js/mobile-image-utils.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Use shared touch scroll lock
+    setupTouchScrollLock(['.pinboard-item', '.image-stream-container']);
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Use shared touch scroll lock
-      setupTouchScrollLock(['.pinboard-item', '.image-stream-container']);
-
-      // Mobile Menu Toggle
-      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-      const mobileMenu = document.getElementById('mobileMenu');
-      const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-      
-      function toggleMobileMenu() {
-        const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
-        mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
-        mobileMenu.setAttribute('aria-hidden', isExpanded);
-      }
-      
-      function closeMobileMenu() {
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileMenu.setAttribute('aria-hidden', 'true');
-      }
-      
-      if (mobileMenuToggle && mobileMenu) {
-        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-        mobileNavLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
-        mobileMenu.addEventListener('click', (e) => {
-          if (e.target === mobileMenu) closeMobileMenu();
-        });
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
-            closeMobileMenu();
-            mobileMenuToggle.focus();
-          }
-        });
-      }
-      
-      const EDGE_THRESHOLD = 90;
-
-      // Mouse tracking & Edge glow
-      window.addEventListener('mousemove', (e) => {
-        document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
-        document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
-
-        const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
-
-        if (minEdgeDist < EDGE_THRESHOLD) {
-          const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
-          document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
-        } else {
-          document.body.style.setProperty('--edge-glow-opacity', '0');
+    // Mobile Menu Toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    
+    function toggleMobileMenu() {
+      const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+      mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+      mobileMenu.setAttribute('aria-hidden', isExpanded);
+    }
+    
+    function closeMobileMenu() {
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+    }
+    
+    if (mobileMenuToggle && mobileMenu) {
+      mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+      mobileNavLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
+      mobileMenu.addEventListener('click', (e) => {
+        if (e.target === mobileMenu) closeMobileMenu();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenuToggle.getAttribute('aria-expanded') === 'true') {
+          closeMobileMenu();
+          mobileMenuToggle.focus();
         }
       });
+    }
+    
+    const EDGE_THRESHOLD = 90;
 
-      // Gallery & Lightbox Management
-      const lightboxModal = document.getElementById('lightboxModal');
-      const lightboxImg = document.getElementById('lightboxImg');
-      const lightboxPrevBtn = document.getElementById('lightboxPrevBtn');
-      const lightboxNextBtn = document.getElementById('lightboxNextBtn');
+    // Mouse tracking & Edge glow
+    window.addEventListener('mousemove', (e) => {
+      document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
+      document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
 
-      let currentGalleryList = [];
-      let currentGalleryIndex = 0;
+      const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
 
-      function updateLightboxView() {
-        if (!currentGalleryList.length) return;
-        
-        const imgSrc = currentGalleryList[currentGalleryIndex];
-        const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-        setupWebPFallback(lightboxImg, webpSrc, imgSrc);
+      if (minEdgeDist < EDGE_THRESHOLD) {
+        const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
+        document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
+      } else {
+        document.body.style.setProperty('--edge-glow-opacity', '0');
+      }
+    });
 
-        if (currentGalleryIndex === 0) {
-          lightboxPrevBtn.classList.add('is-hidden');
-        } else {
-          lightboxPrevBtn.classList.remove('is-hidden');
-        }
+    // Gallery & Lightbox Management
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxPrevBtn = document.getElementById('lightboxPrevBtn');
+    const lightboxNextBtn = document.getElementById('lightboxNextBtn');
 
-        if (currentGalleryIndex === currentGalleryList.length - 1) {
-          lightboxNextBtn.classList.add('is-hidden');
-        } else {
-          lightboxNextBtn.classList.remove('is-hidden');
-        }
+    let currentGalleryList = [];
+    let currentGalleryIndex = 0;
+
+    function updateLightboxView() {
+      if (!currentGalleryList.length) return;
+      
+      const imgSrc = currentGalleryList[currentGalleryIndex];
+      const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+      setupWebPFallback(lightboxImg, webpSrc, imgSrc);
+
+      if (currentGalleryIndex === 0) {
+        lightboxPrevBtn.classList.add('is-hidden');
+      } else {
+        lightboxPrevBtn.classList.remove('is-hidden');
       }
 
-      function openLightbox(index) {
-        currentGalleryIndex = index;
+      if (currentGalleryIndex === currentGalleryList.length - 1) {
+        lightboxNextBtn.classList.add('is-hidden');
+      } else {
+        lightboxNextBtn.classList.remove('is-hidden');
+      }
+    }
+
+    function openLightbox(index) {
+      currentGalleryIndex = index;
+      updateLightboxView();
+      lightboxModal.classList.add('is-active');
+    }
+
+    function closeLightbox() {
+      lightboxModal.classList.remove('is-active');
+    }
+
+    lightboxPrevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentGalleryIndex > 0) {
+        currentGalleryIndex--;
         updateLightboxView();
-        lightboxModal.classList.add('is-active');
       }
+    });
 
-      function closeLightbox() {
-        lightboxModal.classList.remove('is-active');
+    lightboxNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentGalleryIndex < currentGalleryList.length - 1) {
+        currentGalleryIndex++;
+        updateLightboxView();
       }
+    });
 
-      lightboxPrevBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (currentGalleryIndex > 0) {
-          currentGalleryIndex--;
-          updateLightboxView();
-        }
-      });
+    lightboxModal.addEventListener('click', (e) => {
+      if (!e.target.closest('.lightbox-img') && !e.target.closest('.lightbox-arrow')) {
+        closeLightbox();
+      }
+    });
 
-      lightboxNextBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (currentGalleryIndex < currentGalleryList.length - 1) {
-          currentGalleryIndex++;
-          updateLightboxView();
-        }
-      });
+    const defaultLeftContent = {
+      hero: { title: 'My Work' },
+      about: {
+        label: 'About Me',
+        paragraphs: [
+          "I'm Cole Thompson, a Texas A&M graduate with a Visualization Major and Graphic Design Minor.",
+          "My first love is design. I have found interest through my career in anything that moves - from merchandise design, branding, web design, data visualization, you name it."
+        ]
+      },
+      experience: { 
+        label: 'Experience', 
+        paragraphs: [
+          "I have years of experience in freelance work, like with Bill Young Productions, and with agencies like GDC Marketing and Hahn.",
+          "These experiences have deepened my understanding of how high-level creative work integrates with strategic marketing. Here are some of the brands I've had the opportunity to support."
+        ] 
+      }
+    };
 
-      lightboxModal.addEventListener('click', (e) => {
-        if (!e.target.closest('.lightbox-img') && !e.target.closest('.lightbox-arrow')) {
-          closeLightbox();
-        }
-      });
-
-      const defaultLeftContent = {
-        hero: { title: 'My Work' },
-        about: {
-          label: 'About Me',
-          paragraphs: [
-            "I'm Cole Thompson, a Texas A&M graduate with a Visualization Major and Graphic Design Minor.",
-            "My first love is design. I have found interest through my career in anything that moves - from merchandise design, branding, web design, data visualization, you name it."
-          ]
+    const streamImages = [
+      { 
+        src: 'images/BlueHouse/VinylBH.webp', fallback: 'images/BlueHouse/VinylBH.jpg', 
+        title: 'Blue House',
+        pinboardItems: [
+          { src: 'images/BlueHouse/Elevator Poster Mockup.webp', fallback: 'images/BlueHouse/Elevator Poster Mockup.png', isPng: false },
+          { src: 'images/BlueHouse/Vinyl_Record_Mockup_01_S.webp', fallback: 'images/BlueHouse/Vinyl_Record_Mockup_01_S.png', isPng: true },
+          { src: 'images/BlueHouse/CD_Slim_Case2.webp', fallback: 'images/BlueHouse/CD_Slim_Case2.png', isPng: true },
+          { src: 'images/BlueHouse/DSC04235.JPEG.webp', fallback: 'images/BlueHouse/DSC04235.JPEG', isPng: false },
+          { src: 'images/BlueHouse/DSC04589.JPEG.webp', fallback: 'images/BlueHouse/DSC04589.JPEG', isPng: false },
+          { src: 'images/BlueHouse/TEE.webp', fallback: 'images/BlueHouse/TEE.png', isPng: true },
+          { src: 'images/BlueHouse/IMG_1078.webp', fallback: 'images/BlueHouse/IMG_1078.jpg', isPng: false }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["A full-spectrum visual identity for an indie band, blending tangible merch with real-time audio-reactive stage graphics."] 
         },
         experience: { 
-          label: 'Experience', 
+          label: 'Creative Tech', 
+          paragraphs: ["Custom interactive TouchDesigner patches programmed to turn live concert frequency data into fluid stage art."] 
+        },
+        detailedAbout: { 
+          label: 'The Vision', 
           paragraphs: [
-            "I have years of experience in freelance work, like with Bill Young Productions, and with agencies like GDC Marketing and Hahn.",
-            "These experiences have deepened my understanding of how high-level creative work integrates with strategic marketing. Here are some of the brands I've had the opportunity to support."
+            "Blue House is an immersive visual ecosystem crafted for high-energy indie rock performances. The goal was to bridge physical tactile merchandise with digital live environments.",
+            "From vinyl packaging and screen-printed apparel to custom GLSL visual shaders, every touchpoint echoes the raw, dynamic energy of the music."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Execution & Tech', 
+          paragraphs: [
+            "Lead Visual Designer & Creative Technologist.",
+            "Designed album art, physical merch kits, and live stage visuals in TouchDesigner that react to live audio stems in real time."
           ] 
         }
-      };
-
-      const streamImages = [
-        { 
-          src: 'images/BlueHouse/VinylBH.webp', fallback: 'images/BlueHouse/VinylBH.jpg', 
-          title: 'Blue House',
-          pinboardItems: [
-            { src: 'images/BlueHouse/Elevator Poster Mockup.webp', fallback: 'images/BlueHouse/Elevator Poster Mockup.png', isPng: false },
-            { src: 'images/BlueHouse/Vinyl_Record_Mockup_01_S.webp', fallback: 'images/BlueHouse/Vinyl_Record_Mockup_01_S.png', isPng: true },
-            { src: 'images/BlueHouse/CD_Slim_Case2.webp', fallback: 'images/BlueHouse/CD_Slim_Case2.png', isPng: true },
-            { src: 'images/BlueHouse/DSC04235.JPEG.webp', fallback: 'images/BlueHouse/DSC04235.JPEG', isPng: false },
-            { src: 'images/BlueHouse/DSC04589.JPEG.webp', fallback: 'images/BlueHouse/DSC04589.JPEG', isPng: false },
-            { src: 'images/BlueHouse/TEE.webp', fallback: 'images/BlueHouse/TEE.png', isPng: true },
-            { src: 'images/BlueHouse/IMG_1078.webp', fallback: 'images/BlueHouse/IMG_1078.jpg', isPng: false }
-          ],
-          about: { 
-            label: 'Project Preview', 
-            paragraphs: ["A full-spectrum visual identity for an indie band, blending tangible merch with real-time audio-reactive stage graphics."] 
-          },
-          experience: { 
-            label: 'Creative Tech', 
-            paragraphs: ["Custom interactive TouchDesigner patches programmed to turn live concert frequency data into fluid stage art."] 
-          },
-          detailedAbout: { 
-            label: 'The Vision', 
-            paragraphs: [
-              "Blue House is an immersive visual ecosystem crafted for high-energy indie rock performances. The goal was to bridge physical tactile merchandise with digital live environments.",
-              "From vinyl packaging and screen-printed apparel to custom GLSL visual shaders, every touchpoint echoes the raw, dynamic energy of the music."
-            ] 
-          },
-          detailedExperience: { 
-            label: 'Execution & Tech', 
-            paragraphs: [
-              "Lead Visual Designer & Creative Technologist.",
-              "Designed album art, physical merch kits, and live stage visuals in TouchDesigner that react to live audio stems in real time."
-            ] 
-          }
+      },
+      { 
+        src: 'images/HUM/HumMockup.webp', fallback: 'images/HUM/HumMockup.jpg', 
+        title: 'hum.fm',
+        pinboardItems: [
+          { src: 'images/HUM/AlyssaProfile.webp', fallback: 'images/HUM/AlyssaProfile.png', isPng: false },
+          { src: 'images/HUM/Log.webp', fallback: 'images/HUM/Log.png', isPng: false },
+          { src: 'images/HUM/GenreDisc.webp', fallback: 'images/HUM/GenreDisc.png', isPng: false },
+          { src: 'images/HUM/JulieProfile.webp', fallback: 'images/HUM/JulieProfile.png', isPng: false },
+          { src: 'images/HUM/Genre.webp', fallback: 'images/HUM/Genre.png', isPng: false },
+          { src: 'images/HUM/single.webp', fallback: 'images/HUM/single.png', isPng: false }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["Reimagining music discovery through fluid, community-driven social streaming and visual waveforms."] 
         },
-        { 
-          src: 'images/HUM/HumMockup.webp', fallback: 'images/HUM/HumMockup.jpg', 
-          title: 'hum.fm',
-          pinboardItems: [
-            { src: 'images/HUM/AlyssaProfile.webp', fallback: 'images/HUM/AlyssaProfile.png', isPng: false },
-            { src: 'images/HUM/Log.webp', fallback: 'images/HUM/Log.png', isPng: false },
-            { src: 'images/HUM/GenreDisc.webp', fallback: 'images/HUM/GenreDisc.png', isPng: false },
-            { src: 'images/HUM/JulieProfile.webp', fallback: 'images/HUM/JulieProfile.png', isPng: false },
-            { src: 'images/HUM/Genre.webp', fallback: 'images/HUM/Genre.png', isPng: false },
-            { src: 'images/HUM/single.webp', fallback: 'images/HUM/single.png', isPng: false }
-          ],
-          about: { 
-            label: 'Project Preview', 
-            paragraphs: ["Reimagining music discovery through fluid, community-driven social streaming and visual waveforms."] 
-          },
-          experience: { 
-            label: 'Product Design', 
-            paragraphs: ["Full-stack UI/UX architectural design built around seamless navigation and real-time listening rooms."] 
-          },
-          detailedAbout: { 
-            label: 'The Concept', 
-            paragraphs: [
-              "hum.fm breaks away from sterile algorithmic music queues, turning audio exploration into a visual, human-centric playground.",
-              "The platform maps genre connections visually, allowing listeners to discover underground talent while curating digital spaces with friends."
-            ] 
-          },
-          detailedExperience: { 
-            label: 'Design System', 
-            paragraphs: [
-              "Principal Product Designer.",
-              "Architected end-to-end Figma design systems, dynamic micro-interactions, waveform visualizer components, and mobile layout frameworks."
-            ] 
-          }
+        experience: { 
+          label: 'Product Design', 
+          paragraphs: ["Full-stack UI/UX architectural design built around seamless navigation and real-time listening rooms."] 
         },
-        { 
-          src: 'images/Guidelines/BrandTitle.webp', fallback: 'images/Guidelines/BrandTitle.png', 
-          title: 'Hahn Guidelines',
-          pinboardItems: [
-            { src: 'images/Guidelines/1.webp', fallback: 'images/Guidelines/1.png', isPng: false },
-            { src: 'images/Guidelines/2.webp', fallback: 'images/Guidelines/2.png', isPng: false },
-            { src: 'images/Guidelines/3.webp', fallback: 'images/Guidelines/3.png', isPng: false },
-            { src: 'images/Guidelines/4.webp', fallback: 'images/Guidelines/4.png', isPng: false },
-            { src: 'images/Guidelines/5.webp', fallback: 'images/Guidelines/5.png', isPng: false },
-            { src: 'images/Guidelines/6.webp', fallback: 'images/Guidelines/6.png', isPng: false },
-            { src: 'images/Guidelines/7.webp', fallback: 'images/Guidelines/7.png', isPng: false },
-            { src: 'images/Guidelines/8.webp', fallback: 'images/Guidelines/8.png', isPng: false },
-            { src: 'images/Guidelines/9.webp', fallback: 'images/Guidelines/9.png', isPng: false },
-            { src: 'images/Guidelines/10.webp', fallback: 'images/Guidelines/10.png', isPng: false }
-          ],
-          about: { 
-            label: 'Project Preview', 
-            paragraphs: ["A comprehensive identity system and brand overhaul for Hahn Marketing & Ideation."] 
-          },
-          experience: { 
-            label: 'Brand Strategy', 
-            paragraphs: ["Establishing clear visual hierarchy, precision grid layouts, and versatile digital brand guidelines."] 
-          },
-          detailedAbout: { 
-            label: 'Brand Transformation', 
-            paragraphs: [
-              "A modern, robust brand identity overhaul built to unify agency communications across print, web, and internal collateral.",
-              "The updated guidelines introduce structured typography scales, vibrant color palettes, and modular grid frameworks for scalable growth."
-            ] 
-          },
-          detailedExperience: { 
-            label: 'Deliverables & Art Direction', 
-            paragraphs: [
-              "Art Director & Lead Brand Designer.",
-              "Authored the complete 60-page Brand Standards Manual, laying out strict rules for logo placement, typography hierarchy, and digital templates."
-            ] 
-          }
+        detailedAbout: { 
+          label: 'The Concept', 
+          paragraphs: [
+            "hum.fm breaks away from sterile algorithmic music queues, turning audio exploration into a visual, human-centric playground.",
+            "The platform maps genre connections visually, allowing listeners to discover underground talent while curating digital spaces with friends."
+          ] 
         },
-        { 
-          src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', 
-          title: 'Univ. of North Texas',
-          pinboardItems: [
-            { src: 'images/UNT/UNT Design2.webp', fallback: 'images/UNT/UNT Design2.png', isPng: true },
-            { src: 'images/UNT/UNT Design3.webp', fallback: 'images/UNT/UNT Design3.png', isPng: true },
-            { src: 'images/UNT/UNT Design4.webp', fallback: 'images/UNT/UNT Design4.png', isPng: true },
-            { src: 'images/UNT/UNT Design5.webp', fallback: 'images/UNT/UNT Design5.png', isPng: true },
-            { src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', isPng: true }
-          ],
-          about: { 
-            label: 'Project Preview', 
-            paragraphs: ["Bold, high-energy promotional campaigns engineered to capture campus culture and recruit prospective talent."] 
-          },
-          experience: { 
-            label: 'Campaign Art', 
-            paragraphs: ["Designing high-impact print collateral, environmental graphics, and social campaign assets."] 
-          },
-          detailedAbout: { 
-            label: 'Campaign Overview', 
-            paragraphs: [
-              "A dynamic recruitment and visual media push designed to elevate the university's presence across digital and physical touchpoints.",
-              "Bold kinetic typography meets textured graphic overlays to showcase student life and campus energy in an unmissable way."
-            ] 
-          },
-          detailedExperience: { 
-            label: 'Creative Production', 
-            paragraphs: [
-              "Graphic Designer & Content Strategist.",
-              "Produced large-scale environmental banners, interactive digital signage, print brochures, and targeted digital advertising assets."
-            ] 
-          }
-        },
-        { 
-          src: 'images/Claire/ClaireFish.webp', fallback: 'images/Claire/ClaireFish.jpg', 
-          title: 'Claire Justice',
-          pinboardItems: [
-            { src: 'images/Claire/1.JPG.webp', fallback: 'images/Claire/1.JPG', isPng: false },
-            { src: 'images/Claire/2.JPG.webp', fallback: 'images/Claire/2.JPG', isPng: false },
-            { src: 'images/Claire/print.webp', fallback: 'images/Claire/print.png', isPng: false },
-            { src: 'images/Claire/text.JPG.webp', fallback: 'images/Claire/text.JPG', isPng: false },
-            { src: 'images/Claire/Claire-08.webp', fallback: 'images/Claire/Claire-08.png', isPng: true },
-            { src: 'images/Claire/Claire-09.webp', fallback: 'images/Claire/Claire-09.png', isPng: true }
-          ],
-          about: { 
-            label: 'Project Preview', 
-            paragraphs: ["Personal artist branding filled with organic textures, custom vector marks, and editorial design flair."] 
-          },
-          experience: { 
-            label: 'Visual Identity', 
-            paragraphs: ["Hand-crafted logomarks and cohesive visual direction for merch, social, and web presence."] 
-          },
-          detailedAbout: { 
-            label: 'Artist Identity', 
-            paragraphs: [
-              "A bespoke, organic visual identity built for artist Claire Justice. The aesthetic balances structured typography with raw, hand-drawn motifs.",
-              "Designed to feel tactile and expressive, the brand system effortlessly translates onto apparel, social media kits, and physical print releases."
-            ] 
-          },
-          detailedExperience: { 
-            label: 'Brand Direction', 
-            paragraphs: [
-              "Visual Identity Specialist.",
-              "Created custom vector logomarks, color systems, web assets, and tactile packaging designs for merchandise releases."
-            ] 
-          }
+        detailedExperience: { 
+          label: 'Design System', 
+          paragraphs: [
+            "Principal Product Designer.",
+            "Architected end-to-end Figma design systems, dynamic micro-interactions, waveform visualizer components, and mobile layout frameworks."
+          ] 
         }
-      ];
-
-      const streamContainer = document.getElementById('streamContainer');
-      const imageStream = document.getElementById('imageStream');
-      const heroTitle = document.getElementById('heroTitle');
-      const clickHint = document.getElementById('clickHint');
-      const viewProjectBtn = document.getElementById('viewProjectBtn');
-      const goBackBtn = document.getElementById('goBackBtn');
-      const aboutGrid = document.getElementById('aboutGrid');
-      const projectDetailsGrid = document.getElementById('projectDetailsGrid');
-
-      let currentY = 0;
-      let targetY = 0;
-      let velocityY = 0;
-      let baseAutoSpeed = 0.4;
-      let isDragging = false;
-      let startPointerX = 0;
-      let startPointerY = 0;
-      let lastPointerY = 0;
-      let pointerMoved = false;
-      let selectedKey = null;
-      let isProjectViewMode = false;
-      let activeProjectCard = null;
-      let highestZIndex = 1400;
-      let activeCardOriginalKey = null;
-      let hoveredKey = null;
-
-      const FRICTION = 0.92;
-      const DRAG_SENSITIVITY = 1.1;
-      const GAP = 28;
-      const PUSH_OFFSET = 70; 
-      
-      let cardHeight = 0;
-      let itemTotalHeight = 0;
-
-      const activeCardsMap = new Map();
-
-      function calculateDimensions() {
-        if (!streamContainer) return;
-        const containerWidth = streamContainer.clientWidth;
-        cardHeight = containerWidth * (9 / 16);
-        itemTotalHeight = cardHeight + GAP;
+      },
+      { 
+        src: 'images/Guidelines/BrandTitle.webp', fallback: 'images/Guidelines/BrandTitle.png', 
+        title: 'Hahn Guidelines',
+        pinboardItems: [
+          { src: 'images/Guidelines/1.webp', fallback: 'images/Guidelines/1.png', isPng: false },
+          { src: 'images/Guidelines/2.webp', fallback: 'images/Guidelines/2.png', isPng: false },
+          { src: 'images/Guidelines/3.webp', fallback: 'images/Guidelines/3.png', isPng: false },
+          { src: 'images/Guidelines/4.webp', fallback: 'images/Guidelines/4.png', isPng: false },
+          { src: 'images/Guidelines/5.webp', fallback: 'images/Guidelines/5.png', isPng: false },
+          { src: 'images/Guidelines/6.webp', fallback: 'images/Guidelines/6.png', isPng: false },
+          { src: 'images/Guidelines/7.webp', fallback: 'images/Guidelines/7.png', isPng: false },
+          { src: 'images/Guidelines/8.webp', fallback: 'images/Guidelines/8.png', isPng: false },
+          { src: 'images/Guidelines/9.webp', fallback: 'images/Guidelines/9.png', isPng: false },
+          { src: 'images/Guidelines/10.webp', fallback: 'images/Guidelines/10.png', isPng: false }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["A comprehensive identity system and brand overhaul for Hahn Marketing & Ideation."] 
+        },
+        experience: { 
+          label: 'Brand Strategy', 
+          paragraphs: ["Establishing clear visual hierarchy, precision grid layouts, and versatile digital brand guidelines."] 
+        },
+        detailedAbout: { 
+          label: 'Brand Transformation', 
+          paragraphs: [
+            "A modern, robust brand identity overhaul built to unify agency communications across print, web, and internal collateral.",
+            "The updated guidelines introduce structured typography scales, vibrant color palettes, and modular grid frameworks for scalable growth."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Deliverables & Art Direction', 
+          paragraphs: [
+            "Art Director & Lead Brand Designer.",
+            "Authored the complete 60-page Brand Standards Manual, laying out strict rules for logo placement, typography hierarchy, and digital templates."
+          ] 
+        }
+      },
+      { 
+        src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', 
+        title: 'Univ. of North Texas',
+        pinboardItems: [
+          { src: 'images/UNT/UNT Design2.webp', fallback: 'images/UNT/UNT Design2.png', isPng: true },
+          { src: 'images/UNT/UNT Design3.webp', fallback: 'images/UNT/UNT Design3.png', isPng: true },
+          { src: 'images/UNT/UNT Design4.webp', fallback: 'images/UNT/UNT Design4.png', isPng: true },
+          { src: 'images/UNT/UNT Design5.webp', fallback: 'images/UNT/UNT Design5.png', isPng: true },
+          { src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', isPng: true }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["Bold, high-energy promotional campaigns engineered to capture campus culture and recruit prospective talent."] 
+        },
+        experience: { 
+          label: 'Campaign Art', 
+          paragraphs: ["Designing high-impact print collateral, environmental graphics, and social campaign assets."] 
+        },
+        detailedAbout: { 
+          label: 'Campaign Overview', 
+          paragraphs: [
+            "A dynamic recruitment and visual media push designed to elevate the university's presence across digital and physical touchpoints.",
+            "Bold kinetic typography meets textured graphic overlays to showcase student life and campus energy in an unmissable way."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Creative Production', 
+          paragraphs: [
+            "Graphic Designer & Content Strategist.",
+            "Produced large-scale environmental banners, interactive digital signage, print brochures, and targeted digital advertising assets."
+          ] 
+        }
+      },
+      { 
+        src: 'images/Claire/ClaireFish.webp', fallback: 'images/Claire/ClaireFish.jpg', 
+        title: 'Claire Justice',
+        pinboardItems: [
+          { src: 'images/Claire/1.JPG.webp', fallback: 'images/Claire/1.JPG', isPng: false },
+          { src: 'images/Claire/2.JPG.webp', fallback: 'images/Claire/2.JPG', isPng: false },
+          { src: 'images/Claire/print.webp', fallback: 'images/Claire/print.png', isPng: false },
+          { src: 'images/Claire/Claire-08.webp', fallback: 'images/Claire/Claire-08.png', isPng: true },
+          { src: 'images/Claire/Claire-09.webp', fallback: 'images/Claire/Claire-09.png', isPng: true }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["Personal artist branding filled with organic textures, custom vector marks, and editorial design flair."] 
+        },
+        experience: { 
+          label: 'Visual Identity', 
+          paragraphs: ["Hand-crafted logomarks and cohesive visual direction for merch, social, and web presence."] 
+        },
+        detailedAbout: { 
+          label: 'Artist Identity', 
+          paragraphs: [
+            "A bespoke, organic visual identity built for artist Claire Justice. The aesthetic balances structured typography with raw, hand-drawn motifs.",
+            "Designed to feel tactile and expressive, the brand system effortlessly translates onto apparel, social media kits, and physical print releases."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Brand Direction', 
+          paragraphs: [
+            "Visual Identity Specialist.",
+            "Created custom vector logomarks, color systems, web assets, and tactile packaging designs for merchandise releases."
+          ] 
+        }
+      },
+      { 
+        src: 'images/Waynes Wings/Main Image Temp.webp', fallback: 'images/Waynes Wings/Main Image Temp.png', 
+        title: 'Waynes Wings',
+        pinboardItems: [
+          { src: 'images/Waynes Wings/Main Image Temp.webp', fallback: 'images/Waynes Wings/Main Image Temp.png', isPng: true },
+          { src: 'images/Waynes Wings/BrandGuideWW-01.webp', fallback: 'images/Waynes Wings/BrandGuideWW-01.png', isPng: true },
+          { src: 'images/Waynes Wings/BrandGuideWW-11.webp', fallback: 'images/Waynes Wings/BrandGuideWW-11.png', isPng: true },
+          { src: 'images/Waynes Wings/Sticker.webp', fallback: 'images/Waynes Wings/Sticker.png', isPng: true },
+          { src: 'images/Waynes Wings/Websitepsd.webp', fallback: 'images/Waynes Wings/Websitepsd.png', isPng: true },
+          { src: 'images/Waynes Wings/lgog.webp', fallback: 'images/Waynes Wings/lgog.png', isPng: true }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["Growing up in San Antonio, Waynes Wings are the best wings you will ever eat. Starting in a food truck, when Waynes Wings gained two new storefront locations, I knew they needed a new look."] 
+        },
+        experience: { 
+          label: 'Brand Evolution', 
+          paragraphs: ["See my iterative process and how I wanted to keep the charm of the original logo, and bring that San Antonio bobble head look to the new modern and scalable version of Waynes Wings."] 
+        },
+        detailedAbout: { 
+          label: 'The Vision', 
+          paragraphs: [
+            "Growing up in San Antonio, Waynes Wings are the best wings you will ever eat. Starting in a food truck, when Waynes Wings gained two new storefront locations, I knew they needed a new look.",
+            "See my iterative process and how I wanted to keep the charm of the original logo, and bring that San Antonio bobble head look to the new modern and scalable version of Waynes Wings."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Brand Identity Process', 
+          paragraphs: [
+            "Brand Designer & Visual Strategist.",
+            "Developed brand identity systems, logo evolution, visual assets, and brand guidelines while preserving the iconic San Antonio bobble head aesthetic."
+          ] 
+        }
+      },
+      { 
+        src: 'images/Aggie Outdoors/Main Aggie Outdoors Temp.webp', fallback: 'images/Aggie Outdoors/Main Aggie Outdoors Temp.png', 
+        title: 'Aggie Outdoors',
+        pinboardItems: [
+          { src: 'images/Aggie Outdoors/Main Aggie Outdoors Temp.webp', fallback: 'images/Aggie Outdoors/Main Aggie Outdoors Temp.png', isPng: true },
+          { src: 'images/Aggie Outdoors/000085830015.webp', fallback: 'images/Aggie Outdoors/000085830015.png', isPng: true },
+          { src: 'images/Aggie Outdoors/AOFEST-06.webp', fallback: 'images/Aggie Outdoors/AOFEST-06.png', isPng: true },
+          { src: 'images/Aggie Outdoors/AOFestPoster.webp', fallback: 'images/Aggie Outdoors/AOFestPoster.png', isPng: true },
+          { src: 'images/Aggie Outdoors/Bandana copy.webp', fallback: 'images/Aggie Outdoors/Bandana copy.png', isPng: true },
+          { src: 'images/Aggie Outdoors/NoClimbingSticker copy.webp', fallback: 'images/Aggie Outdoors/NoClimbingSticker copy.png', isPng: true },
+          { src: 'images/Aggie Outdoors/AoFestPoster2.webp', fallback: 'AoFestPoster2.png', isPng: true },
+          { src: 'images/Aggie Outdoors/ao2025-01.webp', fallback: 'images/Aggie Outdoors/ao2025-01.png', isPng: true }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["As an avid outdoor lover, my time volunteering with Aggie Outdoors brought me so much experience making shirts, stickers, air fresheners, laser engraved wooden stickers, car stickers, hats, and posters on posters."] 
+        },
+        experience: { 
+          label: 'Outdoor Design', 
+          paragraphs: ["The experience brought me into a field I loved, the outdoor design, and into the place I loved through my volunteering."] 
+        },
+        detailedAbout: { 
+          label: 'My Journey', 
+          paragraphs: [
+            "As an avid outdoor lover, my time volunteering with Aggie Outdoors brought me so much experience making shirts, stickers, air fresheners, laser engraved wooden stickers, car stickers, hats, and posters on posters.",
+            "The experience brought me into a field I loved, the outdoor design, and into the place I loved through my volunteering."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Design Production', 
+          paragraphs: [
+            "Graphic Designer & Volunteer.",
+            "Created merchandise designs, stickers, air fresheners, laser engraved wooden stickers, car stickers, hats, and posters while volunteering for the outdoor organization."
+          ] 
+        }
       }
+    ];
 
-      function renderVisibleCards() {
-        const viewportHeight = window.innerHeight * 1.5;
-        const minVisibleY = -currentY - (itemTotalHeight * 4);
-        const maxVisibleY = -currentY + viewportHeight + (itemTotalHeight * 4);
+    const streamContainer = document.getElementById('streamContainer');
+    const imageStream = document.getElementById('imageStream');
+    const heroTitle = document.getElementById('heroTitle');
+    const clickHint = document.getElementById('clickHint');
+    const viewProjectBtn = document.getElementById('viewProjectBtn');
+    const goBackBtn = document.getElementById('goBackBtn');
+    const aboutGrid = document.getElementById('aboutGrid');
+    const projectDetailsGrid = document.getElementById('projectDetailsGrid');
 
-        const startIdx = Math.floor(minVisibleY / itemTotalHeight);
-        const endIdx = Math.ceil(maxVisibleY / itemTotalHeight);
+    let currentY = 0;
+    let targetY = 0;
+    let velocityY = 0;
+    let baseAutoSpeed = 0.4;
+    let isDragging = false;
+    let startPointerX = 0;
+    let startPointerY = 0;
+    let lastPointerY = 0;
+    let pointerMoved = false;
+    let selectedKey = null;
+    let isProjectViewMode = false;
+    let activeProjectCard = null;
+    let highestZIndex = 1400;
+    let activeCardOriginalKey = null;
+    let hoveredKey = null;
 
-        const neededKeys = new Set();
+    const FRICTION = 0.92;
+    const DRAG_SENSITIVITY = 1.1;
+    const GAP = 28;
+    const PUSH_OFFSET = 70; 
+    
+    let cardHeight = 0;
+    let itemTotalHeight = 0;
 
-        for (let i = startIdx; i <= endIdx; i++) {
-          neededKeys.add(i);
+    const activeCardsMap = new Map();
 
-          if (!activeCardsMap.has(i)) {
-            const imageIndex = ((i % streamImages.length) + streamImages.length) % streamImages.length;
-            const imageData = streamImages[imageIndex];
+    function calculateDimensions() {
+      if (!streamContainer) return;
+      const containerWidth = streamContainer.clientWidth;
+      cardHeight = containerWidth * (9 / 16);
+      itemTotalHeight = cardHeight + GAP;
+    }
 
-            const card = document.createElement('div');
-            card.className = 'stream-card';
-            card.dataset.key = i;
-            card.style.height = `${cardHeight}px`;
+    function renderVisibleCards() {
+      const viewportHeight = window.innerHeight * 1.5;
+      const minVisibleY = -currentY - (itemTotalHeight * 4);
+      const maxVisibleY = -currentY + viewportHeight + (itemTotalHeight * 4);
 
-            const cardInner = document.createElement('div');
-            cardInner.className = 'stream-card-inner';
+      const startIdx = Math.floor(minVisibleY / itemTotalHeight);
+      const endIdx = Math.ceil(maxVisibleY / itemTotalHeight);
 
-            const img = createOptimizedImage(
-              imageData.src,
-              imageData.fallback,
-              imageData.title,
-              'stream-image',
-              'lazy',
-              { aspectRatio: '16/9' }
-            );
+      const neededKeys = new Set();
 
-            const overlayText = document.createElement('div');
-            overlayText.className = 'card-overlay-text';
-            overlayText.innerHTML = `
-              <h3 class="card-overlay-title">${imageData.title}</h3>
-              <p class="card-overlay-desc">${imageData.about ? imageData.about.paragraphs[0] : ''}</p>
-            `;
+      for (let i = startIdx; i <= endIdx; i++) {
+        neededKeys.add(i);
 
-            const actionBadge = document.createElement('div');
-            actionBadge.className = 'card-action-badge';
-            actionBadge.textContent = 'View Project ↗';
+        if (!activeCardsMap.has(i)) {
+          const imageIndex = ((i % streamImages.length) + streamImages.length) % streamImages.length;
+          const imageData = streamImages[imageIndex];
 
-            cardInner.appendChild(img);
-            cardInner.appendChild(overlayText);
-            cardInner.appendChild(actionBadge);
-            card.appendChild(cardInner);
+          const card = document.createElement('div');
+          card.className = 'stream-card';
+          card.dataset.key = i;
+          card.style.height = `${cardHeight}px`;
 
-            card.addEventListener('mouseenter', () => {
-              hoveredKey = i;
+          const cardInner = document.createElement('div');
+          cardInner.className = 'stream-card-inner';
+
+          const img = createOptimizedImage(
+            imageData.src,
+            imageData.fallback,
+            imageData.title,
+            'stream-image',
+            'lazy',
+            { aspectRatio: '16/9' }
+          );
+
+          const overlayText = document.createElement('div');
+          overlayText.className = 'card-overlay-text';
+          overlayText.innerHTML = `
+            <h3 class="card-overlay-title">${imageData.title}</h3>
+            <p class="card-overlay-desc">${imageData.about ? imageData.about.paragraphs[0] : ''}</p>
+          `;
+
+          const actionBadge = document.createElement('div');
+          actionBadge.className = 'card-action-badge';
+          actionBadge.textContent = 'View Project ↗';
+
+          cardInner.appendChild(img);
+          cardInner.appendChild(overlayText);
+          cardInner.appendChild(actionBadge);
+          card.appendChild(cardInner);
+
+          card.addEventListener('mouseenter', () => {
+            hoveredKey = i;
+            renderVisibleCards();
+          });
+
+          card.addEventListener('mouseleave', () => {
+            if (hoveredKey === i) {
+              hoveredKey = null;
               renderVisibleCards();
-            });
+            }
+          });
 
-            card.addEventListener('mouseleave', () => {
-              if (hoveredKey === i) {
-                hoveredKey = null;
-                renderVisibleCards();
+          card.addEventListener('click', (e) => {
+            if (pointerMoved) return;
+            e.stopPropagation(); // Prevents bubbling to window dismissal logic
+            
+            if (selectedKey === i || window.innerWidth < 768) {
+              if (!isProjectViewMode) {
+                openProjectView(i, card);
               }
-            });
+            } else {
+              selectImage(i);
+            }
+          });
 
-            card.addEventListener('click', (e) => {
-              if (pointerMoved) return;
-              e.stopPropagation();
-              
-              if (selectedKey === i || window.innerWidth < 768) {
-                if (!isProjectViewMode) {
-                  openProjectView(i, card);
-                }
-              } else {
-                selectImage(i);
-              }
-            });
+          imageStream.appendChild(card);
+          activeCardsMap.set(i, card);
+        }
 
-            imageStream.appendChild(card);
-            activeCardsMap.set(i, card);
+        let cardPosY = i * itemTotalHeight;
+
+        if (selectedKey !== null) {
+          if (i < selectedKey) {
+            cardPosY -= PUSH_OFFSET;
+          } else if (i > selectedKey) {
+            cardPosY += PUSH_OFFSET;
+          }
+        }
+
+        const cardNode = activeCardsMap.get(i);
+        if (cardNode) {
+          const badgeNode = cardNode.querySelector('.card-action-badge');
+
+          if (badgeNode) {
+            badgeNode.textContent = (selectedKey === i) ? 'Open Project ↗' : 'View Project ↗';
           }
 
-          let cardPosY = i * itemTotalHeight;
+          if (isProjectViewMode && i === activeCardOriginalKey) {
+            cardNode.style.transform = `translate3d(150vw, ${cardPosY}px, 0)`;
+          } else {
+            cardNode.style.transform = `translate3d(0, ${cardPosY}px, 0)`;
 
-          if (selectedKey !== null) {
-            if (i < selectedKey) {
-              cardPosY -= PUSH_OFFSET;
-            } else if (i > selectedKey) {
-              cardPosY += PUSH_OFFSET;
+            if (hoveredKey === i && !isProjectViewMode) {
+              cardNode.classList.add('is-hovered');
+            } else {
+              cardNode.classList.remove('is-hovered');
             }
           }
 
-          const cardNode = activeCardsMap.get(i);
+          if (selectedKey === i) {
+            cardNode.classList.add('is-selected');
+          } else {
+            cardNode.classList.remove('is-selected');
+          }
+        }
+      }
+
+      activeCardsMap.forEach((node, key) => {
+        if (!neededKeys.has(key) && key !== activeCardOriginalKey) {
+          node.remove();
+          activeCardsMap.delete(key);
+        }
+      });
+
+      if (!isProjectViewMode) {
+        imageStream.style.transform = `translate3d(0, ${currentY}px, 0)`;
+      }
+    }
+
+    function updateLeftColumn(data, showCta = false) {
+      heroTitle.textContent = data.hero.title;
+      
+      if (showCta) {
+        viewProjectBtn.style.display = 'inline-flex';
+        if (clickHint) clickHint.style.display = 'none';
+      } else {
+        viewProjectBtn.style.display = 'none';
+        if (clickHint) clickHint.style.display = 'inline-flex';
+      }
+
+      aboutGrid.querySelector('.section-label').textContent = data.about.label;
+      aboutGrid.querySelector('.section-content').innerHTML = data.about.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+      projectDetailsGrid.querySelector('.section-label').textContent = data.experience.label;
+      projectDetailsGrid.querySelector('.section-content').innerHTML = data.experience.paragraphs.map(p => `<p>${p}</p>`).join('');
+    }
+
+    function selectImage(key) {
+      selectedKey = key;
+      const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
+      const imageData = streamImages[imageIndex];
+
+      updateLeftColumn({
+        hero: { title: imageData.title },
+        about: imageData.about,
+        experience: imageData.experience
+      }, true);
+
+      const vh = window.innerHeight;
+      const containerTopOffset = vh * 0.20; 
+      const perspectiveTiltOffset = vh * 0.12; 
+      const screenCenter = vh * 0.50;
+
+      targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
+    }
+
+    function deselectImage() {
+      if (selectedKey === null) return;
+      selectedKey = null;
+      updateLeftColumn(defaultLeftContent, false);
+    }
+
+    if (viewProjectBtn) {
+      viewProjectBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (selectedKey !== null) {
+          let cardNode = activeCardsMap.get(selectedKey);
+          if (!cardNode) {
+            cardNode = document.querySelector(`.stream-card[data-key="${selectedKey}"]`);
+          }
           if (cardNode) {
-            const badgeNode = cardNode.querySelector('.card-action-badge');
-
-            if (badgeNode) {
-              badgeNode.textContent = (selectedKey === i) ? 'Open Project ↗' : 'View Project ↗';
-            }
-
-            if (isProjectViewMode && i === activeCardOriginalKey) {
-              cardNode.style.transform = `translate3d(150vw, ${cardPosY}px, 0)`;
-            } else {
-              cardNode.style.transform = `translate3d(0, ${cardPosY}px, 0)`;
-
-              if (hoveredKey === i && !isProjectViewMode) {
-                cardNode.classList.add('is-hovered');
-              } else {
-                cardNode.classList.remove('is-hovered');
-              }
-            }
-
-            if (selectedKey === i) {
-              cardNode.classList.add('is-selected');
-            } else {
-              cardNode.classList.remove('is-selected');
-            }
+            openProjectView(selectedKey, cardNode);
           }
         }
+      });
+    }
 
-        activeCardsMap.forEach((node, key) => {
-          if (!neededKeys.has(key) && key !== activeCardOriginalKey) {
-            node.remove();
-            activeCardsMap.delete(key);
-          }
+    if (goBackBtn) {
+      goBackBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isProjectViewMode) closeProjectView();
+      };
+    }
+
+    const mobileBackBtn = document.getElementById('mobileBackBtn');
+    if (mobileBackBtn) {
+      mobileBackBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isProjectViewMode) closeProjectView();
+      };
+    }
+
+    function buildCollageLayout(items) {
+      const gridWrapper = document.getElementById('pinboardGridWrapper');
+      gridWrapper.innerHTML = '';
+      if (!items || items.length === 0) return;
+
+      const isMobile = window.innerWidth < 768;
+
+      if (isMobile) {
+        items.forEach((item, idx) => {
+          const pinboardItem = document.createElement('div');
+          pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
+          pinboardItem.style.position = 'relative';
+          pinboardItem.style.width = 'calc(50% - 8px)';
+          pinboardItem.style.height = 'auto';
+          pinboardItem.style.transform = 'none';
+          pinboardItem.style.zIndex = 1300 + idx;
+
+          const img = createOptimizedImage(
+            item.src,
+            item.fallback,
+            `Project Asset ${idx + 1}`,
+            '',
+            'lazy',
+            {}
+          );
+          
+          setNaturalAspectRatio(img);
+
+          pinboardItem.appendChild(img);
+          gridWrapper.appendChild(pinboardItem);
+
+          makeDraggableAndZoomable(pinboardItem, idx);
         });
+      } else {
+        const anchorPoints = [
+          { left: 40, top: 8 },   { left: 70, top: 10 }, { left: 38, top: 35 },
+          { left: 74, top: 38 },  { left: 35, top: 62 }, { left: 68, top: 65 },
+          { left: 48, top: 18 },  { left: 78, top: 22 }, { left: 52, top: 48 }
+        ];
 
-        if (!isProjectViewMode) {
-          imageStream.style.transform = `translate3d(0, ${currentY}px, 0)`;
-        }
+        items.forEach((item, idx) => {
+          const pinboardItem = document.createElement('div');
+          pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
+
+          const anchor = anchorPoints[idx % anchorPoints.length];
+          const rotation = ((idx % 5) - 2) * 3;
+          const sizeVW = item.isPng ? 15 : 18; 
+          
+          const maxLeftPercent = 100 - sizeVW - 5;
+          const maxTopPercent = 100 - (sizeVW * 0.75) - 5;
+          
+          const safeLeft = Math.min(anchor.left, maxLeftPercent);
+          const safeTop = Math.min(anchor.top, maxTopPercent);
+          
+          pinboardItem.style.position = 'absolute';
+          pinboardItem.style.width = `${sizeVW}vw`;
+          pinboardItem.style.height = 'auto';
+          pinboardItem.style.left = `${safeLeft}%`;
+          pinboardItem.style.top = `${safeTop}%`;
+          pinboardItem.style.transform = `rotate(${rotation}deg)`;
+          pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
+
+          const img = createOptimizedImage(
+            item.src,
+            item.fallback,
+            `Project Asset ${idx + 1}`,
+            '',
+            'lazy',
+            {}
+          );
+          
+          setNaturalAspectRatio(img);
+          pinboardItem.appendChild(img);
+          gridWrapper.appendChild(pinboardItem);
+          makeDraggableAndZoomable(pinboardItem, idx);
+        });
       }
+    }
 
-      function updateLeftColumn(data, showCta = false) {
-        heroTitle.textContent = data.hero.title;
-        
-        if (showCta) {
-          viewProjectBtn.style.display = 'inline-flex';
-          if (clickHint) clickHint.style.display = 'none';
-        } else {
-          viewProjectBtn.style.display = 'none';
-          if (clickHint) clickHint.style.display = 'inline-flex';
-        }
+    function openProjectView(key, cardNode) {
+      isProjectViewMode = true;
+      activeProjectCard = cardNode;
+      activeCardOriginalKey = key;
 
-        aboutGrid.querySelector('.section-label').textContent = data.about.label;
-        aboutGrid.querySelector('.section-content').innerHTML = data.about.paragraphs.map(p => `<p>${p}</p>`).join('');
+      cardNode.classList.add('is-active-project');
 
-        projectDetailsGrid.querySelector('.section-label').textContent = data.experience.label;
-        projectDetailsGrid.querySelector('.section-content').innerHTML = data.experience.paragraphs.map(p => `<p>${p}</p>`).join('');
-      }
+      const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
+      const imageData = streamImages[imageIndex];
 
-      function selectImage(key) {
-        selectedKey = key;
-        const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
+      currentGalleryList = (imageData.pinboardItems || []).map(item => item.src);
+
+      document.getElementById('projectTitle').textContent = imageData.title;
+      
+      const detailedAboutObj = imageData.detailedAbout || imageData.about;
+      const detailedExpObj = imageData.detailedExperience || imageData.experience;
+
+      document.getElementById('projectLeft').innerHTML = `
+        <div class="project-section-grid">
+          <div class="project-section-content">
+            ${detailedAboutObj.paragraphs.map(p => `<p>${p}</p>`).join('')}
+          </div>
+          <h2 class="project-section-label">${detailedAboutObj.label}</h2>
+        </div>
+
+        <div class="project-section-grid">
+          <div class="project-section-content">
+            ${detailedExpObj.paragraphs.map(p => `<p>${p}</p>`).join('')}
+          </div>
+          <h2 class="project-section-label">${detailedExpObj.label}</h2>
+        </div>
+      `;
+
+      buildCollageLayout(imageData.pinboardItems);
+
+      document.body.classList.add('is-project-mode');
+      renderVisibleCards();
+    }
+
+    function closeProjectView() {
+      if (!isProjectViewMode) return;
+
+      document.body.classList.remove('is-project-mode');
+
+      if (selectedKey !== null) {
+        const imageIndex = ((selectedKey % streamImages.length) + streamImages.length) % streamImages.length;
         const imageData = streamImages[imageIndex];
-
         updateLeftColumn({
           hero: { title: imageData.title },
           about: imageData.about,
           experience: imageData.experience
         }, true);
-
-        const vh = window.innerHeight;
-        const containerTopOffset = vh * 0.20; 
-        const perspectiveTiltOffset = vh * 0.12; 
-        const screenCenter = vh * 0.50;
-
-        targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
-      }
-
-      function deselectImage() {
-        if (selectedKey === null) return;
-        selectedKey = null;
+      } else {
         updateLeftColumn(defaultLeftContent, false);
       }
 
-      if (viewProjectBtn) {
-        viewProjectBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-
-          if (selectedKey !== null) {
-            let cardNode = activeCardsMap.get(selectedKey);
-            if (!cardNode) {
-              cardNode = document.querySelector(`.stream-card[data-key="${selectedKey}"]`);
-            }
-            if (cardNode) {
-              openProjectView(selectedKey, cardNode);
-            }
+      if (activeProjectCard) {
+        setTimeout(() => {
+          if (activeProjectCard) {
+            activeProjectCard.classList.remove('is-active-project');
           }
-        });
-      }
-
-      if (goBackBtn) {
-        goBackBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (isProjectViewMode) closeProjectView();
-        };
-      }
-
-      // Mobile back button for project mode
-      const mobileBackBtn = document.getElementById('mobileBackBtn');
-      if (mobileBackBtn) {
-        mobileBackBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (isProjectViewMode) closeProjectView();
-        };
-      }
-
-      function buildCollageLayout(items) {
-        const gridWrapper = document.getElementById('pinboardGridWrapper');
-        gridWrapper.innerHTML = '';
-        if (!items || items.length === 0) return;
-
-        const count = items.length;
-        const isMobile = window.innerWidth < 768;
-
-        if (isMobile) {
-          // Tight grid layout for mobile matching fun.html stacking style
-          const itemWidthVW = 45;
-          const itemHeightVH = 28;
-          const columns = 2;
-          const gapX = 2;
-          const gapY = 3;
-
-          items.forEach((item, idx) => {
-            const pinboardItem = document.createElement('div');
-            pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
-
-            const col = idx % columns;
-            const row = Math.floor(idx / columns);
-
-            const posX = col * (itemWidthVW + gapX) + gapX;
-            const posY = row * (itemHeightVH + gapY) + gapY;
-
-            pinboardItem.style.width = `${itemWidthVW}vw`;
-            pinboardItem.style.height = `${itemHeightVH}vh`;
-            pinboardItem.style.left = `${posX}vw`;
-            pinboardItem.style.top = `${posY}vh`;
-            pinboardItem.style.transform = `rotate(0deg)`;
-            pinboardItem.style.zIndex = 1300 + idx;
-
-            const img = createOptimizedImage(
-              item.src,
-              item.fallback,
-              `Project Asset ${idx + 1}`,
-              '',
-              'lazy',
-              {}
-            );
-            
-            setNaturalAspectRatio(img);
-
-            pinboardItem.appendChild(img);
-            gridWrapper.appendChild(pinboardItem);
-
-            makeDraggableAndZoomable(pinboardItem, idx);
-          });
-        } else {
-          // Desktop Pinboard Grid
-          let baseWidthVW = count <= 2 ? 38 : (count <= 4 ? 26 : 21);
-          let baseHeightVH = count <= 2 ? 45 : (count <= 4 ? 35 : 28);
-          const columns = count > 3 ? 3 : (count === 3 ? 3 : count);
-
-          items.forEach((item, idx) => {
-            const pinboardItem = document.createElement('div');
-            pinboardItem.className = `pinboard-item ${item.isPng ? 'is-png' : ''}`;
-
-            const col = idx % columns;
-            const row = Math.floor(idx / columns);
-            const staggerOffset = (col === 1) ? 3 : (col === 2 ? 6 : 0); 
-            const rotDeg = item.isPng ? (idx % 2 === 0 ? 3 : -4) : (idx % 2 === 0 ? -2 : 2);
-
-            const posX = col * (baseWidthVW * 0.88) + (item.isPng ? 1 : 0);
-            const posY = row * (baseHeightVH * 1.12) + staggerOffset;
-
-            pinboardItem.style.width = `${baseWidthVW}vw`;
-            pinboardItem.style.height = `${baseHeightVH}vh`;
-            pinboardItem.style.left = `${posX}vw`;
-            pinboardItem.style.top = `${posY}vh`;
-            pinboardItem.style.transform = `rotate(${rotDeg}deg)`;
-            pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
-
-            const img = createOptimizedImage(
-              item.src,
-              item.fallback,
-              `Project Asset ${idx + 1}`,
-              '',
-              'lazy',
-              {}
-            );
-            
-            setNaturalAspectRatio(img);
-
-            pinboardItem.appendChild(img);
-            gridWrapper.appendChild(pinboardItem);
-
-            makeDraggableAndZoomable(pinboardItem, idx);
-          });
-        }
-      }
-
-      function openProjectView(key, cardNode) {
-        isProjectViewMode = true;
-        activeProjectCard = cardNode;
-        activeCardOriginalKey = key;
-
-        cardNode.classList.add('is-active-project');
-
-        const imageIndex = ((key % streamImages.length) + streamImages.length) % streamImages.length;
-        const imageData = streamImages[imageIndex];
-
-        currentGalleryList = (imageData.pinboardItems || []).map(item => item.src);
-
-        document.getElementById('projectTitle').textContent = imageData.title;
-        
-        const detailedAboutObj = imageData.detailedAbout || imageData.about;
-        const detailedExpObj = imageData.detailedExperience || imageData.experience;
-
-        document.getElementById('projectLeft').innerHTML = `
-          <div class="project-section-grid">
-            <div class="project-section-content">
-              ${detailedAboutObj.paragraphs.map(p => `<p>${p}</p>`).join('')}
-            </div>
-            <h2 class="project-section-label">${detailedAboutObj.label}</h2>
-          </div>
-
-          <div class="project-section-grid">
-            <div class="project-section-content">
-              ${detailedExpObj.paragraphs.map(p => `<p>${p}</p>`).join('')}
-            </div>
-            <h2 class="project-section-label">${detailedExpObj.label}</h2>
-          </div>
-        `;
-
-        buildCollageLayout(imageData.pinboardItems);
-
-        document.body.classList.add('is-project-mode');
-        renderVisibleCards();
-      }
-
-      function closeProjectView() {
-        if (!isProjectViewMode) return;
-
-        document.body.classList.remove('is-project-mode');
-
-        if (selectedKey !== null) {
-          const imageIndex = ((selectedKey % streamImages.length) + streamImages.length) % streamImages.length;
-          const imageData = streamImages[imageIndex];
-          updateLeftColumn({
-            hero: { title: imageData.title },
-            about: imageData.about,
-            experience: imageData.experience
-          }, true);
-        } else {
-          updateLeftColumn(defaultLeftContent, false);
-        }
-
-        if (activeProjectCard) {
-          setTimeout(() => {
-            if (activeProjectCard) {
-              activeProjectCard.classList.remove('is-active-project');
-            }
-            isProjectViewMode = false;
-            activeCardOriginalKey = null;
-            activeProjectCard = null;
-            document.getElementById('pinboardGridWrapper').innerHTML = '';
-            renderVisibleCards();
-          }, 300);
-        } else {
           isProjectViewMode = false;
           activeCardOriginalKey = null;
           activeProjectCard = null;
           document.getElementById('pinboardGridWrapper').innerHTML = '';
           renderVisibleCards();
-        }
-      }
-
-      // Dragging logic with Window Constraint Clamping
-      function makeDraggableAndZoomable(element, galleryIdx) {
-        let isItemDragging = false;
-        let startX = 0, startY = 0;
-        let initialLeft = 0, initialTop = 0;
-        let dragDistance = 0;
-
-        function startDrag(clientX, clientY) {
-          isItemDragging = true;
-          dragDistance = 0;
-          highestZIndex += 1;
-          element.style.zIndex = highestZIndex;
-          element.style.transition = 'none';
-
-          startX = clientX;
-          startY = clientY;
-
-          initialLeft = element.offsetLeft;
-          initialTop = element.offsetTop;
-        }
-
-        function moveDrag(clientX, clientY) {
-          if (!isItemDragging) return;
-
-          const dx = clientX - startX;
-          const dy = clientY - startY;
-          dragDistance += Math.hypot(dx, dy);
-
-          let newLeft = initialLeft + dx;
-          let newTop = initialTop + dy;
-
-          const parentRect = element.offsetParent 
-            ? element.offsetParent.getBoundingClientRect() 
-            : { left: 0, top: 0 };
-
-          const elemWidth = element.offsetWidth;
-          const elemHeight = element.offsetHeight;
-
-          const minLeft = -parentRect.left + 10;
-          const maxLeft = window.innerWidth - parentRect.left - elemWidth - 10;
-          const minTop = -parentRect.top + 10;
-          const maxTop = window.innerHeight - parentRect.top - elemHeight - 10;
-
-          if (maxLeft >= minLeft) {
-            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
-          }
-          if (maxTop >= minTop) {
-            newTop = Math.max(minTop, Math.min(maxTop, newTop));
-          }
-
-          element.style.left = `${newLeft}px`;
-          element.style.top = `${newTop}px`;
-        }
-
-        function stopDrag() {
-          if (isItemDragging) {
-            isItemDragging = false;
-            element.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease';
-          }
-        }
-
-        element.addEventListener('click', (e) => {
-          if (dragDistance < 5) {
-            e.stopPropagation();
-            openLightbox(galleryIdx);
-          }
-        });
-
-        element.addEventListener('mousedown', (e) => {
-          e.stopPropagation();
-          startDrag(e.clientX, e.clientY);
-        });
-
-        element.addEventListener('touchstart', (e) => {
-          if (e.touches.length > 0) {
-            e.stopPropagation();
-            startDrag(e.touches[0].clientX, e.touches[0].clientY);
-          }
-        }, { passive: true });
-
-        window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
-        window.addEventListener('touchmove', (e) => {
-          if (e.touches.length > 0) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: true });
-
-        window.addEventListener('mouseup', stopDrag);
-        window.addEventListener('touchend', stopDrag);
-      }
-
-      // Wheel Event Handling
-      window.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        if (isProjectViewMode) return;
-        if (selectedKey !== null) {
-          deselectImage();
-        }
-        currentY -= e.deltaY * 0.8;
-        velocityY = -e.deltaY * 0.15;
-      }, { passive: false });
-
-      function tick() {
-        if (selectedKey !== null && !isProjectViewMode) {
-          currentY += (targetY - currentY) * 0.08;
-        } else if (!isDragging && !isProjectViewMode) {
-          velocityY *= FRICTION;
-          if (Math.abs(velocityY) < 0.1) {
-            velocityY = 0;
-            currentY -= baseAutoSpeed;
-          } else {
-            currentY += velocityY;
-          }
-        }
-
+        }, 300);
+      } else {
+        isProjectViewMode = false;
+        activeCardOriginalKey = null;
+        activeProjectCard = null;
+        document.getElementById('pinboardGridWrapper').innerHTML = '';
         renderVisibleCards();
-        requestAnimationFrame(tick);
+      }
+    }
+
+    function makeDraggableAndZoomable(element, galleryIdx) {
+      let isItemDragging = false;
+      let startX = 0, startY = 0;
+      let initialLeft = 0, initialTop = 0;
+      let dragDistance = 0;
+
+      function startDrag(clientX, clientY) {
+        isItemDragging = true;
+        dragDistance = 0;
+        highestZIndex += 1;
+        element.style.zIndex = highestZIndex;
+        element.style.transition = 'none';
+
+        startX = clientX;
+        startY = clientY;
+
+        initialLeft = element.offsetLeft;
+        initialTop = element.offsetTop;
       }
 
-      function onPointerDown(clientX, clientY) {
-        if (isProjectViewMode) return;
-        isDragging = true;
-        pointerMoved = false;
-        startPointerX = clientX;
-        startPointerY = clientY;
-        lastPointerY = clientY;
-        velocityY = 0;
-      }
+      function moveDrag(clientX, clientY) {
+        if (!isItemDragging) return;
 
-      function onPointerMove(clientX, clientY) {
-        if (!isDragging || isProjectViewMode) return;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        dragDistance += Math.hypot(dx, dy);
 
-        const totalMovedDist = Math.hypot(clientX - startPointerX, clientY - startPointerY);
-        const deltaY = (clientY - lastPointerY) * DRAG_SENSITIVITY;
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
 
-        if (totalMovedDist > 6) {
-          pointerMoved = true;
+        const elemWidth = element.offsetWidth;
+        const elemHeight = element.offsetHeight;
+
+        const margin = 20;
+        const minLeft = margin;
+        const maxLeft = window.innerWidth - elemWidth - margin;
+        const minTop = margin;
+        const maxTop = window.innerHeight - elemHeight - margin;
+
+        if (maxLeft >= minLeft) {
+          newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+        }
+        if (maxTop >= minTop) {
+          newTop = Math.max(minTop, Math.min(maxTop, newTop));
         }
 
-        currentY += deltaY;
-        velocityY = deltaY;
-        lastPointerY = clientY;
+        element.style.left = `${newLeft}px`;
+        element.style.top = `${newTop}px`;
       }
 
-      function onPointerUp() {
-        isDragging = false;
+      function stopDrag() {
+        if (isItemDragging) {
+          isItemDragging = false;
+          element.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease';
+        }
       }
 
-      if (streamContainer) {
-        streamContainer.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
-        streamContainer.addEventListener('touchstart', (e) => {
-          if (e.touches.length > 0) onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: true });
-      }
+      element.addEventListener('click', (e) => {
+        if (dragDistance < 5) {
+          e.stopPropagation();
+          openLightbox(galleryIdx);
+        }
+      });
 
-      window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
-      window.addEventListener('mouseup', onPointerUp);
+      element.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        startDrag(e.clientX, e.clientY);
+      });
 
-      window.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      element.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+          e.stopPropagation();
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
       }, { passive: true });
 
-      window.addEventListener('touchend', onPointerUp);
+      window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
 
-      window.addEventListener('click', (e) => {
-        if (isProjectViewMode || selectedKey === null) return;
-        if (pointerMoved) return;
-        
-        const isCardClick = e.target.closest('.stream-card');
-        const isNavClick = e.target.closest('.top-nav');
-        const isBtnClick = e.target.closest('#viewProjectBtn');
+      window.addEventListener('mouseup', stopDrag);
+      window.addEventListener('touchend', stopDrag);
+    }
 
-        if (!isCardClick && !isNavClick && !isBtnClick) {
+    // Wheel Event Handling
+    window.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (isProjectViewMode) return;
+      if (selectedKey !== null) {
+        deselectImage();
+      }
+      currentY -= e.deltaY * 0.8;
+      velocityY = -e.deltaY * 0.15;
+    }, { passive: false });
+
+    function tick() {
+      if (selectedKey !== null && !isProjectViewMode) {
+        currentY += (targetY - currentY) * 0.08;
+      } else if (!isDragging && !isProjectViewMode) {
+        velocityY *= FRICTION;
+        if (Math.abs(velocityY) < 0.1) {
+          velocityY = 0;
+          currentY -= baseAutoSpeed;
+        } else {
+          currentY += velocityY;
+        }
+      }
+
+      renderVisibleCards();
+      requestAnimationFrame(tick);
+    }
+
+    function onPointerDown(clientX, clientY) {
+      if (isProjectViewMode) return;
+      isDragging = true;
+      pointerMoved = false;
+      startPointerX = clientX;
+      startPointerY = clientY;
+      lastPointerY = clientY;
+      velocityY = 0;
+    }
+
+    function onPointerMove(clientX, clientY) {
+      if (!isDragging || isProjectViewMode) return;
+
+      const totalMovedDist = Math.hypot(clientX - startPointerX, clientY - startPointerY);
+      const deltaY = (clientY - lastPointerY) * DRAG_SENSITIVITY;
+
+      if (totalMovedDist > 6) {
+        pointerMoved = true;
+      }
+
+      currentY += deltaY;
+      velocityY = deltaY;
+      lastPointerY = clientY;
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+    }
+
+    if (streamContainer) {
+      streamContainer.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+      streamContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+    }
+
+    window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', onPointerUp);
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    window.addEventListener('touchend', onPointerUp);
+
+    // Global Click Listener for Outside Dismissal
+    window.addEventListener('click', (e) => {
+      if (isProjectViewMode || selectedKey === null) return;
+      if (pointerMoved) return;
+      
+      const isNavClick = e.target.closest('.top-nav');
+      const isBtnClick = e.target.closest('#viewProjectBtn');
+
+      if (!isNavClick && !isBtnClick) {
+        deselectImage();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (lightboxModal.classList.contains('is-active')) {
+        if (e.key === 'ArrowLeft' && currentGalleryIndex > 0) {
+          currentGalleryIndex--;
+          updateLightboxView();
+        } else if (e.key === 'ArrowRight' && currentGalleryIndex < currentGalleryList.length - 1) {
+          currentGalleryIndex++;
+          updateLightboxView();
+        } else if (e.key === 'Escape') {
+          closeLightbox();
+        }
+      } else if (e.key === 'Escape') {
+        if (isProjectViewMode) {
+          closeProjectView();
+        } else {
           deselectImage();
         }
-      });
-
-      window.addEventListener('keydown', (e) => {
-        if (lightboxModal.classList.contains('is-active')) {
-          if (e.key === 'ArrowLeft' && currentGalleryIndex > 0) {
-            currentGalleryIndex--;
-            updateLightboxView();
-          } else if (e.key === 'ArrowRight' && currentGalleryIndex < currentGalleryList.length - 1) {
-            currentGalleryIndex++;
-            updateLightboxView();
-          } else if (e.key === 'Escape') {
-            closeLightbox();
-          }
-        } else if (e.key === 'Escape') {
-          if (isProjectViewMode) {
-            closeProjectView();
-          } else {
-            deselectImage();
-          }
-        }
-      });
-
-      window.addEventListener('resize', calculateDimensions);
-
-      document.querySelectorAll('a[href]').forEach(link => {
-        link.addEventListener('click', (e) => {
-          const href = link.getAttribute('href');
-
-          if (!href || 
-              href.startsWith('#') || 
-              href.startsWith('javascript:') || 
-              href.startsWith('mailto:') || 
-              link.target === '_blank' ||
-              window.location.pathname.endsWith(href)) {
-            return;
-          }
-
-          e.preventDefault();
-          document.body.classList.add('is-exiting');
-
-          setTimeout(() => {
-            window.location.href = href;
-          }, 380);
-        });
-      });
-
-      window.addEventListener('pageshow', (event) => {
-        if (event.persisted) {
-          document.body.classList.remove('is-exiting');
-        }
-      });
-
-      updateLeftColumn(defaultLeftContent, false);
-      calculateDimensions();
-      tick();
+      }
     });
-  </script>
+
+    window.addEventListener('resize', calculateDimensions);
+
+    document.querySelectorAll('a[href]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+
+        if (!href || 
+            href.startsWith('#') || 
+            href.startsWith('javascript:') || 
+            href.startsWith('mailto:') || 
+            link.target === '_blank' ||
+            window.location.pathname.endsWith(href)) {
+          return;
+        }
+
+        e.preventDefault();
+        document.body.classList.add('is-exiting');
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 380);
+      });
+    });
+
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        document.body.classList.remove('is-exiting');
+      }
+    });
+
+    updateLeftColumn(defaultLeftContent, false);
+    calculateDimensions();
+    tick();
+  });
+</script>
 
 </body>
 </html>

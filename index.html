@@ -341,6 +341,7 @@
       >
         <source src="images/Run2.mp4" type="video/mp4" />
         <source src="images/Run3.mp4" type="video/mp4" />
+        <source src="images/Horse.mp4" type="video/mp4" />
         <!-- Fallback image if video fails to load or unsupported -->
         <picture>
           <source srcset="images/000097000012.webp" type="image/webp">
@@ -368,7 +369,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Background Video Alternation Logic
       const bgVideo = document.getElementById('bgVideo');
-      const videos = ['images/Run2.mp4', 'images/Run3.mp4'];
+      const videos = ['images/Run3.mp4', 'images/Horse.mp4', 'images/Run2.mp4'];
       let currentVideoIndex = 0;
       let loopCount = 0;
       const loopsPerVideo = 3;
