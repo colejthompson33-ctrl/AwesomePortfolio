@@ -331,6 +331,10 @@
       margin-top: auto;
     }
 
+    .mobile-email {
+      display: none;
+    }
+
     .contact-email a {
       text-decoration: underline;
       text-underline-offset: 6px;
@@ -416,43 +420,11 @@
       box-sizing: border-box;
     }
 
-    /* Gradient Bloom Backdrop */
-    .stream-card::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 10px;
-      background: radial-gradient(
-        circle at 50% 50%,
-        rgba(220, 255, 60, 0.85) 0%,
-        rgba(0, 210, 255, 0.75) 35%,
-        rgba(0, 80, 255, 0.5) 65%,
-        transparent 85%
-      );
-      filter: blur(28px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-      z-index: -1;
-    }
-
     @media (hover: hover) {
-      .stream-card:hover::before {
-        opacity: 1;
-      }
-
       .stream-card:hover .stream-card-inner {
         border-color: rgba(0, 210, 255, 0.85);
-        box-shadow: 
-          -15px 30px 60px rgba(0, 0, 0, 0.9),
-          0 0 30px rgba(0, 210, 255, 0.4),
-          0 0 55px rgba(180, 255, 0, 0.3);
+        box-shadow: -15px 30px 60px rgba(0, 0, 0, 0.9);
       }
-    }
-
-    .stream-card.is-hovered .stream-card-inner {
-      transform: scale(1.02);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
     }
 
     /* Card Text Overlay */
@@ -568,6 +540,10 @@
       .content-left {
         display: none !important;
       }
+
+      .content-left .contact-email {
+        display: none !important;
+      }
       
       .content-right {
         width: 100%;
@@ -619,101 +595,27 @@
         padding: 0.3rem 0.6rem;
       }
 
-      /* Mobile Project View Header Styles */
-      body.is-project-mode .mobile-menu-toggle {
+      .contact-email.mobile-email {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3000;
+        margin: 0;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .content-left .contact-email {
         display: none !important;
       }
 
-      #mobileBackBtn {
-        background: transparent;
-        border: none;
-        color: #ffffff;
-        font-size: 1.5rem;
-        font-weight: 500;
-        cursor: pointer;
-        padding: 0.5rem;
-        min-width: 44px;
-        min-height: 44px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        z-index: 3000;
-      }
-
-      body.is-project-mode #mobileBackBtn {
-        display: inline-flex !important;
-      }
-
-      body.is-project-mode #projectHeader {
-        display: flex !important;
-        align-items: center;
-        justify-content: flex-end;
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        left: auto;
-        margin: 0 !important;
-        padding: 0;
-        z-index: 2999;
-        min-height: auto;
-      }
-
-      body.is-project-mode #projectTitle {
-        font-size: clamp(0.95rem, 3.8vw, 1.35rem) !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: calc(100vw - 5rem);
-        text-align: right;
-        margin: 0;
-      }
-
-      /* Mobile Project Description - Better vertical positioning */
-      #mobileProjectDescription {
-        display: none;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.95);
-        padding: 1rem 1.25rem;
-        z-index: 2998;
-        max-height: 35vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        box-sizing: border-box;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        width: 100%;
-      }
-
-      body.is-project-mode #mobileProjectDescription {
-        display: block;
-      }
-
-      #mobileProjectDescription h3 {
-        color: #ffffff;
-        font-size: 1rem;
-        margin-bottom: 0.4rem;
-        line-height: 1.2;
-        word-wrap: break-word;
-      }
-
-      #mobileProjectDescription p {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.8rem;
-        line-height: 1.3;
-        margin-bottom: 0.3rem;
-        max-width: 100%;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-      }
-
-      #mobileProjectDescription strong {
-        color: #ffffff;
-        font-weight: 600;
+      .mobile-email {
+        display: block !important;
       }
 
       .top-nav {
@@ -735,13 +637,12 @@
       .mobile-menu-toggle {
         display: none;
       }
-      
+
       .mobile-menu {
         display: none;
       }
 
-      #mobileBackBtn,
-      #mobileProjectDescription {
+      .mobile-email {
         display: none !important;
       }
     }
@@ -839,19 +740,12 @@
     </div>
   </header>
 
-  <!-- Mobile Project View Header -->
-  <button class="mobile-back-btn" id="mobileBackBtn">←</button>
-  <div class="project-header" id="projectHeader" style="display: none;">
-    <h2 class="project-title" id="projectTitle">Project Title</h2>
-  </div>
-
-  <!-- Mobile Project Description -->
-  <div class="mobile-project-description" id="mobileProjectDescription">
-    <h3 id="mobileProjectTitle">Project Title</h3>
-    <div id="mobileProjectContent"></div>
-  </div>
-
   <main class="portfolio-layout" id="mainLayout">
+    <!-- Mobile Email -->
+    <p class="contact-email mobile-email">
+      <a href="mailto:colejthompson33@gmail.com">colejthompson33@gmail.com</a>
+    </p>
+
     <!-- Left Column: Content -->
     <div class="content-left">
       <!-- Hero Section -->
@@ -889,10 +783,6 @@
           <h2 class="section-label">Experience</h2>
         </div>
       </div>
-
-      <p class="contact-email">
-        <a href="mailto:colejthompson33@gmail.com">colejthompson33@gmail.com</a>
-      </p>
     </div>
 
     <!-- Right Column: Interactive Stream -->
@@ -915,15 +805,7 @@
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
       const mobileMenu = document.getElementById('mobileMenu');
       const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-      
-      // Mobile Project View Elements
-      const mobileBackBtn = document.getElementById('mobileBackBtn');
-      const projectHeader = document.getElementById('projectHeader');
-      const projectTitle = document.getElementById('projectTitle');
-      const mobileProjectDescription = document.getElementById('mobileProjectDescription');
-      const mobileProjectTitle = document.getElementById('mobileProjectTitle');
-      const mobileProjectContent = document.getElementById('mobileProjectContent');
-      
+
       function toggleMobileMenu() {
         const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
         mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
@@ -1082,7 +964,6 @@
       let lastPointerY = 0;
       let pointerMoved = false;
       let selectedKey = null;
-      let hoveredKey = null;
 
       const FRICTION = 0.92;
       const DRAG_SENSITIVITY = 1.1;
@@ -1151,18 +1032,6 @@
             cardInner.appendChild(badge);
             card.appendChild(cardInner);
 
-            card.addEventListener('mouseenter', () => {
-              hoveredKey = i;
-              renderVisibleCards();
-            });
-
-            card.addEventListener('mouseleave', () => {
-              if (hoveredKey === i) {
-                hoveredKey = null;
-                renderVisibleCards();
-              }
-            });
-
             card.addEventListener('click', (e) => {
               if (pointerMoved) return;
               e.stopPropagation();
@@ -1201,12 +1070,6 @@
             }
 
             cardNode.style.transform = `translate3d(0, ${cardPosY}px, 0)`;
-
-            if (hoveredKey === i && !document.body.classList.contains('is-project-mode')) {
-              cardNode.classList.add('is-hovered');
-            } else {
-              cardNode.classList.remove('is-hovered');
-            }
 
             if (selectedKey === i) {
               cardNode.classList.add('is-selected');
@@ -1268,38 +1131,10 @@
           experience: imageData.experience
         });
 
-        // Mobile project view setup
-        if (window.innerWidth < 768) {
-          document.body.classList.add('is-project-mode');
-          if (projectTitle) projectTitle.textContent = imageData.title;
-          if (mobileProjectTitle) mobileProjectTitle.textContent = imageData.title;
-          
-          // Combine about and experience paragraphs for mobile description
-          const aboutText = imageData.about.paragraphs.join(' ');
-          const experienceText = imageData.experience.paragraphs.join(' ');
-          if (mobileProjectContent) {
-            mobileProjectContent.innerHTML = `
-              <p><strong>About:</strong> ${aboutText}</p>
-              <p><strong>Experience:</strong> ${experienceText}</p>
-            `;
-          }
-        }
-
         const vh = window.innerHeight;
-        const isMobile = window.innerWidth < 768;
-        
-        // Adjust centering for mobile vs desktop
-        let containerTopOffset, perspectiveTiltOffset, screenCenter;
-        
-        if (isMobile) {
-          containerTopOffset = vh * 0.15; // Moderate offset on mobile
-          perspectiveTiltOffset = vh * 0.08; // Moderate perspective on mobile
-          screenCenter = vh * 0.40; // Lower center on mobile to account for description panel
-        } else {
-          containerTopOffset = vh * 0.20; 
-          perspectiveTiltOffset = vh * 0.12; 
-          screenCenter = vh * 0.50;
-        }
+        const containerTopOffset = vh * 0.20;
+        const perspectiveTiltOffset = vh * 0.12;
+        const screenCenter = vh * 0.50;
 
         targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
       }
@@ -1311,9 +1146,6 @@
         backToWorkBtn.classList.remove('visible');
         heroHint.classList.remove('hidden');
 
-        // Remove mobile project view
-        document.body.classList.remove('is-project-mode');
-
         updateLeftColumn(defaultLeftContent);
       }
 
@@ -1322,19 +1154,9 @@
         deselectImage();
       });
 
-      // Mobile back button
-      if (mobileBackBtn) {
-        mobileBackBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          deselectImage();
-        });
-      }
-
       // Wheel Event Handling
       window.addEventListener('wheel', (e) => {
         e.preventDefault();
-        if (document.body.classList.contains('is-project-mode')) return;
         if (selectedKey !== null) {
           deselectImage();
         }
@@ -1343,9 +1165,9 @@
       }, { passive: false });
 
       function tick() {
-        if (selectedKey !== null && !document.body.classList.contains('is-project-mode')) {
+        if (selectedKey !== null) {
           currentY += (targetY - currentY) * 0.08;
-        } else if (!isDragging && !document.body.classList.contains('is-project-mode')) {
+        } else if (!isDragging) {
           velocityY *= FRICTION;
           if (Math.abs(velocityY) < 0.1) {
             velocityY = 0;
@@ -1360,7 +1182,6 @@
       }
 
       function onPointerDown(clientX, clientY) {
-        if (document.body.classList.contains('is-project-mode')) return;
         isDragging = true;
         pointerMoved = false;
         startPointerX = clientX;
@@ -1370,7 +1191,7 @@
       }
 
       function onPointerMove(clientX, clientY) {
-        if (!isDragging || document.body.classList.contains('is-project-mode')) return;
+        if (!isDragging) return;
 
         const totalMovedDist = Math.hypot(clientX - startPointerX, clientY - startPointerY);
         const deltaY = (clientY - lastPointerY) * DRAG_SENSITIVITY;
@@ -1405,9 +1226,9 @@
       window.addEventListener('touchend', onPointerUp);
 
       window.addEventListener('click', (e) => {
-        if (document.body.classList.contains('is-project-mode') || selectedKey === null) return;
+        if (selectedKey === null) return;
         if (pointerMoved) return;
-        
+
         const isCardClick = e.target.closest('.stream-card');
         const isNavClick = e.target.closest('.top-nav');
         const isBtnClick = e.target.closest('#backToWorkBtn');

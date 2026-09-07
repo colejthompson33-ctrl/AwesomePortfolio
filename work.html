@@ -89,7 +89,7 @@
       color: rgba(255, 255, 255, 0.45);
     }
 
-    /* Mobile Menu Toggle Button - Using shared CSS from mobile-optimizations.css */
+    /* Mobile Menu Toggle Button */
     .mobile-menu-toggle {
       display: none;
     }
@@ -383,10 +383,10 @@
       background-color: transparent;
       cursor: pointer;
       transform-style: preserve-3d;
-      will-change: transform, box-shadow, opacity;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
-                  box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  opacity 0.4s ease;
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+      will-change: transform;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
       z-index: 10;
       opacity: 1 !important;
       pointer-events: auto;
@@ -397,61 +397,32 @@
       cursor: zoom-in;
     }
 
-    .stream-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background-color: #000000;
-      overflow: hidden;
-      box-shadow: -10px 20px 40px rgba(0, 0, 0, 0.8);
-      border-radius: 6px;
-      border: 1px solid transparent;
-      transform-style: preserve-3d;
-      will-change: transform, border-color, box-shadow;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
-                  border-color 0.35s ease,
-                  box-shadow 0.35s ease;
-      transform-origin: center center;
-      z-index: 2;
-    }
+.stream-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  overflow: hidden;
+  box-shadow: -10px 20px 40px rgba(0, 0, 0, 0.8);
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transform-style: preserve-3d;
+  will-change: transform, border-color, box-shadow;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease,
+              box-shadow 0.35s ease;
+  transform-origin: center center;
+  z-index: 2;
+  box-sizing: border-box;
+}
 
-    .stream-card::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 10px;
-      background: radial-gradient(
-        circle at 50% 50%,
-        rgba(220, 255, 60, 0.85) 0%,
-        rgba(0, 210, 255, 0.75) 35%,
-        rgba(0, 80, 255, 0.5) 65%,
-        transparent 85%
-      );
-      filter: blur(28px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-      z-index: -1;
-    }
-
-    @media (hover: hover) {
-      .stream-card:hover::before {
-        opacity: 1;
-      }
-
-      .stream-card:hover .stream-card-inner {
-        border-color: rgba(0, 210, 255, 0.85);
-        box-shadow: 
-          -15px 30px 60px rgba(0, 0, 0, 0.9),
-          0 0 30px rgba(0, 210, 255, 0.4),
-          0 0 55px rgba(180, 255, 0, 0.3);
-      }
-    }
-
-    .stream-card.is-hovered .stream-card-inner {
-      transform: scale(1.02);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-    }
+@media (hover: hover) {
+  .stream-card:hover .stream-card-inner {
+    transform: scale(1.02);
+    border-color: rgba(0, 210, 255, 0.85);
+    box-shadow: -15px 30px 60px rgba(0, 0, 0, 0.9);
+  }
+}
 
     /* Card Text Overlay */
     .card-overlay-text {
@@ -519,13 +490,13 @@
 
     @keyframes borderPulse {
       0% {
-        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 210, 255, 0.5);
+        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 210, 255, 0.3);
       }
       50% {
-        box-shadow: -20px 35px 65px rgba(0, 0, 0, 0.95), 0 0 40px rgba(180, 255, 0, 0.5);
+        box-shadow: -20px 35px 65px rgba(0, 0, 0, 0.95), 0 0 24px rgba(180, 255, 0, 0.3);
       }
       100% {
-        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 210, 255, 0.5);
+        box-shadow: -15px 25px 50px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 210, 255, 0.3);
       }
     }
 
@@ -598,7 +569,6 @@
         overflow: hidden;
       }
 
-      /* Requirement 1: Strictly center-justify stream on mobile without edge clipping */
       .image-stream-container {
         top: 0;
         left: 0;
@@ -650,7 +620,6 @@
         padding: 1.25rem;
       }
 
-      /* Requirement 3: Mobile Project View Navigation Alignment */
       body.is-project-mode .mobile-menu-toggle {
         display: none !important;
       }
@@ -721,7 +690,6 @@
       }
     }
 
-    /* Requirement 2: Strict Desktop Back Button & Hide Mobile Back Button on Desktop */
     @media (min-width: 768px) {
       .mobile-menu-toggle {
         display: none;
@@ -873,7 +841,6 @@
       overflow: visible;
     }
 
-    /* Mobile Pinboard Stacked Wrapper */
     @media (max-width: 767px) {
       .pinboard-grid-wrapper {
         position: relative;
@@ -908,9 +875,9 @@
       cursor: zoom-in;
       user-select: none;
       background-color: transparent;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+      transition: filter 0.25s ease;
       touch-action: none;
-      will-change: transform, left, top;
+      will-change: transform;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -918,7 +885,7 @@
 
     @media (hover: hover) {
       .pinboard-item:hover {
-        filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(0, 210, 255, 0.5));
+        filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 10px rgba(0, 210, 255, 0.25));
       }
     }
 
@@ -933,7 +900,7 @@
     }
 
     .pinboard-item.is-png img {
-      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.1));
       transform: scale(1.1);
       transform-origin: center center;
     }
@@ -1187,19 +1154,30 @@
     }
     
     const EDGE_THRESHOLD = 90;
+    let mouseX = 0, mouseY = 0;
+    let glowTicking = false;
 
-    // Mouse tracking & Edge glow
+    // Mouse tracking & Edge glow with animation frame throttling
     window.addEventListener('mousemove', (e) => {
-      document.body.style.setProperty('--bg-mouse-x', `${e.clientX}px`);
-      document.body.style.setProperty('--bg-mouse-y', `${e.clientY}px`);
+      mouseX = e.clientX;
+      mouseY = e.clientY;
 
-      const minEdgeDist = Math.min(e.clientX, window.innerWidth - e.clientX, e.clientY, window.innerHeight - e.clientY);
+      if (!glowTicking) {
+        requestAnimationFrame(() => {
+          document.body.style.setProperty('--bg-mouse-x', `${mouseX}px`);
+          document.body.style.setProperty('--bg-mouse-y', `${mouseY}px`);
 
-      if (minEdgeDist < EDGE_THRESHOLD) {
-        const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
-        document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
-      } else {
-        document.body.style.setProperty('--edge-glow-opacity', '0');
+          const minEdgeDist = Math.min(mouseX, window.innerWidth - mouseX, mouseY, window.innerHeight - mouseY);
+
+          if (minEdgeDist < EDGE_THRESHOLD) {
+            const edgeFactor = 1 - (minEdgeDist / EDGE_THRESHOLD);
+            document.body.style.setProperty('--edge-glow-opacity', edgeFactor.toFixed(2));
+          } else {
+            document.body.style.setProperty('--edge-glow-opacity', '0');
+          }
+          glowTicking = false;
+        });
+        glowTicking = true;
       }
     });
 
@@ -1270,13 +1248,13 @@
         label: 'About Me',
         paragraphs: [
           "I'm Cole Thompson, a Texas A&M graduate with a Visualization Major and Graphic Design Minor.",
-          "My first love is design. I have found interest through my career in anything that moves - from merchandise design, branding, web design, data visualization, you name it."
+          "My first love is design. I have found interest through my career in anything that moves - from merchandise design, branding, web design, data visualization... you name it."
         ]
       },
       experience: { 
         label: 'Experience', 
         paragraphs: [
-          "I have years of experience in freelance work, like with Bill Young Productions, and with agencies like GDC Marketing and Hahn.",
+          "I have years of experience doing freelance work, with Bill Young Productions, and doing agency internships with GDC Marketing and Hahn Creative Agency.",
           "These experiences have deepened my understanding of how high-level creative work integrates with strategic marketing. Here are some of the brands I've had the opportunity to support."
         ] 
       }
@@ -1318,6 +1296,39 @@
           ] 
         }
       },
+            { 
+        src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', 
+        title: 'Univ. of North Texas',
+        pinboardItems: [
+          { src: 'images/UNT/UNT Design2.webp', fallback: 'images/UNT/UNT Design2.png', isPng: true },
+          { src: 'images/UNT/UNT Design3.webp', fallback: 'images/UNT/UNT Design3.png', isPng: true },
+          { src: 'images/UNT/UNT Design4.webp', fallback: 'images/UNT/UNT Design4.png', isPng: true },
+          { src: 'images/UNT/UNT Design5.webp', fallback: 'images/UNT/UNT Design5.png', isPng: true },
+          { src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', isPng: true }
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["A brand new look for the University of North Texas"] 
+        },
+        experience: { 
+          label: 'The Campaign', 
+          paragraphs: ["Needing a total refreash of the iconic brand of University of North Texas (UNT), I helped lead the charge in creating a fresh, modern identity."] 
+        },
+        detailedAbout: { 
+          label: 'Campaign Overview', 
+          paragraphs: [
+            "The challenge with this project was not just creating a new visual identity, but ensuring it resonated with both current and prospective students.",
+            "The wings and the new 'Better Look North' slogan were at the front of the new campaign with the idea of the wings being a symbol of growth and aspiration."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Creative Production', 
+          paragraphs: [
+            "I created sizing and versioning for billboard, stadium runners, all the way to social. Showing off the variety of sport, academic, and music programs that UNT is know for",
+            "The biggest visual style I tried to convey was that heavy 'Better Look North' sentiment. I utilized the vertical formatting to the highest potential, showing the students rising upwards and being enveloped on the wings of the UNT logo showing how UNT supports their students to be greater. Always leaning into the idea of higher education and that to find a competitive university to join, you Better Look North."
+          ] 
+        }
+      },
       { 
         src: 'images/HUM/HumMockup.webp', fallback: 'images/HUM/HumMockup.jpg', 
         title: 'hum.fm',
@@ -1331,30 +1342,30 @@
         ],
         about: { 
           label: 'Project Preview', 
-          paragraphs: ["Reimagining music discovery through fluid, community-driven social streaming and visual waveforms."] 
+          paragraphs: ["Reimagining music discovery"] 
         },
         experience: { 
           label: 'Product Design', 
-          paragraphs: ["Full-stack UI/UX architectural design built around seamless navigation and real-time listening rooms."] 
+          paragraphs: ["See how I designed the user interface and user experience for hum.fm"] 
         },
         detailedAbout: { 
           label: 'The Concept', 
           paragraphs: [
-            "hum.fm breaks away from sterile algorithmic music queues, turning audio exploration into a visual, human-centric playground.",
-            "The platform maps genre connections visually, allowing listeners to discover underground talent while curating digital spaces with friends."
+            "My greatest qualm with modern music platforms, from streaming to discovery, is that they all use vertical scrolling lists. If I described the user flow of an app that has the information of millions of artists and billions of songs that only displayed 20 at a time, you would revoke my design license.",
+            "The platform maps all data points vertically on a 3-D plane, allowing every song and artist to be discovered through spatial navigation rather than endless scrolling. A much more intuitive way to navigate data for a user than you would think."
           ] 
         },
         detailedExperience: { 
           label: 'Design System', 
           paragraphs: [
-            "Principal Product Designer.",
-            "Architected end-to-end Figma design systems, dynamic micro-interactions, waveform visualizer components, and mobile layout frameworks."
+            "As the Principal Product Designer",
+            "I created the website from scratch with my partner. We learned from many rounds of user testing, mentor advice from the legendary Glen McDonald (creator of Every Noise at Once), and iterated until we had a product that was both beautiful and functional."
           ] 
         }
       },
       { 
         src: 'images/Guidelines/BrandTitle.webp', fallback: 'images/Guidelines/BrandTitle.png', 
-        title: 'Hahn Guidelines',
+        title: 'Hahn Marketing & Ideation Guidelines',
         pinboardItems: [
           { src: 'images/Guidelines/1.webp', fallback: 'images/Guidelines/1.png', isPng: false },
           { src: 'images/Guidelines/2.webp', fallback: 'images/Guidelines/2.png', isPng: false },
@@ -1372,54 +1383,21 @@
           paragraphs: ["A comprehensive identity system and brand overhaul for Hahn Marketing & Ideation."] 
         },
         experience: { 
-          label: 'Brand Strategy', 
-          paragraphs: ["Establishing clear visual hierarchy, precision grid layouts, and versatile digital brand guidelines."] 
+          label: 'Brand Guidelines', 
+          paragraphs: ["A passion of mine come true working with Hahn, creating brand guidelines for their marketing and ideation services."] 
         },
         detailedAbout: { 
-          label: 'Brand Transformation', 
+          label: 'The New Brand', 
           paragraphs: [
-            "A modern, robust brand identity overhaul built to unify agency communications across print, web, and internal collateral.",
+            "As a modern and evolving marketing agency, Hahn needed to evolve their own brand forward along with their clients. To keep with their core value being 'Bold' I created new guidelines defining their brand.",
             "The updated guidelines introduce structured typography scales, vibrant color palettes, and modular grid frameworks for scalable growth."
           ] 
         },
         detailedExperience: { 
-          label: 'Deliverables & Art Direction', 
+          label: 'Guidelines', 
           paragraphs: [
-            "Art Director & Lead Brand Designer.",
-            "Authored the complete 60-page Brand Standards Manual, laying out strict rules for logo placement, typography hierarchy, and digital templates."
-          ] 
-        }
-      },
-      { 
-        src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', 
-        title: 'Univ. of North Texas',
-        pinboardItems: [
-          { src: 'images/UNT/UNT Design2.webp', fallback: 'images/UNT/UNT Design2.png', isPng: true },
-          { src: 'images/UNT/UNT Design3.webp', fallback: 'images/UNT/UNT Design3.png', isPng: true },
-          { src: 'images/UNT/UNT Design4.webp', fallback: 'images/UNT/UNT Design4.png', isPng: true },
-          { src: 'images/UNT/UNT Design5.webp', fallback: 'images/UNT/UNT Design5.png', isPng: true },
-          { src: 'images/UNT/UNT Design.webp', fallback: 'images/UNT/UNT Design.jpg', isPng: true }
-        ],
-        about: { 
-          label: 'Project Preview', 
-          paragraphs: ["Bold, high-energy promotional campaigns engineered to capture campus culture and recruit prospective talent."] 
-        },
-        experience: { 
-          label: 'Campaign Art', 
-          paragraphs: ["Designing high-impact print collateral, environmental graphics, and social campaign assets."] 
-        },
-        detailedAbout: { 
-          label: 'Campaign Overview', 
-          paragraphs: [
-            "A dynamic recruitment and visual media push designed to elevate the university's presence across digital and physical touchpoints.",
-            "Bold kinetic typography meets textured graphic overlays to showcase student life and campus energy in an unmissable way."
-          ] 
-        },
-        detailedExperience: { 
-          label: 'Creative Production', 
-          paragraphs: [
-            "Graphic Designer & Content Strategist.",
-            "Produced large-scale environmental banners, interactive digital signage, print brochures, and targeted digital advertising assets."
+            "Guidelines are a deep passion and intrest of mine",
+            "Seeing how a brand works and moves through different formats can influence the design of the entire system. You can roll out a color or logo until you see how it interacts with all assets in a system. Also outlining the subtle rules you learn about a brand is just a nerdy thing I love to do."
           ] 
         }
       },
@@ -1435,24 +1413,23 @@
         ],
         about: { 
           label: 'Project Preview', 
-          paragraphs: ["Personal artist branding filled with organic textures, custom vector marks, and editorial design flair."] 
+          paragraphs: ["Visual and creative direction for singer/songwriter Claire Justice"] 
         },
         experience: { 
           label: 'Visual Identity', 
-          paragraphs: ["Hand-crafted logomarks and cohesive visual direction for merch, social, and web presence."] 
+          paragraphs: ["On first listen to Claire as a designer, I knew I could'nt make something only on my laptop - I had to get out my tools and create something tangible."] 
         },
         detailedAbout: { 
           label: 'Artist Identity', 
           paragraphs: [
-            "A bespoke, organic visual identity built for artist Claire Justice. The aesthetic balances structured typography with raw, hand-drawn motifs.",
-            "Designed to feel tactile and expressive, the brand system effortlessly translates onto apparel, social media kits, and physical print releases."
+            "As a visual artist, Claire needed a brand that felt personal and authentic. I created a visual identity that balances structured handmade typography with raw, hand-carved motifs.",
+            "Designed to feel tactile and expressive, the brand system works so well with print and lets every peice of merch feel unique and real to listeners."
           ] 
         },
         detailedExperience: { 
-          label: 'Brand Direction', 
+          label: 'Quick Plug', 
           paragraphs: [
-            "Visual Identity Specialist.",
-            "Created custom vector logomarks, color systems, web assets, and tactile packaging designs for merchandise releases."
+            "Go listen to her new EP Pale Horse!",
           ] 
         }
       },
@@ -1469,24 +1446,23 @@
         ],
         about: { 
           label: 'Project Preview', 
-          paragraphs: ["Growing up in San Antonio, Waynes Wings are the best wings you will ever eat. Starting in a food truck, when Waynes Wings gained two new storefront locations, I knew they needed a new look."] 
+          paragraphs: ["As a quickly growing business, I had the opportunity to help Waynes Wings evolve their brand to match thier growth."] 
         },
         experience: { 
           label: 'Brand Evolution', 
-          paragraphs: ["See my iterative process and how I wanted to keep the charm of the original logo, and bring that San Antonio bobble head look to the new modern and scalable version of Waynes Wings."] 
+          paragraphs: ["Growing up in San Antonio, Waynes Wings are the best wings you will ever eat. See how I balance the original identidy into a modern, scalable brand."] 
         },
         detailedAbout: { 
           label: 'The Vision', 
           paragraphs: [
-            "Growing up in San Antonio, Waynes Wings are the best wings you will ever eat. Starting in a food truck, when Waynes Wings gained two new storefront locations, I knew they needed a new look.",
-            "See my iterative process and how I wanted to keep the charm of the original logo, and bring that San Antonio bobble head look to the new modern and scalable version of Waynes Wings."
+            "Starting in a food truck, Waynes Wings gained two new storefront location as fast as they opened, and they stuggled maintaining their once small brand identity. I knew they needed a new look.",
+            "Working with such a personal logo with the face of the founder as the mascot, it was hard to see where I could evolve their brand to scale yet keep all the recognizability and charm of the original logo. I found a great middle ground with a more stylized version of the original logo, without the human head. Keeping close the the bobble head (a San Antonio Tradition) charm."
           ] 
         },
         detailedExperience: { 
           label: 'Brand Identity Process', 
           paragraphs: [
-            "Brand Designer & Visual Strategist.",
-            "Developed brand identity systems, logo evolution, visual assets, and brand guidelines while preserving the iconic San Antonio bobble head aesthetic."
+            "I Developed a new brand identity system along with a brand new logo, website, and guidelines."
           ] 
         }
       },
@@ -1505,24 +1481,24 @@
         ],
         about: { 
           label: 'Project Preview', 
-          paragraphs: ["As an avid outdoor lover, my time volunteering with Aggie Outdoors brought me so much experience making shirts, stickers, air fresheners, laser engraved wooden stickers, car stickers, hats, and posters on posters."] 
+          paragraphs: ["As an avid outdoor lover, my time volunteering with Aggie Outdoors brought me so much. Check out how."] 
         },
         experience: { 
-          label: 'Outdoor Design', 
-          paragraphs: ["The experience brought me into a field I loved, the outdoor design, and into the place I loved through my volunteering."] 
+          label: 'My Design', 
+          paragraphs: ["Go outside and make stuff"] 
         },
         detailedAbout: { 
-          label: 'My Journey', 
+          label: 'What AO Is', 
           paragraphs: [
-            "As an avid outdoor lover, my time volunteering with Aggie Outdoors brought me so much experience making shirts, stickers, air fresheners, laser engraved wooden stickers, car stickers, hats, and posters on posters.",
-            "The experience brought me into a field I loved, the outdoor design, and into the place I loved through my volunteering."
+            "An Outdoor organization in College Station, TX Aggie Outdoors (AO) is a student organization that promotes outdoor activities and environmental awareness. Hosting service events to help the local community to camping trips in Texas once a month, AO gets people outside and helps their community to keep their green areas clean and safe.",
+            "The experience volunteering and being elected Merchandising Chair brought me deeper into a field I love, outdoor design and marketing."
           ] 
         },
         detailedExperience: { 
-          label: 'Design Production', 
+          label: 'What I Did', 
           paragraphs: [
-            "Graphic Designer & Volunteer.",
-            "Created merchandise designs, stickers, air fresheners, laser engraved wooden stickers, car stickers, hats, and posters while volunteering for the outdoor organization."
+            "As a Graphic Designer & Volunteer",
+            "I created merchandise designs, stickers, air fresheners, laser engraved wooden stickers, car decals, hats, and posters. I gained so much experience printing front to end merchandise for a huge group of people, working closely with local print shops and learning the process deeply."
           ] 
         }
       }
@@ -1551,10 +1527,10 @@
     let activeProjectCard = null;
     let highestZIndex = 1400;
     let activeCardOriginalKey = null;
-    let hoveredKey = null;
+    let pinboardClickBuffer = false; 
 
-    const FRICTION = 0.92;
-    const DRAG_SENSITIVITY = 1.1;
+    const FRICTION = 0.97;
+    const DRAG_SENSITIVITY = 1.35;
     const GAP = 28;
     const PUSH_OFFSET = 70; 
     
@@ -1562,15 +1538,18 @@
     let itemTotalHeight = 0;
 
     const activeCardsMap = new Map();
+    let lastRenderedStart = -999;
+    let lastRenderedEnd = -999;
 
     function calculateDimensions() {
       if (!streamContainer) return;
       const containerWidth = streamContainer.clientWidth;
       cardHeight = containerWidth * (9 / 16);
       itemTotalHeight = cardHeight + GAP;
+      lastRenderedStart = -999; // Force re-render on resize
     }
 
-    function renderVisibleCards() {
+    function renderVisibleCards(force = false) {
       const viewportHeight = window.innerHeight * 1.5;
       const minVisibleY = -currentY - (itemTotalHeight * 4);
       const maxVisibleY = -currentY + viewportHeight + (itemTotalHeight * 4);
@@ -1578,19 +1557,27 @@
       const startIdx = Math.floor(minVisibleY / itemTotalHeight);
       const endIdx = Math.ceil(maxVisibleY / itemTotalHeight);
 
+      // Only rebuild DOM nodes if viewport range changes or forced
+      if (!force && startIdx === lastRenderedStart && endIdx === lastRenderedEnd) {
+        return;
+      }
+      lastRenderedStart = startIdx;
+      lastRenderedEnd = endIdx;
+
       const neededKeys = new Set();
 
       for (let i = startIdx; i <= endIdx; i++) {
         neededKeys.add(i);
 
-        if (!activeCardsMap.has(i)) {
+        let cardNode = activeCardsMap.get(i);
+        if (!cardNode) {
           const imageIndex = ((i % streamImages.length) + streamImages.length) % streamImages.length;
           const imageData = streamImages[imageIndex];
 
-          const card = document.createElement('div');
-          card.className = 'stream-card';
-          card.dataset.key = i;
-          card.style.height = `${cardHeight}px`;
+          cardNode = document.createElement('div');
+          cardNode.className = 'stream-card';
+          cardNode.dataset.key = i;
+          cardNode.style.height = `${cardHeight}px`;
 
           const cardInner = document.createElement('div');
           cardInner.className = 'stream-card-inner';
@@ -1618,39 +1605,26 @@
           cardInner.appendChild(img);
           cardInner.appendChild(overlayText);
           cardInner.appendChild(actionBadge);
-          card.appendChild(cardInner);
+          cardNode.appendChild(cardInner);
 
-          card.addEventListener('mouseenter', () => {
-            hoveredKey = i;
-            renderVisibleCards();
-          });
-
-          card.addEventListener('mouseleave', () => {
-            if (hoveredKey === i) {
-              hoveredKey = null;
-              renderVisibleCards();
-            }
-          });
-
-          card.addEventListener('click', (e) => {
+          cardNode.addEventListener('click', (e) => {
             if (pointerMoved) return;
-            e.stopPropagation(); // Prevents bubbling to window dismissal logic
+            e.stopPropagation();
             
             if (selectedKey === i || window.innerWidth < 768) {
               if (!isProjectViewMode) {
-                openProjectView(i, card);
+                openProjectView(i, cardNode);
               }
             } else {
               selectImage(i);
             }
           });
 
-          imageStream.appendChild(card);
-          activeCardsMap.set(i, card);
+          imageStream.appendChild(cardNode);
+          activeCardsMap.set(i, cardNode);
         }
 
         let cardPosY = i * itemTotalHeight;
-
         if (selectedKey !== null) {
           if (i < selectedKey) {
             cardPosY -= PUSH_OFFSET;
@@ -1659,31 +1633,24 @@
           }
         }
 
-        const cardNode = activeCardsMap.get(i);
-        if (cardNode) {
-          const badgeNode = cardNode.querySelector('.card-action-badge');
+        const badgeNode = cardNode.querySelector('.card-action-badge');
+        if (badgeNode) {
+          badgeNode.textContent = (selectedKey === i) ? 'Open Project ↗' : 'View Project ↗';
+        }
 
-          if (badgeNode) {
-            badgeNode.textContent = (selectedKey === i) ? 'Open Project ↗' : 'View Project ↗';
-          }
+        const targetTransform = (isProjectViewMode && i === activeCardOriginalKey)
+          ? `translate3d(150vw, ${cardPosY}px, 0)`
+          : `translate3d(0, ${cardPosY}px, 0)`;
 
-          if (isProjectViewMode && i === activeCardOriginalKey) {
-            cardNode.style.transform = `translate3d(150vw, ${cardPosY}px, 0)`;
-          } else {
-            cardNode.style.transform = `translate3d(0, ${cardPosY}px, 0)`;
+        if (cardNode.dataset.lastTransform !== targetTransform) {
+          cardNode.style.transform = targetTransform;
+          cardNode.dataset.lastTransform = targetTransform;
+        }
 
-            if (hoveredKey === i && !isProjectViewMode) {
-              cardNode.classList.add('is-hovered');
-            } else {
-              cardNode.classList.remove('is-hovered');
-            }
-          }
-
-          if (selectedKey === i) {
-            cardNode.classList.add('is-selected');
-          } else {
-            cardNode.classList.remove('is-selected');
-          }
+        if (selectedKey === i) {
+          cardNode.classList.add('is-selected');
+        } else {
+          cardNode.classList.remove('is-selected');
         }
       }
 
@@ -1693,10 +1660,6 @@
           activeCardsMap.delete(key);
         }
       });
-
-      if (!isProjectViewMode) {
-        imageStream.style.transform = `translate3d(0, ${currentY}px, 0)`;
-      }
     }
 
     function updateLeftColumn(data, showCta = false) {
@@ -1729,17 +1692,17 @@
       }, true);
 
       const vh = window.innerHeight;
-      const containerTopOffset = vh * 0.20; 
-      const perspectiveTiltOffset = vh * 0.12; 
       const screenCenter = vh * 0.50;
 
-      targetY = -(key * itemTotalHeight) + screenCenter + containerTopOffset + perspectiveTiltOffset - (cardHeight / 2);
+      targetY = -(key * itemTotalHeight) + screenCenter - (cardHeight * 0.25);
+      renderVisibleCards(true); // Force update to trigger bezel curve separation animation
     }
 
     function deselectImage() {
       if (selectedKey === null) return;
       selectedKey = null;
       updateLeftColumn(defaultLeftContent, false);
+      renderVisibleCards(true); // Force update to collapse bezel curve separation
     }
 
     if (viewProjectBtn) {
@@ -1835,7 +1798,6 @@
           pinboardItem.style.height = 'auto';
           pinboardItem.style.left = `${safeLeft}%`;
           pinboardItem.style.top = `${safeTop}%`;
-          pinboardItem.style.transform = `rotate(${rotation}deg)`;
           pinboardItem.style.zIndex = item.isPng ? 1350 + idx : 1300 + idx;
 
           const img = createOptimizedImage(
@@ -1859,6 +1821,11 @@
       isProjectViewMode = true;
       activeProjectCard = cardNode;
       activeCardOriginalKey = key;
+
+      pinboardClickBuffer = false;
+      setTimeout(() => {
+        pinboardClickBuffer = true;
+      }, 500);
 
       cardNode.classList.add('is-active-project');
 
@@ -1891,7 +1858,7 @@
       buildCollageLayout(imageData.pinboardItems);
 
       document.body.classList.add('is-project-mode');
-      renderVisibleCards();
+      renderVisibleCards(true);
     }
 
     function closeProjectView() {
@@ -1920,22 +1887,29 @@
           activeCardOriginalKey = null;
           activeProjectCard = null;
           document.getElementById('pinboardGridWrapper').innerHTML = '';
-          renderVisibleCards();
+          renderVisibleCards(true);
         }, 300);
       } else {
         isProjectViewMode = false;
         activeCardOriginalKey = null;
         activeProjectCard = null;
         document.getElementById('pinboardGridWrapper').innerHTML = '';
-        renderVisibleCards();
+        renderVisibleCards(true);
       }
     }
 
     function makeDraggableAndZoomable(element, galleryIdx) {
       let isItemDragging = false;
       let startX = 0, startY = 0;
-      let initialLeft = 0, initialTop = 0;
+      let initialTx = 0, initialTy = 0;
       let dragDistance = 0;
+      let dragTicking = false;
+      let pendingX = 0, pendingY = 0;
+
+      const rotation = ((galleryIdx % 5) - 2) * 3;
+      element.style.transform = `rotate(${rotation}deg)`;
+      element.dataset.tx = 0;
+      element.dataset.ty = 0;
 
       function startDrag(clientX, clientY) {
         isItemDragging = true;
@@ -1946,52 +1920,55 @@
 
         startX = clientX;
         startY = clientY;
-
-        initialLeft = element.offsetLeft;
-        initialTop = element.offsetTop;
+        initialTx = parseFloat(element.dataset.tx || 0);
+        initialTy = parseFloat(element.dataset.ty || 0);
       }
 
       function moveDrag(clientX, clientY) {
         if (!isItemDragging) return;
 
-        const dx = clientX - startX;
-        const dy = clientY - startY;
-        dragDistance += Math.hypot(dx, dy);
+        pendingX = clientX;
+        pendingY = clientY;
 
-        let newLeft = initialLeft + dx;
-        let newTop = initialTop + dy;
+        if (!dragTicking) {
+          dragTicking = true;
+          requestAnimationFrame(() => {
+            const dx = pendingX - startX;
+            const dy = pendingY - startY;
+            dragDistance += Math.hypot(dx, dy);
 
-        const elemWidth = element.offsetWidth;
-        const elemHeight = element.offsetHeight;
+            const currentTx = initialTx + dx;
+            const currentTy = initialTy + dy;
 
-        const margin = 20;
-        const minLeft = margin;
-        const maxLeft = window.innerWidth - elemWidth - margin;
-        const minTop = margin;
-        const maxTop = window.innerHeight - elemHeight - margin;
+            element.style.transform = `translate3d(${currentTx}px, ${currentTy}px, 0) rotate(${rotation}deg)`;
+            element.dataset.pendingTx = currentTx;
+            element.dataset.pendingTy = currentTy;
 
-        if (maxLeft >= minLeft) {
-          newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+            dragTicking = false;
+          });
         }
-        if (maxTop >= minTop) {
-          newTop = Math.max(minTop, Math.min(maxTop, newTop));
-        }
-
-        element.style.left = `${newLeft}px`;
-        element.style.top = `${newTop}px`;
       }
 
       function stopDrag() {
         if (isItemDragging) {
           isItemDragging = false;
           element.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease';
+          
+          if (element.dataset.pendingTx !== undefined) {
+            element.dataset.tx = element.dataset.pendingTx;
+            element.dataset.ty = element.dataset.pendingTy;
+            delete element.dataset.pendingTx;
+            delete element.dataset.pendingTy;
+          }
         }
       }
 
       element.addEventListener('click', (e) => {
         if (dragDistance < 5) {
           e.stopPropagation();
-          openLightbox(galleryIdx);
+          if (pinboardClickBuffer) {
+            openLightbox(galleryIdx);
+          }
         }
       });
 
@@ -2016,15 +1993,24 @@
       window.addEventListener('touchend', stopDrag);
     }
 
-    // Wheel Event Handling
+    // Wheel Event Handling with Inertia Dampening & Speed Caps
     window.addEventListener('wheel', (e) => {
       e.preventDefault();
       if (isProjectViewMode) return;
       if (selectedKey !== null) {
         deselectImage();
       }
-      currentY -= e.deltaY * 0.8;
-      velocityY = -e.deltaY * 0.15;
+
+      let rawDelta = e.deltaY;
+      if (e.deltaMode === 1) rawDelta *= 16;
+      if (e.deltaMode === 2) rawDelta *= 600;
+
+      const clampedDelta = Math.max(-120, Math.min(120, rawDelta));
+      const speedModifier = 0.45; 
+      const addedVelocity = -clampedDelta * speedModifier;
+      const MAX_VELOCITY = 35;
+      
+      velocityY = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocityY + addedVelocity));
     }, { passive: false });
 
     function tick() {
@@ -2032,12 +2018,18 @@
         currentY += (targetY - currentY) * 0.08;
       } else if (!isDragging && !isProjectViewMode) {
         velocityY *= FRICTION;
-        if (Math.abs(velocityY) < 0.1) {
+        
+        if (Math.abs(velocityY) < 0.01) {
           velocityY = 0;
           currentY -= baseAutoSpeed;
         } else {
           currentY += velocityY;
         }
+      }
+
+      // Zero-stutter architecture: Apply transform to parent container once per frame using integer snapping to avoid sub-pixel tearing
+      if (!isProjectViewMode) {
+        imageStream.style.transform = `translate3d(0, ${Math.round(currentY)}px, 0)`;
       }
 
       renderVisibleCards();
@@ -2054,19 +2046,32 @@
       velocityY = 0;
     }
 
+    let pointerTicking = false;
+    let pendingPointerX = 0, pendingPointerY = 0;
+
     function onPointerMove(clientX, clientY) {
       if (!isDragging || isProjectViewMode) return;
 
-      const totalMovedDist = Math.hypot(clientX - startPointerX, clientY - startPointerY);
-      const deltaY = (clientY - lastPointerY) * DRAG_SENSITIVITY;
+      pendingPointerX = clientX;
+      pendingPointerY = clientY;
 
-      if (totalMovedDist > 6) {
-        pointerMoved = true;
+      if (!pointerTicking) {
+        pointerTicking = true;
+        requestAnimationFrame(() => {
+          const totalMovedDist = Math.hypot(pendingPointerX - startPointerX, pendingPointerY - startPointerY);
+          const deltaY = (pendingPointerY - lastPointerY) * DRAG_SENSITIVITY;
+
+          if (totalMovedDist > 6) {
+            pointerMoved = true;
+          }
+
+          currentY += deltaY;
+          velocityY = deltaY;
+          lastPointerY = pendingPointerY;
+
+          pointerTicking = false;
+        });
       }
-
-      currentY += deltaY;
-      velocityY = deltaY;
-      lastPointerY = clientY;
     }
 
     function onPointerUp() {
