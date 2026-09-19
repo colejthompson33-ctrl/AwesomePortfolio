@@ -208,7 +208,7 @@
       flex-direction: column;
       justify-content: flex-start;
       gap: clamp(2rem, 4vw, 3.5rem);
-      z-index: 40;
+      z-index: 200;
       pointer-events: auto;
     }
 
@@ -268,7 +268,7 @@
       text-underline-offset: 4px;
       text-decoration-thickness: 1px;
       position: relative;
-      z-index: 1000 !important;
+      z-index: 2500 !important;
       pointer-events: auto !important;
     }
 
@@ -644,7 +644,8 @@
         position: fixed;
         top: 1rem;
         left: 1.25rem;
-        z-index: 3000;
+        z-index: 5000;
+        pointer-events: auto !important;
       }
 
       body.is-project-mode .mobile-back-btn {
@@ -687,6 +688,16 @@
       .project-section-label {
         text-align: left;
         order: -1;
+      }
+
+      .project-detail-view {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .project-container {
+        z-index: 3000;
+        pointer-events: auto !important;
       }
     }
 
@@ -762,7 +773,7 @@
       width: 100vw;
       height: 100vh;
       background-color: transparent;
-      z-index: 100;
+      z-index: 150;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -827,6 +838,7 @@
 
     body.is-project-mode .pinboard-container {
       opacity: 1;
+      pointer-events: none;
     }
 
     .pinboard-grid-wrapper {
@@ -839,6 +851,11 @@
       height: 90vh;
       pointer-events: none;
       overflow: visible;
+      z-index: 180;
+    }
+
+    body.is-project-mode .pinboard-grid-wrapper {
+      pointer-events: auto;
     }
 
     @media (max-width: 767px) {
@@ -861,12 +878,7 @@
         left: auto !important;
         width: calc(50% - 8px) !important;
         height: auto !important;
-        transform: none !important;
       }
-    }
-
-    body.is-project-mode .pinboard-grid-wrapper {
-      pointer-events: auto;
     }
 
     .pinboard-item {
@@ -1649,6 +1661,13 @@
         } else {
           cardNode.classList.remove('is-selected');
         }
+
+        // Sync is-active-project class during continuous rendering
+        if (isProjectViewMode && i === activeCardOriginalKey) {
+          cardNode.classList.add('is-active-project');
+        } else {
+          cardNode.classList.remove('is-active-project');
+        }
       }
 
       activeCardsMap.forEach((node, key) => {
@@ -1750,7 +1769,6 @@
           pinboardItem.style.position = 'relative';
           pinboardItem.style.width = 'calc(50% - 8px)';
           pinboardItem.style.height = 'auto';
-          pinboardItem.style.transform = 'none';
           pinboardItem.style.zIndex = 1300 + idx;
 
           const img = createOptimizedImage(
@@ -1767,7 +1785,9 @@
           pinboardItem.appendChild(img);
           gridWrapper.appendChild(pinboardItem);
 
-          makeDraggableAndZoomable(pinboardItem, idx);
+          // Use custom rotation if provided, otherwise no rotation for mobile
+          const mobileRotation = item.rotation !== undefined ? item.rotation : 0;
+          makeDraggableAndZoomable(pinboardItem, idx, mobileRotation);
         });
       } else {
         const anchorPoints = [
