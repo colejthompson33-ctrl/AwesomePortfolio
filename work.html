@@ -1267,7 +1267,6 @@
         label: 'Experience', 
         paragraphs: [
           "I have years of experience doing freelance work, with Bill Young Productions, and doing agency internships with GDC Marketing and Hahn Creative Agency.",
-          "These experiences have deepened my understanding of how high-level creative work integrates with strategic marketing. Here are some of the brands I've had the opportunity to support."
         ] 
       }
     };
@@ -1338,6 +1337,44 @@
           paragraphs: [
             "I created sizing and versioning for billboard, stadium runners, all the way to social. Showing off the variety of sport, academic, and music programs that UNT is know for",
             "The biggest visual style I tried to convey was that heavy 'Better Look North' sentiment. I utilized the vertical formatting to the highest potential, showing the students rising upwards and being enveloped on the wings of the UNT logo showing how UNT supports their students to be greater. Always leaning into the idea of higher education and that to find a competitive university to join, you Better Look North."
+          ] 
+        }
+      },
+            { 
+        src: 'images/Old Mervs/OldMervsMerch-29.webp', fallback: 'images/Old Mervs/OldMervsMerch-29.png', 
+        title: 'Old Mervs',
+        pinboardItems: [
+          { src: 'images/Old Mervs/OldMervsMerch-22.webp', fallback: 'images/Old Mervs/OldMervsMerch-22.png', isPng: true, left: 40, top: 0, size: 22},
+          { src: 'images/Old Mervs/OldMervsMerch-23.webp', fallback: 'images/Old Mervs/OldMervsMerch-23.png', isPng: true, left: 53, top: 26, size: 10},
+          { src: 'images/Old Mervs/OldMervsMerch-24.webp', fallback: 'images/Old Mervs/OldMervsMerch-24.png', isPng: true, left: 78, top: 0, size: 10},
+          { src: 'images/Old Mervs/OldMervsMerch-25.webp', fallback: 'images/Old Mervs/OldMervsMerch-25.png', isPng: true, left: 10, top: 45, size: 15},
+          { src: 'images/Old Mervs/OldMervsMerch-26.webp', fallback: 'images/Old Mervs/OldMervsMerch-26.png', isPng: true, left: 35, top: 45, size: 15},
+          { src: 'images/Old Mervs/OldMervsMerch-27.webp', fallback: 'images/Old Mervs/OldMervsMerch-27.png', isPng: true, left: 10, top: 65, size: 17},
+          { src: 'images/Old Mervs/OldMervsMerch-28.webp', fallback: 'images/Old Mervs/OldMervsMerch-28.png', isPng: true, left: 30, top: 65, size: 17},
+          { src: 'images/Old Mervs/OldMervsMerch-30.webp', fallback: 'images/Old Mervs/OldMervsMerch-30.png', isPng: false, left: 15, top: 0, size: 18},
+          { src: 'images/Old Mervs/OldMervsMerch-32.webp', fallback: 'images/Old Mervs/OldMervsMerch-32.png', isPng: false, left: 70, top: 20, size: 18},
+          { src: 'images/Old Mervs/OldMervsMerch-31.webp', fallback: 'images/Old Mervs/OldMervsMerch-31.png', isPng: false, left: 60, top: 55, size: 18}
+        ],
+        about: { 
+          label: '?', 
+          paragraphs: ["Who The Fark Are Old Mervs?"] 
+        },
+        experience: { 
+          label: 'The Project', 
+          paragraphs: ["See how I designed merch for the band Old Mervs. A duo from Australia"] 
+        },
+        detailedAbout: { 
+          label: 'The Concept', 
+          paragraphs: [
+            "Old Mervs are a duo from Kojonup, Australia. Their music is a blend of surf and rock and so much more. Beginning my process, I really played with the idea of duo merch. Twinning stickers, shirts posters were the main theme of this round.",
+            "Because their sound evolves and changes, the common theme is that of flexibility and youth."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Design System', 
+          paragraphs: [
+            "And being named after a dog (Old Merv), a dog sticker was required",
+            "I took much inspiration from surf culture and rock in Australia that features a lot of punk symbolism."
           ] 
         }
       },
@@ -1480,7 +1517,7 @@
         src: 'images/Aggie Outdoors/Main Aggie Outdoors Temp.webp', fallback: 'images/Aggie Outdoors/Main Aggie Outdoors Temp.png', 
         title: 'Aggie Outdoors',
         pinboardItems: [
-          { src: 'images/Aggie Outdoors/000085830015.webp', fallback: 'images/Aggie Outdoors/000085830015.png', isPng: false, left: 17, top: 10, size: 22},
+          { src: 'images/Aggie Outdoors/000085830015.webp', fallback: 'images/Aggie Outdoors/000085830015.png', isPng: false, left: 13, top: 7, size: 22},
           { src: 'images/Aggie Outdoors/AOFEST-06.webp', fallback: 'images/Aggie Outdoors/AOFEST-06.png', isPng: false, left: 40, top: 10, size: 20},
           { src: 'images/Aggie Outdoors/AOFestPoster.webp', fallback: 'images/Aggie Outdoors/AOFestPoster.png', isPng: false, left: 70, top: 10, size: 17},
           { src: 'images/Aggie Outdoors/Bandana copy.webp', fallback: 'images/Aggie Outdoors/Bandana copy.png', isPng: false, left: 20, top: 45, size: 19},
@@ -2067,7 +2104,7 @@
 
       // Zero-stutter architecture: Apply transform to parent container once per frame using integer snapping to avoid sub-pixel tearing
       if (!isProjectViewMode) {
-        imageStream.style.transform = `translate3d(0, ${Math.round(currentY)}px, 0)`;
+        imageStream.style.transform = `translate3d(0, ${currentY.toFixed(2)}px, 0)`;
       }
 
       renderVisibleCards();
