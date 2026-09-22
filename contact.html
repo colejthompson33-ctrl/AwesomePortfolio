@@ -764,7 +764,7 @@
               Hi, I'm Cole Thompson - a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.
             </p>
             <p>
-              Design is my first love. Throughout my career, I've developed a passion for anything in motion - from dynamic branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.
+              Design is my first love. I've developed a passion for branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.
             </p>
             <p>
               Have a project in mind, a question about my work, or just want to connect? Feel free to reach out anytime!
@@ -777,7 +777,7 @@
         <div class="section-grid">
           <div class="section-content">
             <p>
-              Alongside my freelance work with Bill Young Productions—where I dove headfirst into the fast-paced world of music industry design—I've held creative internships at GDC Ideation & Marketing and Hahn. These experiences sharpened my ability to bridge high-level creative direction with strategic marketing, producing work that resonates and performs.
+              Alongside my freelance work with Bill Young Productions where I made merch for bands while in collage, I've also held creative internships at GDC Ideation & Marketing and Hahn. These experiences taught me B2B creative direction, marketing, and all the fun little design things like spreadsheets.
             </p>
           </div>
           <h2 class="section-label">Experience</h2>
@@ -859,15 +859,15 @@
         about: {
           label: 'About Me',
           paragraphs: [
-            "Hi, I'm Cole Thompson—a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.",
-            "Design is my first love. Throughout my career, I've developed a passion for anything in motion—from dynamic branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.",
+            "Hi, I'm Cole Thompson - a multidisciplinary designer based in Austin, Texas, and a proud Texas A&M graduate with a B.S. in Visualization and a minor in Graphic Design.",
+            "Design is my first love. I've developed a passion for branding and merchandise design to web experiences and data visualization. If it tells a story, I want to create it.",
             "Have a project in mind, a question about my work, or just want to connect? Feel free to reach out anytime!"
           ]
         },
         experience: {
           label: 'Experience',
           paragraphs: [
-            "Alongside my freelance work with Bill Young Productions—where I dove headfirst into the fast-paced world of music industry design—I've held creative internships at GDC Ideation & Marketing and Hahn. These experiences sharpened my ability to bridge high-level creative direction with strategic marketing, producing work that resonates and performs."
+            "Alongside my freelance work with Bill Young Productions where I made merch for bands while in collage, I've also held creative internships at GDC Ideation & Marketing and Hahn. These experiences taught me B2B creative direction, marketing, and all the fun little design things like spreadsheets."
           ]
         }
       };
@@ -879,14 +879,14 @@
           about: {
             label: 'Background',
             paragraphs: [
-              "Born and raised in San Antonio, I’ve spent almost my entire life in Texas. I graduated Magna Cum Laude from Texas A&M University with a B.S. in Visualization and a minor in Graphic Design.",
-              "My time in College Station was shaped as much by my community involvement as my studies. I competed as a collegiate rower, served as a counselor for Fish Camp, and regularly volunteered with the Special Olympics, Camp Howdy, and local cleanups across Bryan/College Station."
+              "I graduated Magna Cum Laude from Texas A&M University with a B.S. in Visualization and a minor in Graphic Design.",
+              "While there I competed as a collegiate rower, served as a counselor for Fish Camp, and regularly volunteered with the Special Olympics, Camp Howdy, and park cleanups around Bryan/College Station."
             ]
           },
           experience: {
             label: 'Community',
             paragraphs: [
-              "Giving back through design has always been central to my work. I’ve frequently donated graphic design services to local organizations including UNICEF, Wayne’s Wings, and a local band Blue House, helping support the community that supported me."
+              "Giving back through design has always been so important me. I’ve frequently donated graphic design services to local organizations including UNICEF, Wayne’s Wings, and a local band Blue House, helping support the community that supported me."
             ]
           }
         },
@@ -896,14 +896,13 @@
           about: {
             label: 'My Passion',
             paragraphs: [
-              "Music is something I deeply love. I believe design is one of the most powerful tools for empowering artists to fully express their art and identity",
-              "Live music is the ultimate convergence where musicians, visual artists, lighting tech, sound engineers, and so many artists combine their crafts to build something awesome"
+              "Music is something I deeply love. I believe design is one of the most powerful tools for empowering artists to fully express their identity. Especially now when it's so important to stand out from the crowd",
             ]
           },
           experience: {
             label: 'Creative Focus',
             paragraphs: [
-              "From concert posters to tour merch and album art, I strive to design visuals that capture the sound of live music."
+              "From concert posters to tour merch, album art, or a tiny sticker I think all day and night on how artists could express themselves better and still love their merch."
             ]
           }
         },
@@ -913,8 +912,8 @@
           about: {
             label: 'Florence',
             paragraphs: [
-              "Other people charge my inspiration. So I spent half a year living, studying, and working abroad in Florence, being taught classical and Renaissance art techniques",
-              "Studying the best artists who have ever lived firsthand gave me a respect for composition, light, and other design principles.",
+              "I spent half a year living, studying, and working abroad in Florence, being taught classical and Renaissance art techniques",
+              "Studying the best artists who have ever lived firsthand gave me a respect for composition, light, and the other design principles.",
               "(And they didn't have Illistrator??)"
             ]
           },
@@ -931,14 +930,14 @@
           about: {
             label: 'The Outdoors',
             paragraphs: [
-              "Nature has always been a second home to me. That connection to the outdoors inspired my extensive work with Aggie Outdoors, where I led branding efforts and created merchandise.",
+              "Nature has always been a second home to me. That connection inspired my extensive work with Aggie Outdoors, where I led the public branding efforts and created their merch.",
               "My time in nature defines my work and reinforces my commitment to ethical, sustainable design practices that respects both the environment and its audiences."
             ]
           },
           experience: {
             label: 'Branding & Merch',
             paragraphs: [
-              "Building apparel and brand identities for outdoor communities is a special interest of mine as it needs to rough yet design friendly, soft and scalable, and all other beatiful paradoxes"
+              "Making brands for outdoor communities is a special interest of mine. I find it so facinating as it needs to rough yet design friendly, soft and scalable, and all other beatiful paradoxes."
             ]
           }
         }
@@ -965,8 +964,9 @@
       let pointerMoved = false;
       let selectedKey = null;
 
-      const FRICTION = 0.92;
-      const DRAG_SENSITIVITY = 1.1;
+      const FRICTION = 0.97;
+      const DRAG_SENSITIVITY = 1.35;
+      const MAX_VELOCITY = 35;
 
       const GAP = 28;
       const PUSH_OFFSET = 70;
@@ -1160,8 +1160,14 @@
         if (selectedKey !== null) {
           deselectImage();
         }
-        currentY -= e.deltaY * 0.8;
-        velocityY = -e.deltaY * 0.15;
+        
+        const rawDelta = e.deltaY;
+        const clampedDelta = Math.max(-120, Math.min(120, rawDelta));
+        const speedModifier = 0.45;
+        const addedVelocity = -clampedDelta * speedModifier;
+        
+        velocityY += addedVelocity;
+        velocityY = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocityY));
       }, { passive: false });
 
       function tick() {

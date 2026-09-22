@@ -361,6 +361,8 @@
     body.is-project-mode .image-stream-container {
       pointer-events: none !important;
       cursor: default;
+      visibility: hidden !important; /* Forces Safari to hide the 3D container */
+      transform: none !important;    /* Flattens the 3D perspective layer for WebKit */
     }
 
     .image-stream-container:active {
@@ -1356,25 +1358,25 @@
           { src: 'images/Old Mervs/OldMervsMerch-31.webp', fallback: 'images/Old Mervs/OldMervsMerch-31.png', isPng: false, left: 60, top: 55, size: 18}
         ],
         about: { 
-          label: '?', 
-          paragraphs: ["Who The Fark Are Old Mervs?"] 
-        },
-        experience: { 
           label: 'The Project', 
           paragraphs: ["See how I designed merch for the band Old Mervs. A duo from Australia"] 
+        },
+        experience: { 
+          label: '?', 
+          paragraphs: ["But who the fark are Old Mervs?"] 
         },
         detailedAbout: { 
           label: 'The Concept', 
           paragraphs: [
-            "Old Mervs are a duo from Kojonup, Australia. Their music is a blend of surf and rock and so much more. Beginning my process, I really played with the idea of duo merch. Twinning stickers, shirts posters were the main theme of this round.",
-            "Because their sound evolves and changes, the common theme is that of flexibility and youth."
+            "Old Mervs are a duo from Kojonup, Australia. Their music is a blend of surf and rock and so much more.",
+            "Beginning my process, I really played with the idea of duo merch. Twinning stickers, shirts posters were the main theme of this round. I think this creates a really cool culture around their merch that other bands just arent doing."
           ] 
         },
         detailedExperience: { 
           label: 'Design System', 
           paragraphs: [
-            "And being named after a dog (Old Merv), a dog sticker was required",
-            "I took much inspiration from surf culture and rock in Australia that features a lot of punk symbolism."
+            "I took a lot of inspiration from surf culture and rock in Australia.",
+            "And being named after a dog (Old Merv), a dog sticker was required."
           ] 
         }
       },
@@ -1477,6 +1479,37 @@
           label: 'Quick Plug', 
           paragraphs: [
             "Go listen to her new EP Pale Horse!",
+          ] 
+        }
+      },
+      { 
+        src: 'images/Data Visualization/NBUWaterInfographicTitle.png', fallback: 'images/Data Visualization/NBUWaterInfographicTitle.png', 
+        title: 'Data Vizualization Projects',
+        pinboardItems: [
+          { src: 'images/Data Visualization/Global.png', fallback: 'images/Data Visualization/Global.png', isPng: false, left: 62, top: 5, size: 22},
+          { src: 'images/Data Visualization/NBUWaterInfographic-05.png', fallback: 'images/Data Visualization/NBUWaterInfographic-05.png', isPng: false, left: 15, top: 10, size: 25},
+          { src: 'images/Data Visualization/NBUWaterInfographic-06.png', fallback: 'images/Data Visualization/NBUWaterInfographic-06.png', isPng: false, left: 22, top: 55, size: 25}
+        ],
+        about: { 
+          label: 'Project Preview', 
+          paragraphs: ["Data and design are close cousins, and making data easy to understand is something I am very passionate about."] 
+        },
+        experience: { 
+          label: 'Working with Data', 
+          paragraphs: ["My philosophy is that great design should come across instantly, especially when explaining data. See how I appraoch design when it comes to data sets."] 
+        },
+        detailedAbout: { 
+          label: 'NBU', 
+          paragraphs: [
+            "My philosophy is that great design should come across instantly, especially when explaining complex infrastructure. For New Braunfels Utilities, I worked on creating a series of infographics aiming to educate its customers about how they get their utilities.",
+            "Working with so much infrastructure that can be complicated to an average person, I worked closely with NBU to make something that is immediately recognisable, and easy to glance at and understand."
+          ] 
+        },
+        detailedExperience: { 
+          label: 'Global Warming', 
+          paragraphs: [
+            "Taking inspiration from Ed Hawkins, a climatologist, and his work I created an easier to understand version of a very complex data set. I wrote down and drew each individual line representing temperature, showing how global average temperatures are rapidly increasing.",
+            "Again, data and design are close cousins, and making data easy to understand is something I am very passionate about."
           ] 
         }
       },
