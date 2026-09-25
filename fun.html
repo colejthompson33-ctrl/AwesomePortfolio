@@ -332,7 +332,7 @@
       width: 100%;
       height: 100%;
       background-color: #141416;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .drawing-canvas {
@@ -555,9 +555,10 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: none;
-      display: inline-block;
-      width: fit-content;
-      max-width: 200px;
+      display: block;
+      width: max-content;
+      max-width: none;
+      transform-origin: top center;
     }
 
     .sticker-item:active {
@@ -566,7 +567,7 @@
 
     @media (hover: hover) {
       .sticker-item:hover {
-        transform: scale(1.04) rotate(0deg) !important;
+        filter: brightness(1.1);
       }
       
       .sticker-item:hover .sticker-image {
@@ -576,7 +577,7 @@
 
     .sticker-item.active-highlight {
       z-index: 2000 !important;
-      transform: scale(1.08) rotate(0deg) !important;
+      filter: brightness(1.15);
       opacity: 1 !important;
     }
 
@@ -598,6 +599,8 @@
     .sticker-image {
       width: 100%;
       height: auto;
+      max-width: 100%;
+      max-height: none;
       display: block;
       pointer-events: none;
       transition: filter 0.25s ease;
@@ -831,7 +834,7 @@
         padding: 1rem;
       }
       .sticker-item {
-        max-width: 130px;
+        max-width: none;
       }
     }
   </style>
@@ -968,22 +971,25 @@
 
     /* Sticker Configuration Data - WebP Optimized with PNG Fallback */
     const stickerData = [
-      { id: 1, title: "Aggie Outdoors Logo Design", stickerImage: "images/funstickers/AO.webp", fallback: "images/funstickers/AO.png", position: { top: "5%", left: "5%", rotation: "-12deg" }, description: "A logo for Aggie Outdoors" },
-      { id: 4, title: "Aggie Radio Sticker", stickerImage: "images/funstickers/AgRadio.webp", fallback: "images/funstickers/AgRadio.png", position: { top: "5%", left: "55%", rotation: "12deg" }, description: "While a host, I made many designs for the student radio. This design was one of my favorites" },
-      { id: 5, title: "Like New Legs", stickerImage: "images/funstickers/LikenewLegs.webp", fallback: "images/funstickers/LikenewLegs.png", position: { top: "7%", left: "70%", rotation: "-8deg" }, description: "Poster design" },
-      { id: 6, title: "Aggie Outdoors Logo", stickerImage: "images/funstickers/AoSimp.webp", fallback: "images/funstickers/AoSimp.png", position: { top: "12%", left: "82%", rotation: "5deg" }, description: "Logo design for Aggie Outdoors" },
-      { id: 7, title: "Feel Fear", stickerImage: "images/funstickers/FeelFear.webp", fallback: "images/funstickers/FeelFear.png", position: { top: "18%", left: "5%", rotation: "-15deg" }, description: "A poster I made for a local band" },
-      { id: 8, title: "Howdy", stickerImage: "images/funstickers/Howdy.webp", fallback: "images/funstickers/Howdy.png", position: { top: "22%", left: "10%", rotation: "18deg" }, description: "Merch I made for the singer Howdy (Highly recommend to listen to btw)" },
-      { id: 9, title: "Chud World Tour", stickerImage: "images/funstickers/ChudworldTour.webp", fallback: "images/funstickers/ChudworldTour.png", position: { top: "35%", left: "25%", rotation: "-8deg" }, description: "Some concept merch for a local band" },
-      { id: 10, title: "Stretch & Flex Co", stickerImage: "images/funstickers/Stretch&Flex co..webp", fallback: "images/funstickers/Stretch&Flex co..png", position: { top: "38%", left: "42%", rotation: "10deg" }, description: "Branding work for a local sports therapy business" },
-      { id: 11, title: "Chud World Tour", stickerImage: "images/funstickers/ChudComeNoDrop.webp", fallback: "images/funstickers/ChudComeNoDrop.jpg", position: { top: "40%", left: "76%", rotation: "-10deg" }, description: "Some concept merch I made for a local band" },
-      { id: 13, title: "Collaborative Poetry", stickerImage: "images/funstickers/CollabriativePeotry.webp", fallback: "images/funstickers/CollabriativePeotry.png", position: { top: "40%", left: "58%", rotation: "7deg" }, description: "An event poster for a local sports therapy business" },
-      { id: 14, title: "Crew A&M Rowing", stickerImage: "images/funstickers/CrewA&MRowing.webp", fallback: "images/funstickers/CrewA&MRowing.png", position: { top: "64%", left: "72%", rotation: "-5deg" }, description: "Some concept merch I made for a local band" },
-      { id: 15, title: "Seen And Heard", stickerImage: "images/funstickers/SeenAndHeard.webp", fallback: "images/funstickers/SeenAndHeard.png", position: { top: "70%", left: "32%", rotation: "12deg" }, description: "A personal project of mine I love" },
-      { id: 16, title: "Ag Radio", stickerImage: "images/funstickers/AgRadioRev.webp", fallback: "images/funstickers/AgRadioRev.png", position: { top: "73%", left: "45%", rotation: "-8deg" }, description: "Sticker for A&M's student radio" },
-      { id: 17, title: "Rowing Sticker", stickerImage: "images/funstickers/Rowingsticker.webp", fallback: "images/funstickers/Rowingsticker.png", position: { top: "26%", left: "27%", rotation: "5deg" }, description: "Texas A&M Crew rowing sticker" },
-      { id: 18, title: "Halftone Band", stickerImage: "images/funstickers/HalftoneBand.webp", fallback: "images/funstickers/HalftoneBand.png", position: { top: "55%", left: "8%", rotation: "15deg" }, description: "Some concept merch I made for a local band" },
-      { id: 19, title: "Skeggs Design", stickerImage: "images/funstickers/Skeggs.webp", fallback: "images/funstickers/Skeggs.png", position: { top: "60%", left: "18%", rotation: "-10deg" }, description: "A zine I used to make 'The Garage' that would show off designs and such of grunge bands I listened to" }
+      { id: 1, title: "Aggie Outdoors Logo Design", stickerImage: "images/funstickers/AO.webp", fallback: "images/funstickers/AO.png", position: { top: "0%", left: "19.651%", width: "180px" }, description: "A logo for Aggie Outdoors" },
+      { id: 4, title: "Aggie Radio Sticker", stickerImage: "images/funstickers/AgRadio.webp", fallback: "images/funstickers/AgRadio.png", position: { top: "11.1189%", left: "85.2959%", width: "200px" }, description: "While a host, I made many designs for the student radio. This design was one of my favorites" },
+      { id: 5, title: "Like New Legs", stickerImage: "images/funstickers/LikenewLegs.webp", fallback: "images/funstickers/LikenewLegs.png", position: { top: "0%", left: "69.6883%", width: "220px" }, description: "Poster design" },
+      { id: 6, title: "Aggie Outdoors Logo", stickerImage: "images/funstickers/AoSimp.webp", fallback: "images/funstickers/AoSimp.png", position: { top: "58.7989%", left: "9.99229%", width: "150px" }, description: "Logo design for Aggie Outdoors" },
+      { id: 7, title: "Feel Fear", stickerImage: "images/funstickers/FeelFear.webp", fallback: "images/funstickers/FeelFear.png", position: { top: "54.9481%", left: "0%", width: "200px" }, description: "A poster I made for a local band" },
+      { id: 8, title: "Howdy", stickerImage: "images/funstickers/Howdy.webp", fallback: "images/funstickers/Howdy.png", position: { top: "2.32335%", left: "41.7178%", width: "180px" }, description: "Merch I made for the singer Howdy (Highly recommend to listen to btw)" },
+      { id: 9, title: "Chud World Tour", stickerImage: "images/funstickers/ChudworldTour.webp", fallback: "images/funstickers/ChudworldTour.png", position: { top: "8.61338%", left: "0%", width: "240px" }, description: "Some concept merch for a local band" },
+      { id: 10, title: "Stretch & Flex Co", stickerImage: "images/funstickers/Stretch&Flex co.webp", fallback: "images/funstickers/Stretch&Flex co.png", position: { top: "27.5449%", left: "39.4282%", width: "200px" }, description: "Branding work for a local sports therapy business" },
+      { id: 11, title: "Chud World Tour", stickerImage: "images/funstickers/ChudComeNoDrop.webp", fallback: "images/funstickers/ChudComeNoDrop.jpg", position: { top: "43.9829%", left: "75.0255%", width: "220px" }, description: "Some concept merch I made for a local band" },
+      { id: 13, title: "Collaborative Poetry", stickerImage: "images/funstickers/CollabriativePeotry.webp", fallback: "images/funstickers/CollabriativePeotry.png", position: { top: "16.1027%", left: "54.4152%", width: "190px" }, description: "An event poster for a local sports therapy business" },
+      { id: 14, title: "Crew A&M Rowing", stickerImage: "images/funstickers/CrewA&MRowing.webp", fallback: "images/funstickers/CrewA&MRowing.png", position: { top: "49.8939%", left: "67.7919%", width: "210px" }, description: "Some concept merch I made for a local band" },
+      { id: 15, title: "Seen And Heard", stickerImage: "images/funstickers/SeenAndHeard.webp", fallback: "images/funstickers/SeenAndHeard.png", position: { top: "69.6732%", left: "37.2993%", width: "230px" }, description: "A personal project of mine I love" },
+      { id: 16, title: "Ag Radio", stickerImage: "images/funstickers/AgRadioRev.webp", fallback: "images/funstickers/AgRadioRev.png", position: { top: "80.0159%", left: "23.4912%", width: "170px" }, description: "Sticker for A&M's student radio" },
+      { id: 17, title: "Rowing Sticker", stickerImage: "images/funstickers/Rowingsticker.webp", fallback: "images/funstickers/Rowingsticker.png", position: { top: "68.3181%", left: "34.5594%", width: "160px" }, description: "Texas A&M Crew rowing sticker" },
+      { id: 18, title: "Halftone Band", stickerImage: "images/funstickers/HalftoneBand.webp", fallback: "images/funstickers/HalftoneBand.png", position: { top: "49.0256%", left: "3.16831%", width: "250px" }, description: "Some concept merch I made for a local band" },
+      { id: 19, title: "Skeggs Design", stickerImage: "images/funstickers/Skeggs.webp", fallback: "images/funstickers/Skeggs.png", position: { top: "22.3285%", left: "16.909%", width: "289px" }, description: "A zine I used to make 'The Garage' that would show off designs and such of grunge bands I listened to" },
+      { id: 20, title: "Goal", stickerImage: "images/funstickers/Goal.webp", fallback: "images/funstickers/Goal.png", position: { top: "52.5372%", left: "23.5972%", width: "200px" }, description: "A motivational design piece" },
+      { id: 21, title: "Spill", stickerImage: "images/funstickers/spill.webp", fallback: "images/funstickers/spill.png", position: { top: "57.6818%", left: "55.5331%", width: "190px" }, description: "A creative liquid-inspired design" },
+      { id: 22, title: "Sunburn", stickerImage: "images/funstickers/sunburn.webp", fallback: "images/funstickers/sunburn.png", position: { top: "70.2943%", left: "71.1814%", width: "210px" }, description: "A warm-toned design piece" }
     ];
 
     /* Canvas & Stacking Logic */
@@ -1002,15 +1008,13 @@
       element.style.zIndex = highestZIndex;
     }
 
-    // Define boundary zones where images can be placed (red outlined areas)
-    // Each zone: { left: %, top: %, width: %, height: % }
     const boundaryZones = [
-      { left: 5, top: 5, width: 40, height: 40 },    // Top-left zone
-      { left: 55, top: 5, width: 40, height: 40 },   // Top-right zone  
-      { left: 5, top: 55, width: 40, height: 40 },   // Bottom-left zone
-      { left: 55, top: 55, width: 40, height: 40 }, // Bottom-right zone
-      { left: 25, top: 25, width: 50, height: 50 },  // Center zone
-      { left: 0, top: 0, width: 100, height: 100 } // Full canvas fallback
+      { left: 5, top: 5, width: 40, height: 40 },
+      { left: 55, top: 5, width: 40, height: 40 },  
+      { left: 5, top: 55, width: 40, height: 40 },   
+      { left: 55, top: 55, width: 40, height: 40 },
+      { left: 25, top: 25, width: 50, height: 50 },  
+      { left: 0, top: 0, width: 100, height: 100 }
     ];
 
     function enforceBoundaries(element) {
@@ -1025,73 +1029,15 @@
       const elemWidth = element.offsetWidth;
       const elemHeight = element.offsetHeight;
       
-      // Check if current position is within any boundary zone
-      let withinAnyZone = false;
-      let closestZone = null;
-      let minDistance = Infinity;
-
-      for (const zone of boundaryZones) {
-        const zoneLeft = (zone.left / 100) * canvasRect.width;
-        const zoneTop = (zone.top / 100) * canvasRect.height;
-        const zoneRight = zoneLeft + (zone.width / 100) * canvasRect.width;
-        const zoneBottom = zoneTop + (zone.height / 100) * canvasRect.height;
-
-        // Check if element is within this zone
-        if (leftPx >= zoneLeft && leftPx + elemWidth <= zoneRight &&
-            topPx >= zoneTop && topPx + elemHeight <= zoneBottom) {
-          withinAnyZone = true;
-          break;
-        }
-
-        // Calculate distance to zone center for fallback
-        const zoneCenterX = zoneLeft + (zone.width / 200) * canvasRect.width;
-        const zoneCenterY = zoneTop + (zone.height / 200) * canvasRect.height;
-        const elemCenterX = leftPx + elemWidth / 2;
-        const elemCenterY = topPx + elemHeight / 2;
-        const distance = Math.hypot(elemCenterX - zoneCenterX, elemCenterY - zoneCenterY);
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestZone = zone;
-        }
-      }
-
-      // If not within any zone, constrain to closest zone or canvas bounds
-      if (!withinAnyZone && closestZone) {
-        const zoneLeft = (closestZone.left / 100) * canvasRect.width;
-        const zoneTop = (closestZone.top / 100) * canvasRect.height;
-        const zoneRight = zoneLeft + (closestZone.width / 100) * canvasRect.width;
-        const zoneBottom = zoneTop + (closestZone.height / 100) * canvasRect.height;
-
-        // Clamp position to within the closest zone
-        const maxLeft = zoneRight - elemWidth;
-        const maxTop = zoneBottom - elemHeight;
-
-        let newLeftPx = Math.max(zoneLeft, Math.min(leftPx, maxLeft));
-        let newTopPx = Math.max(zoneTop, Math.min(topPx, maxTop));
-
-        if (newLeftPx !== leftPx || newTopPx !== topPx) {
-          element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
-          element.style.top = (newTopPx / canvasRect.height * 100) + '%';
-        }
-      } else {
-        // Standard canvas boundary enforcement
-        const maxLeft = canvasRect.width - elemWidth;
-        const maxTop = canvasRect.height - elemHeight;
-        
-        let newLeftPx = leftPx;
-        let newTopPx = topPx;
-        
-        if (newLeftPx < 0) newLeftPx = 0;
-        if (newLeftPx > maxLeft) newLeftPx = maxLeft;
-        
-        if (newTopPx < 0) newTopPx = 0;
-        if (newTopPx > maxTop) newTopPx = maxTop;
-        
-        if (newLeftPx !== leftPx || newTopPx !== topPx) {
-          element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
-          element.style.top = (newTopPx / canvasRect.height * 100) + '%';
-        }
+      const maxLeft = Math.max(0, canvasRect.width - elemWidth);
+      const maxTop = Math.max(0, canvasRect.height - elemHeight);
+      
+      let newLeftPx = Math.max(0, Math.min(leftPx, maxLeft));
+      let newTopPx = Math.max(0, Math.min(topPx, maxTop));
+      
+      if (newLeftPx !== leftPx || newTopPx !== topPx) {
+        element.style.left = (newLeftPx / canvasRect.width * 100) + '%';
+        element.style.top = (newTopPx / canvasRect.height * 100) + '%';
       }
     }
 
@@ -1106,7 +1052,6 @@
         const tabThumb = document.createElement('img');
         tabThumb.className = 'mac-tab-thumb';
         tabThumb.alt = sticker.title;
-        // Skip setting src on mobile to prevent memory issues in webviews
         if (window.innerWidth > 767) {
           if (sticker.fallback) {
             tabThumb.src = sticker.stickerImage;
@@ -1152,7 +1097,12 @@
         
         stickerEl.style.top = sticker.position.top;
         stickerEl.style.left = sticker.position.left;
-        stickerEl.style.transform = `rotate(${sticker.position.rotation})`;
+        stickerEl.style.transform = 'none';
+        
+        const stickerWidth = sticker.position.width || '200px';
+        const isMobile = window.innerWidth < 768;
+        const finalWidth = isMobile ? `calc(${stickerWidth} * 0.7)` : stickerWidth;
+        stickerEl.style.width = finalWidth;
         
         highestZIndex++;
         stickerEl.style.zIndex = highestZIndex;
@@ -1165,6 +1115,8 @@
           'lazy',
           {}
         );
+        
+        setNaturalAspectRatio(img);
         
         img.onload = () => {
           enforceBoundaries(stickerEl);
@@ -1263,7 +1215,6 @@
       }
     });
 
-    // Add click handlers to stickers for lightbox
     stickerData.forEach((sticker, index) => {
       const stickerItem = document.querySelector(`.sticker-item[data-id="${sticker.id}"]`);
       if (stickerItem) {
@@ -1275,7 +1226,6 @@
       }
     });
 
-    // Keyboard navigation for lightbox
     window.addEventListener('keydown', (e) => {
       if (lightboxModal.classList.contains('is-active')) {
         if (e.key === 'ArrowLeft' && currentGalleryIndex > 0) {
@@ -1580,6 +1530,6 @@
       }
     });
   });
-  </script>
+</script>
 </body>
 </html>
