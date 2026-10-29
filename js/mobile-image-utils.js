@@ -10,12 +10,12 @@
  * @param {string} alt - Alt text for accessibility
  * @param {string} className - CSS class name
  * @param {string} loading - Loading attribute ('lazy' or 'eager')
- * @param {Object} options - Additional options { aspectRatio, style }
+ * @param {Object} options - Additional options { aspectRatio, style, srcset, sizes }
  * @returns {HTMLImageElement} Configured image element
  */
 function createOptimizedImage(webpSrc, fallbackSrc, alt, className, loading = 'lazy', options = {}) {
   const img = document.createElement('img');
-  
+
   if (fallbackSrc) {
     img.src = webpSrc;
     img.setAttribute('data-fallback', fallbackSrc);
@@ -27,20 +27,28 @@ function createOptimizedImage(webpSrc, fallbackSrc, alt, className, loading = 'l
   } else {
     img.src = webpSrc;
   }
-  
+
   img.alt = alt;
   img.className = className;
   img.loading = loading;
   img.decoding = 'async';
-  
+
   if (options.aspectRatio) {
     img.style.aspectRatio = options.aspectRatio;
   }
-  
+
   if (options.style) {
     Object.assign(img.style, options.style);
   }
-  
+
+  if (options.srcset) {
+    img.setAttribute('srcset', options.srcset);
+  }
+
+  if (options.sizes) {
+    img.setAttribute('sizes', options.sizes);
+  }
+
   return img;
 }
 

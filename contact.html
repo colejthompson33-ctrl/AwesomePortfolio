@@ -7,7 +7,10 @@
   
   <!-- Preload critical font -->
   <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  
+
+  <!-- Preload critical above-the-fold image -->
+  <link rel="preload" href="images/Personal/Cole.webp" as="image" type="image/webp" fetchpriority="high">
+
   <!-- Shared Mobile Optimizations -->
   <link rel="stylesheet" href="css/mobile-optimizations.css">
   
@@ -1007,14 +1010,19 @@
             const cardInner = document.createElement('div');
             cardInner.className = 'stream-card-inner';
 
+            const isLoadingEager = (i >= 0 && i <= 2);
             const img = createOptimizedImage(
               imageData.src,
               imageData.fallback,
               imageData.title,
               'stream-image',
-              'lazy',
+              isLoadingEager ? 'eager' : 'lazy',
               { aspectRatio: '16/9' }
             );
+
+            if (isLoadingEager) {
+              img.setAttribute('fetchpriority', 'high');
+            }
 
             const overlayText = document.createElement('div');
             overlayText.className = 'card-overlay-text';

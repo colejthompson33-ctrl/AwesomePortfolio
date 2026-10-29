@@ -7,7 +7,12 @@
   
   <!-- Preload critical font -->
   <link rel="preload" href="fonts/HelveticaNowDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  
+
+  <!-- Preload critical above-the-fold stickers -->
+  <link rel="preload" href="images/funstickers/AO.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="images/funstickers/AgRadio.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="images/funstickers/LikenewLegs.webp" as="image" type="image/webp" fetchpriority="high">
+
   <!-- Shared Mobile Optimizations -->
   <link rel="stylesheet" href="css/mobile-optimizations.css">
   
@@ -1106,14 +1111,20 @@
         highestZIndex++;
         stickerEl.style.zIndex = highestZIndex;
         
+        const stickerIndex = stickerData.indexOf(sticker);
+        const isLoadingEager = (stickerIndex >= 0 && stickerIndex <= 2);
         const img = createOptimizedImage(
           sticker.stickerImage,
           sticker.fallback,
           sticker.title,
           'sticker-image',
-          'lazy',
+          isLoadingEager ? 'eager' : 'lazy',
           {}
         );
+
+        if (isLoadingEager) {
+          img.setAttribute('fetchpriority', 'high');
+        }
         
         setNaturalAspectRatio(img);
         
